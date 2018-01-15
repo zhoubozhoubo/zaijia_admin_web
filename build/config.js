@@ -1,6 +1,5 @@
-import Env from './env';
-
 let config = {
-    env: Env
+    env: 'development',
+    baseUrl: 'https://api.apiadmin.org/admin/'
 };
 export default config;

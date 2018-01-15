@@ -1,12 +1,23 @@
 import Cookies from 'js-cookie';
 
 const user = {
-    state: {},
+    state: {
+        userToken: ''
+    },
+    getters: {
+        userToken: (state) => {
+            return state.userToken || localStorage.getItem('userToken');
+        }
+    },
     mutations: {
+        setUserToken (state, token) {
+            state.userToken = token;
+            localStorage.setItem('userToken', token);
+        },
         logout (state, vm) {
             Cookies.remove('user');
-            Cookies.remove('password');
             Cookies.remove('access');
+            state.userToken = '';
             // 恢复默认样式
             let themeLink = document.querySelector('link[name="theme"]');
             themeLink.setAttribute('href', '');

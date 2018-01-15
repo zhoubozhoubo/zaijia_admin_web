@@ -13,7 +13,7 @@
                 <div class="form-con">
                     <Form ref="loginForm" :model="form" :rules="rules">
                         <FormItem prop="userName">
-                            <Input v-model="form.userName" placeholder="请输入用户名">
+                            <Input v-model="form.username" placeholder="请输入用户名">
                                 <span slot="prepend">
                                     <Icon :size="16" type="person"></Icon>
                                 </span>
@@ -30,7 +30,7 @@
                             <Button @click="handleSubmit" type="primary" long>登录</Button>
                         </FormItem>
                     </Form>
-                    <p class="login-tip">输入任意用户名和密码即可</p>
+                    <p class="login-tip">欢迎使用ApiAdmin3.0后台管理系统</p>
                 </div>
             </Card>
         </div>
@@ -39,15 +39,16 @@
 
 <script>
 import Cookies from 'js-cookie';
+import axios from 'axios';
 export default {
     data () {
         return {
             form: {
-                userName: 'iview_admin',
+                username: '',
                 password: ''
             },
             rules: {
-                userName: [
+                username: [
                     { required: true, message: '账号不能为空', trigger: 'blur' }
                 ],
                 password: [
@@ -60,16 +61,23 @@ export default {
         handleSubmit () {
             this.$refs.loginForm.validate((valid) => {
                 if (valid) {
-                    Cookies.set('user', this.form.userName);
-                    Cookies.set('password', this.form.password);
-                    this.$store.commit('setAvator', 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3448484253,3685836170&fm=27&gp=0.jpg');
-                    if (this.form.userName === 'iview_admin') {
-                        Cookies.set('access', 0);
-                    } else {
-                        Cookies.set('access', 1);
-                    }
-                    this.$router.push({
-                        name: 'home_index'
+                    let vObj = this;
+                    axios.post('Login/index', {
+                        username: this.form.username,
+                        password: this.form.password
+                    }).then(function (response) {
+                        if (response.data.code === 1) {
+                            Cookies.set('access', 1);
+                            Cookies.set('user', vObj.form.username);
+                            vObj.$store.commit('setUserToken', response.data.data.userToken);
+                            vObj.$Message.success(response.data.msg);
+                            vObj.$store.commit('setAvator', 'http://tx.haiqq.com/uploads/allimg/150325/1223213930-12.jpg');
+                            vObj.$router.push({
+                                name: 'home_index'
+                            });
+                        } else {
+                            vObj.$Message.error(response.data.msg);
+                        }
                     });
                 }
             });
