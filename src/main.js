@@ -27,7 +27,7 @@ new Vue({
         axios.defaults.baseURL = config.baseUrl;
         if (store.getters.userToken) {
             axios.interceptors.request.use(function (config) {
-                config.headers['User-Token'] = store.getters.userToken;
+                config.headers['Authorization'] = store.getters.userToken;
                 return config;
             });
         }
