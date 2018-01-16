@@ -1,6 +1,6 @@
 <style lang="less">
     @import '../../styles/common.less';
-    @import './error-page.less';
+    @import 'index.less';
 </style>
 
 <template>

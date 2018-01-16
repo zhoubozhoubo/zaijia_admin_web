@@ -1,5 +1,5 @@
 <style lang="less">
-    @import './message.less';
+    @import 'index.less';
 </style>
 
 <template>

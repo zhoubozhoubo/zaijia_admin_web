@@ -12,11 +12,11 @@ export const loginRouter = {
 
 export const page404 = {
     path: '/*',
-    name: 'error-404',
+    name: 'error_404',
     meta: {
         title: '404-页面不存在'
     },
-    component: () => import('@/views/error-page/404.vue')
+    component: () => import('@/views/error_page/404.vue')
 };
 
 export const page403 = {
@@ -24,8 +24,8 @@ export const page403 = {
     meta: {
         title: '403-权限不足'
     },
-    name: 'error-403',
-    component: () => import('@//views/error-page/403.vue')
+    name: 'error_403',
+    component: () => import('@//views/error_page/403.vue')
 };
 
 export const page500 = {
@@ -33,20 +33,20 @@ export const page500 = {
     meta: {
         title: '500-服务端错误'
     },
-    name: 'error-500',
-    component: () => import('@/views/error-page/500.vue')
+    name: 'error_500',
+    component: () => import('@/views/error_page/500.vue')
+};
+
+export const locking = {
+    path: '/locking',
+    name: 'locking',
+    component: () => import('@/views/main_components/lock_screen/components/locking-page.vue')
 };
 
 export const preview = {
     path: '/preview',
     name: 'preview',
     component: () => import('@/views/form/article-publish/preview.vue')
-};
-
-export const locking = {
-    path: '/locking',
-    name: 'locking',
-    component: () => import('@/views/main-components/lockscreen/components/locking-page.vue')
 };
 
 // 作为Main组件的子页面展示但是不在左侧菜单显示的路由写在otherRouter里
@@ -56,16 +56,79 @@ export const otherRouter = {
     redirect: '/home',
     component: Main,
     children: [
-        { path: 'home', title: {i18n: 'home'}, name: 'home_index', component: () => import('@/views/home/home.vue') },
-        { path: 'ownspace', title: '个人中心', name: 'ownspace_index', component: () => import('@/views/own-space/own-space.vue') },
-        { path: 'order/:order_id', title: '订单详情', name: 'order-info', component: () => import('@/views/advanced-router/component/order-info.vue') }, // 用于展示动态路由
-        { path: 'shopping', title: '购物详情', name: 'shopping', component: () => import('@/views/advanced-router/component/shopping-info.vue') }, // 用于展示带参路由
-        { path: 'message', title: '消息中心', name: 'message_index', component: () => import('@/views/message/message.vue') }
+        {
+            path: 'home',
+            title: {i18n: 'home'},
+            name: 'home_index',
+            component: () => import('@/views/home/home.vue')
+        },
+        {
+            path: 'ownspace',
+            title: '个人中心',
+            name: 'ownspace_index',
+            component: () => import('@/views/own_space/index.vue')
+        },
+        {
+            path: 'order/:order_id',
+            title: '订单详情',
+            name: 'order-info',
+            component: () => import('@/views/advanced-router/component/order-info.vue')
+        },
+        {
+            path: 'shopping',
+            title: '购物详情',
+            name: 'shopping',
+            component: () => import('@/views/advanced-router/component/shopping-info.vue')
+        },
+        {
+            path: 'message',
+            title: '消息中心',
+            name: 'message_index',
+            component: () => import('@/views/message/index.vue')
+        }
     ]
 };
 
 // 作为Main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
 export const appRouter = [
+    {
+        path: '/system',
+        icon: 'wrench',
+        name: 'system',
+        title: '系统配置',
+        component: Main,
+        children: [
+            {
+                path: 'menu',
+                icon: 'navicon-round',
+                name: 'menu',
+                title: '菜单维护',
+                component: () => import('@/views/error_page/404.vue')
+                
+            },
+            {
+                path: 'md-editor',
+                icon: 'ios-people',
+                name: 'md-editor',
+                title: '用户管理',
+                component: () => import('@/views/error_page/404.vue')
+            },
+            {
+                path: 'image-editor',
+                icon: 'locked',
+                name: 'image-editor',
+                title: '权限管理',
+                component: () => import('@/views/error_page/404.vue')
+            },
+            {
+                path: 'draggable-list',
+                icon: 'clipboard',
+                name: 'draggable-list',
+                title: '操作日志',
+                component: () => import('@/views/error_page/404.vue')
+            }
+        ]
+    },
     {
         path: '/access',
         icon: 'key',
@@ -73,7 +136,12 @@ export const appRouter = [
         title: '权限管理',
         component: Main,
         children: [
-            { path: 'index', title: '权限管理', name: 'access_index', component: () => import('@/views/access/access.vue') }
+            {
+                path: 'index',
+                title: '权限管理',
+                name: 'access_index',
+                component: () => import('@/views/access/access.vue')
+            }
         ]
     },
     {
@@ -84,7 +152,13 @@ export const appRouter = [
         access: 0,
         component: Main,
         children: [
-            { path: 'index', title: '权限测试页', name: 'accesstest_index', access: 0, component: () => import('@/views/access/access-test.vue') }
+            {
+                path: 'index',
+                title: '权限测试页',
+                name: 'accesstest_index',
+                access: 0,
+                component: () => import('@/views/access/access-test.vue')
+            }
         ]
     },
     {
@@ -94,7 +168,12 @@ export const appRouter = [
         name: 'international',
         component: Main,
         children: [
-            { path: 'index', title: {i18n: 'international'}, name: 'international_index', component: () => import('@/views/international/international.vue') }
+            {
+                path: 'index',
+                title: {i18n: 'international'},
+                name: 'international_index',
+                component: () => import('@/views/international/international.vue')
+            }
         ]
     },
     {
@@ -170,23 +249,23 @@ export const appRouter = [
         title: '表单编辑',
         component: Main,
         children: [
-            { path: 'artical-publish', title: '文章发布', name: 'artical-publish', icon: 'compose', component: () => import('@/views/form/article-publish/article-publish.vue') },
-            { path: 'workflow', title: '工作流', name: 'workflow', icon: 'arrow-swap', component: () => import('@/views/form/work-flow/work-flow.vue') }
+            {
+                path: 'artical-publish',
+                title: '文章发布',
+                name: 'artical-publish',
+                icon: 'compose',
+                component: () => import('@/views/form/article-publish/article-publish.vue')
+            },
+            {
+                path: 'workflow',
+                title: '工作流',
+                name: 'workflow',
+                icon: 'arrow-swap',
+                component: () => import('@/views/form/work-flow/work-flow.vue')
+            }
 
         ]
     },
-    // {
-    //     path: '/charts',
-    //     icon: 'ios-analytics',
-    //     name: 'charts',
-    //     title: '图表',
-    //     component: Main,
-    //     children: [
-    //         { path: 'pie', title: '饼状图', name: 'pie', icon: 'ios-pie', component: resolve => { require('@/views/access/access.vue') },
-    //         { path: 'histogram', title: '柱状图', name: 'histogram', icon: 'stats-bars', component: resolve => { require('@/views/access/access.vue') }
-
-    //     ]
-    // },
     {
         path: '/tables',
         icon: 'ios-grid-view',
@@ -194,11 +273,41 @@ export const appRouter = [
         title: '表格',
         component: Main,
         children: [
-            { path: 'dragableTable', title: '可拖拽排序', name: 'dragable-table', icon: 'arrow-move', component: () => import('@/views/tables/dragable-table.vue') },
-            { path: 'editableTable', title: '可编辑表格', name: 'editable-table', icon: 'edit', component: () => import('@/views/tables/editable-table.vue') },
-            { path: 'searchableTable', title: '可搜索表格', name: 'searchable-table', icon: 'search', component: () => import('@/views/tables/searchable-table.vue') },
-            { path: 'exportableTable', title: '表格导出数据', name: 'exportable-table', icon: 'code-download', component: () => import('@/views/tables/exportable-table.vue') },
-            { path: 'table2image', title: '表格转图片', name: 'table-to-image', icon: 'images', component: () => import('@/views/tables/table-to-image.vue') }
+            {
+                path: 'dragableTable',
+                title: '可拖拽排序',
+                name: 'dragable-table',
+                icon: 'arrow-move',
+                component: () => import('@/views/tables/dragable-table.vue')
+            },
+            {
+                path: 'editableTable',
+                title: '可编辑表格',
+                name: 'editable-table',
+                icon: 'edit',
+                component: () => import('@/views/tables/editable-table.vue')
+            },
+            {
+                path: 'searchableTable',
+                title: '可搜索表格',
+                name: 'searchable-table',
+                icon: 'search',
+                component: () => import('@/views/tables/searchable-table.vue')
+            },
+            {
+                path: 'exportableTable',
+                title: '表格导出数据',
+                name: 'exportable-table',
+                icon: 'code-download',
+                component: () => import('@/views/tables/exportable-table.vue')
+            },
+            {
+                path: 'table2image',
+                title: '表格转图片',
+                name: 'table-to-image',
+                icon: 'images',
+                component: () => import('@/views/tables/table-to-image.vue')
+            }
         ]
     },
     {
@@ -208,18 +317,35 @@ export const appRouter = [
         title: '高级路由',
         component: Main,
         children: [
-            { path: 'mutative-router', title: '动态路由', name: 'mutative-router', icon: 'link', component: () => import('@/views/advanced-router/mutative-router.vue') },
-            { path: 'argument-page', title: '带参页面', name: 'argument-page', icon: 'android-send', component: () => import('@/views/advanced-router/argument-page.vue') }
+            {
+                path: 'mutative-router',
+                title: '动态路由',
+                name: 'mutative-router',
+                icon: 'link',
+                component: () => import('@/views/advanced-router/mutative-router.vue')
+            },
+            {
+                path: 'argument-page',
+                title: '带参页面',
+                name: 'argument-page',
+                icon: 'android-send',
+                component: () => import('@/views/advanced-router/argument-page.vue')
+            }
         ]
     },
     {
-        path: '/error-page',
+        path: '/error_page',
         icon: 'android-sad',
         title: '错误页面',
         name: 'errorpage',
         component: Main,
         children: [
-            { path: 'index', title: '错误页面', name: 'errorpage_index', component: () => import('@/views/error-page/error-page.vue') }
+            {
+                path: 'index',
+                title: '错误页面',
+                name: 'errorpage_index',
+                component: () => import('@/views/error_page/index.vue')
+            }
         ]
     }
 ];
