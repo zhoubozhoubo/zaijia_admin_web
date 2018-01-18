@@ -103,8 +103,8 @@ export const appRouter = [
                 icon: 'navicon-round',
                 name: 'menu',
                 title: '菜单维护',
-                component: () => import('@/views/error_page/404.vue')
-                
+                component: () => import('@/views/system/menu.vue')
+
             },
             {
                 path: 'md-editor',
