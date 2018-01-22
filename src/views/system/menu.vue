@@ -19,7 +19,7 @@
 
 <script>
 export default {
-    name: 'Error404',
+    name: 'system_menu',
     methods: {
         backPage () {
             this.$router.go(-1);
