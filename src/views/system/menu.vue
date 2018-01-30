@@ -1,19 +1,21 @@
 <style lang="less">
-    @import './menu.less';
+    /*@import './menu.less';*/
 </style>
 
 <template>
-    <div class="error404">
-        <div class="error404-body-con">
-            <Card>
-                <div class="error404-body-con-title">4<span><Icon type="ios-navigate-outline"></Icon></span>4</div>
-                <p class="error404-body-con-message">YOU&nbsp;&nbsp;LOOK&nbsp;&nbsp;LOST</p>
-                <div class="error404-btn-con">
-                    <Button @click="goHome" size="large" style="width: 200px;" type="text">返回首页</Button>
-                    <Button @click="backPage" size="large" style="width: 200px;margin-left: 40px;" type="primary">返回上一页</Button>
-                </div>
-            </Card>
-        </div>
+    <div>
+        <Row>
+            <Col span="24">
+                <Card>
+                    <p slot="title" style="height: 32px">
+                        <Button type="primary" icon="plus-round">新增</Button>
+                    </p>
+                    <div class="edittable-test-con">
+                        可编辑单元格可配置可编辑的列，可设置编辑整行的可编辑单元格，也可配置单个编辑可编辑单元格，也可两种形式同时可用。可配置单元格内编辑的图标显示方式。
+                    </div>
+                </Card>
+            </Col>
+        </Row>
     </div>
 </template>
 
