@@ -1,7 +1,3 @@
-import axios from 'axios';
-import semver from 'semver';
-import packjson from '../../package.json';
-
 let util = {};
 
 util.title = function (title) {
@@ -242,6 +238,34 @@ util.fullscreenEvent = function (vm) {
     // 权限菜单过滤相关
     vm.$store.commit('updateMenulist');
     // 全屏相关
+};
+
+/**
+ * 格式化时间戳
+ * @param date
+ * @param fmt
+ * @returns {*}
+ */
+util.formatDate = function (date, fmt) {
+    date = parseInt(date) * 1000;
+    date = new Date(date);
+    if (/(y+)/.test(fmt)) {
+        fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+    }
+    let o = {
+        'M+': date.getMonth() + 1,
+        'd+': date.getDate(),
+        'h+': date.getHours(),
+        'm+': date.getMinutes(),
+        's+': date.getSeconds()
+    };
+    for (let k in o) {
+        if (new RegExp(`(${k})`).test(fmt)) {
+            let str = o[k] + '';
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? str : ('00' + str).substr(str.length));
+        }
+    }
+    return fmt;
 };
 
 export default util;
