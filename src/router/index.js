@@ -5,6 +5,8 @@ import VueRouter from 'vue-router';
 import Cookies from 'js-cookie';
 import store from '../store';
 import {routers, otherRouter, appRouter} from './router';
+import config from '../../build/config';
+import axios from 'axios';
 
 Vue.use(VueRouter);
 
@@ -37,6 +39,12 @@ router.beforeEach((to, from, next) => {
                 name: 'home_index'
             });
         } else {
+            // 统一处理请求的UserToken
+            axios.defaults.baseURL = config.baseUrl;
+            axios.interceptors.request.use(function (config) {
+                config.headers['Authorization'] = store.getters.userToken;
+                return config;
+            });
             const curRouterObj = Util.getRouterObjByName([otherRouter, ...appRouter], to.name);
             if (curRouterObj && curRouterObj.access !== undefined) { // 需要判断权限的路由
                 if (curRouterObj.access === parseInt(Cookies.get('access'))) {

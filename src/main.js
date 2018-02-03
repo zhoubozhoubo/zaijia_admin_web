@@ -5,10 +5,8 @@ import {appRouter} from './router/router';
 import store from './store';
 import App from './app.vue';
 import '@/locale';
-import config from '../build/config.js';
 import 'iview/dist/styles/iview.css';
 import VueI18n from 'vue-i18n';
-import axios from 'axios';
 
 Vue.use(VueI18n);
 Vue.use(iView);
@@ -23,14 +21,6 @@ new Vue({
     },
     mounted () {
         this.currentPageName = this.$route.name;
-        // 统一处理请求的UserToken
-        axios.defaults.baseURL = config.baseUrl;
-        if (store.getters.userToken) {
-            axios.interceptors.request.use(function (config) {
-                config.headers['Authorization'] = store.getters.userToken;
-                return config;
-            });
-        }
         // 显示打开的页面的列表
         this.$store.commit('setOpenedList');
         this.$store.commit('initCachepage');
