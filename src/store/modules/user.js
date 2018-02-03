@@ -15,7 +15,6 @@ const user = {
             localStorage.setItem('userToken', token);
         },
         logout (state, vm) {
-            Cookies.remove('user');
             Cookies.remove('access');
             state.userToken = '';
             // 恢复默认样式

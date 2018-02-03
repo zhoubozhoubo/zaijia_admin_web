@@ -61,22 +61,22 @@ export default {
         handleSubmit () {
             this.$refs.loginForm.validate((valid) => {
                 if (valid) {
-                    let vObj = this;
+                    let vm = this;
                     axios.post('Login/index', {
                         username: this.form.username,
                         password: this.form.password
                     }).then(function (response) {
                         if (response.data.code === 1) {
                             Cookies.set('access', 1);
-                            Cookies.set('user', vObj.form.username);
-                            vObj.$store.commit('setUserToken', response.data.data.userToken);
-                            vObj.$Message.success(response.data.msg);
-                            vObj.$store.commit('setAvator', 'http://tx.haiqq.com/uploads/allimg/150325/1223213930-12.jpg');
-                            vObj.$router.push({
+                            localStorage.setItem('user', vm.form.username);
+                            vm.$store.commit('setUserToken', response.data.data.userToken);
+                            vm.$Message.success(response.data.msg);
+                            vm.$store.commit('setAvator', 'http://tx.haiqq.com/uploads/allimg/150325/1223213930-12.jpg');
+                            vm.$router.push({
                                 name: 'home_index'
                             });
                         } else {
-                            vObj.$Message.error(response.data.msg);
+                            vm.$Message.error(response.data.msg);
                         }
                     });
                 }

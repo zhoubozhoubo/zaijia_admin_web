@@ -8,7 +8,7 @@
             <Col span="24">
                 <Card>
                     <p slot="title" style="height: 32px">
-                        <Button type="primary" icon="plus-round">新增</Button>
+                        <Button type="primary" @click="alertAdd" icon="plus-round">新增</Button>
                     </p>
                     <div>
                         <Table :columns="columnsList" :data="tableData" border disabled-hover></Table>
@@ -19,19 +19,25 @@
         <Modal v-model="modalSetting.show" width="668" :styles="{top: '30px'}">
             <p slot="header" style="color:#2d8cf0;">
                 <Icon type="information-circled"></Icon>
-                <span>轮播详情</span>
+                <span>{{modalSetting.edit ? '编辑' : '新增'}}菜单</span>
             </p>
             <Form ref="formItem" :rules="ruleValidate" :model="formItem" :label-width="80">
-                <FormItem label="轮播图片" prop="imageUrl">
-                    <div class="demo-upload-list-banner" v-if="formItem.Url">
-                        <img :src="formItem.Url">
-                        <div class="demo-upload-list-cover">
-                            <Icon type="ios-trash-outline" @click.native="handleRemove()"></Icon>
-                        </div>
-                    </div>
-                    <input v-if="formItem.Url" v-model="formItem.Url" type="hidden" name="image">
+                <FormItem label="菜单名称" prop="name">
+                    <Input v-model="formItem.name" placeholder="请输入菜单名称"></Input>
                 </FormItem>
-                <FormItem label="广告排序">
+                <FormItem label="父级菜单" prop="fid">
+                    <Input v-model="formItem.fid" placeholder=""></Input>
+                </FormItem>
+                <FormItem label="是否隐藏">
+                    <i-switch v-model="formItem.hide" size="large">
+                        <span slot="open">隐藏</span>
+                        <span slot="close">显示</span>
+                    </i-switch>
+                </FormItem>
+                <FormItem label="菜单URL">
+                    <Input v-model="formItem.url" placeholder="请输入菜单URL"></Input>
+                </FormItem>
+                <FormItem label="菜单排序">
                     <InputNumber :min="0" v-model="formItem.order"></InputNumber>
                     <Badge count="数字越大越靠前" style="margin-left:5px"></Badge>
                 </FormItem>
@@ -57,10 +63,12 @@
             on: {
                 'click': () => {
                     vm.formItem.id = currentRow.id;
-                    vm.formItem.videoId = currentRow.videoId;
-                    vm.formItem.imageUrl = currentRow.image;
-                    vm.formItem.order = currentRow.id;
-                    vm.formItem.videoName = currentRow.searchKey;
+                    vm.formItem.name = currentRow.name;
+                    vm.formItem.fid = currentRow.fid;
+                    vm.formItem.hide = currentRow.hide;
+                    vm.formItem.url = currentRow.url;
+                    vm.formItem.sort = currentRow.sort;
+                    vm.modalSetting.edit = true;
                     vm.modalSetting.show = true;
                 }
             }
@@ -112,7 +120,7 @@
                     {
                         title: '序号',
                         type: 'index',
-                        width: 80,
+                        width: 65,
                         align: 'center'
                     },
                     {
@@ -149,13 +157,24 @@
                 tableData: [],
                 modalSetting: {
                     show: false,
-                    loading: false
+                    loading: false,
+                    edit: false
                 },
                 formItem: {
-                    videoId: '',
-                    imageUrl: '',
-                    order: 0,
+                    name: '',
+                    fid: 0,
+                    hide: 0,
+                    url: '',
+                    sort: 0,
                     id: 0
+                },
+                ruleValidate: {
+                    username: [
+                        { required: true, message: '账号不能为空', trigger: 'blur' }
+                    ],
+                    password: [
+                        { required: true, message: '密码不能为空', trigger: 'blur' }
+                    ]
                 }
             };
         },
@@ -198,6 +217,7 @@
                 });
             },
             alertAdd () {
+                this.modalSetting.edit = false;
                 this.modalSetting.show = true;
             },
             ok () {
@@ -242,10 +262,18 @@
             getList () {
                 let vm = this;
                 axios.get('Menu/index').then(function (response) {
+                    let res = response.data;
                     if (response.data.code === 1) {
-                        vm.tableData = response.data.data.list;
+                        vm.tableData = res.data.list;
                     } else {
-                        vm.$Message.error(response.data.msg);
+                        if (res.code === -14) {
+                            vm.$store.commit('logout', vm);
+                            vm.$router.push({
+                                name: 'login'
+                            });
+                        } else {
+                            vm.$Message.error(res.msg);
+                        }
                     }
                 });
             }

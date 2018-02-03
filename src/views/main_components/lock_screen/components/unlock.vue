@@ -58,7 +58,7 @@ export default {
         handleUnlock () {
             let vObj = this;
             axios.post('Login/index', {
-                username: Cookies.get('user'),
+                username: localStorage.getItem('user'),
                 password: vObj.password
             }).then(function (response) {
                 if (response.data.code === 1) {
