@@ -26,19 +26,16 @@
                     <Input v-model="formItem.name" placeholder="请输入菜单名称"></Input>
                 </FormItem>
                 <FormItem label="父级菜单" prop="fid">
-                    <Input v-model="formItem.fid" placeholder=""></Input>
+                    <Select v-model="formItem.fid" filterable>
+                        <Option :value="0" :key="0">顶级菜单</Option>
+                        <Option v-for="item in tableData" :value="item.id" :key="item.id">{{ item.showName }}</Option>
+                    </Select>
                 </FormItem>
-                <FormItem label="是否隐藏">
-                    <i-switch v-model="formItem.hide" size="large">
-                        <span slot="open">隐藏</span>
-                        <span slot="close">显示</span>
-                    </i-switch>
-                </FormItem>
-                <FormItem label="菜单URL">
+                <FormItem label="菜单URL" prop="url">
                     <Input v-model="formItem.url" placeholder="请输入菜单URL"></Input>
                 </FormItem>
-                <FormItem label="菜单排序">
-                    <InputNumber :min="0" v-model="formItem.order"></InputNumber>
+                <FormItem label="菜单排序" prop="sort">
+                    <InputNumber :min="0" v-model="formItem.sort"></InputNumber>
                     <Badge count="数字越大越靠前" style="margin-left:5px"></Badge>
                 </FormItem>
             </Form>
@@ -65,7 +62,6 @@
                     vm.formItem.id = currentRow.id;
                     vm.formItem.name = currentRow.name;
                     vm.formItem.fid = currentRow.fid;
-                    vm.formItem.hide = currentRow.hide;
                     vm.formItem.url = currentRow.url;
                     vm.formItem.sort = currentRow.sort;
                     vm.modalSetting.edit = true;
@@ -145,7 +141,7 @@
                         title: '状态',
                         align: 'center',
                         key: 'hide',
-                        width: 80
+                        width: 100
                     },
                     {
                         title: '操作',
@@ -198,20 +194,49 @@
                     if (item.key === 'hide') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
-                            if (currentRowData.hide === 1) {
-                                return h('Badge', {
-                                    attrs: {
-                                        count: '隐藏'
+                            return h('i-switch', {
+                                attrs: {
+                                    size: 'large'
+                                },
+                                props: {
+                                    'true-value': 1,
+                                    'false-value': 0,
+                                    value: currentRowData.hide
+                                },
+                                on: {
+                                    'on-change' : function (status) {
+                                        axios.get('Menu/changeStatus', {
+                                            params: {
+                                                status: status,
+                                                id: currentRowData.id
+                                            }
+                                        }).then(function (response) {
+                                            let res = response.data;
+                                            if (res.code === 1) {
+                                                vm.$Message.success(res.msg);
+                                            } else {
+                                                if (res.code === -14) {
+                                                    vm.$store.commit('logout', vm);
+                                                    vm.$router.push({
+                                                        name: 'login'
+                                                    });
+                                                } else {
+                                                    vm.$Message.error(res.msg);
+                                                    vm.getList();
+                                                }
+                                            }
+                                            vm.cancel();
+                                        });
                                     }
-                                });
-                            } else {
-                                return h('Badge', {
-                                    attrs: {
-                                        count: '显示',
-                                        'class-name': 'badge-success'
-                                    }
-                                });
-                            }
+                                }
+                            }, [
+                                h('span', {
+                                    slot: 'open'
+                                }, '隐藏'),
+                                h('span', {
+                                    slot: 'close'
+                                }, '显示')
+                            ]);
                         };
                     }
                 });
@@ -263,7 +288,7 @@
                 let vm = this;
                 axios.get('Menu/index').then(function (response) {
                     let res = response.data;
-                    if (response.data.code === 1) {
+                    if (res.code === 1) {
                         vm.tableData = res.data.list;
                     } else {
                         if (res.code === -14) {
