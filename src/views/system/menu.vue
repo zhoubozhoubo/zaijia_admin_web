@@ -19,15 +19,15 @@
         <Modal v-model="modalSetting.show" width="668" :styles="{top: '30px'}">
             <p slot="header" style="color:#2d8cf0;">
                 <Icon type="information-circled"></Icon>
-                <span>{{modalSetting.edit ? '编辑' : '新增'}}菜单</span>
+                <span>{{formItem.id ? '编辑' : '新增'}}菜单</span>
             </p>
-            <Form ref="formItem" :rules="ruleValidate" :model="formItem" :label-width="80">
+            <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="80">
                 <FormItem label="菜单名称" prop="name">
                     <Input v-model="formItem.name" placeholder="请输入菜单名称"></Input>
                 </FormItem>
                 <FormItem label="父级菜单" prop="fid">
                     <Select v-model="formItem.fid" filterable>
-                        <Option :value="0" :key="0">顶级菜单</Option>
+                        <Option :value="0">顶级菜单</Option>
                         <Option v-for="item in tableData" :value="item.id" :key="item.id">{{ item.showName }}</Option>
                     </Select>
                 </FormItem>
@@ -41,7 +41,7 @@
             </Form>
             <div slot="footer">
                 <Button type="text" @click="cancel" style="margin-right: 8px">取消</Button>
-                <Button type="primary" @click="ok" :loading="modalSetting.loading">确定</Button>
+                <Button type="primary" @click="submit" :loading="modalSetting.loading">确定</Button>
             </div>
         </Modal>
     </div>
@@ -64,8 +64,8 @@
                     vm.formItem.fid = currentRow.fid;
                     vm.formItem.url = currentRow.url;
                     vm.formItem.sort = currentRow.sort;
-                    vm.modalSetting.edit = true;
                     vm.modalSetting.show = true;
+                    vm.modalSetting.index = index;
                 }
             }
         }, '编辑');
@@ -79,15 +79,14 @@
             },
             on: {
                 'on-ok': () => {
-                    let editRow = vm.thisTableData[index];
-                    axios.get('Banner/del', {
+                    axios.get('Menu/del', {
                         params: {
                             id: currentRow.id
                         }
                     }).then(function (response) {
-                        editRow.loading = false;
+                        currentRow.loading = false;
                         if (response.data.code === 1) {
-                            vm.thisTableData.splice(index, 1);
+                            vm.tableData.splice(index, 1);
                             vm.$Message.success(response.data.msg);
                         } else {
                             vm.$Message.error(response.data.msg);
@@ -154,22 +153,18 @@
                 modalSetting: {
                     show: false,
                     loading: false,
-                    edit: false
+                    index: 0
                 },
                 formItem: {
                     name: '',
                     fid: 0,
-                    hide: 0,
                     url: '',
                     sort: 0,
                     id: 0
                 },
                 ruleValidate: {
-                    username: [
-                        { required: true, message: '账号不能为空', trigger: 'blur' }
-                    ],
-                    password: [
-                        { required: true, message: '密码不能为空', trigger: 'blur' }
+                    name: [
+                        { required: true, message: '菜单名称不能为空', trigger: 'blur' }
                     ]
                 }
             };
@@ -245,44 +240,35 @@
                 this.modalSetting.edit = false;
                 this.modalSetting.show = true;
             },
-            ok () {
-                let vm = this;
-                this.$refs['formItem'].validate((valid) => {
+            submit () {
+                let self = this;
+                this.$refs['myForm'].validate((valid) => {
                     if (valid) {
-                        let targetUrl = '';
-                        vm.modalSetting.loading = true;
-                        if (vm.formItem.id === 0) {
-                            targetUrl = 'Banner/add';
+                        self.modalSetting.loading = true;
+                        let target = '';
+                        if (this.formItem.id === 0) {
+                            target = 'Menu/add';
                         } else {
-                            targetUrl = 'Banner/edit';
+                            target = 'Menu/edit';
                         }
-                        axios.post(targetUrl, vm.formItem).then(function (response) {
+                        axios.post(target, this.formItem).then(function (response) {
                             if (response.data.code === 1) {
-                                vm.$Message.success(response.data.msg);
+                                self.$Message.success(response.data.msg);
                             } else {
-                                vm.$Message.error(response.data.msg);
+                                self.$Message.error(response.data.msg);
                             }
-                            vm.cancel();
-                            vm.getList();
+                            self.getList();
+                            self.cancel();
                         });
                     }
                 });
             },
             cancel () {
-                this.formItem.imageUrl = '';
-                this.formItem.videoId = '';
                 this.formItem.id = 0;
-                this.formItem.order = 0;
-                this.$refs['formItem'].resetFields();
+                this.$refs['myForm'].resetFields();
                 this.modalSetting.show = false;
                 this.modalSetting.loading = false;
-            },
-            successDel (vm, index) {
-                return (callback) => {
-                    callback();
-                    vm.edittingStore.splice(index, 1);
-                    vm.thisTableData = JSON.parse(JSON.stringify(vm.edittingStore));
-                };
+                this.modalSetting.index = 0;
             },
             getList () {
                 let vm = this;
