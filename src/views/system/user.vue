@@ -1,19 +1,18 @@
 <style lang="less">
-    @import './menu.less';
+    @import './user.less';
 </style>
-
 <template>
     <div>
         <Row>
             <Col span="24">
-                <Card>
-                    <p slot="title" style="height: 32px">
-                        <Button type="primary" @click="alertAdd" icon="plus-round">新增</Button>
-                    </p>
-                    <div>
-                        <Table :columns="columnsList" :data="tableData" border disabled-hover></Table>
-                    </div>
-                </Card>
+            <Card>
+                <p slot="title" style="height: 32px">
+                    <Button type="primary" @click="alertAdd" icon="plus-round">新增</Button>
+                </p>
+                <div>
+                    <Table :columns="columnsList" :data="tableData" border disabled-hover></Table>
+                </div>
+            </Card>
             </Col>
         </Row>
         <Modal v-model="modalSetting.show" width="668" :styles="{top: '30px'}">
@@ -46,7 +45,6 @@
         </Modal>
     </div>
 </template>
-
 <script>
     import axios from 'axios';
     const editButton = (vm, h, currentRow, index) => {
@@ -107,8 +105,9 @@
             }, '删除')
         ]);
     };
+
     export default {
-        name: 'system_menu',
+        name: 'user',
         data () {
             return {
                 columnsList: [
@@ -291,3 +290,7 @@
         }
     };
 </script>
+
+<style scoped>
+
+</style>

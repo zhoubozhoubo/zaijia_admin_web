@@ -111,7 +111,7 @@ export const appRouter = [
                 icon: 'ios-people',
                 name: 'md-editor',
                 title: '用户管理',
-                component: () => import('@/views/error_page/404.vue')
+                component: () => import('@/views/system/user.vue')
             },
             {
                 path: 'image-editor',
