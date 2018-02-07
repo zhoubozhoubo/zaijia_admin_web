@@ -5,6 +5,32 @@
     <div>
         <Row>
             <Col span="24">
+                <Card style="margin-bottom: 10px">
+                    <Form inline>
+                        <FormItem style="margin-bottom: 0">
+                            <Select v-model="searchConf.status" clearable placeholder='请选择状态' style="width:100px">
+                                <Option :value="1">启用</Option>
+                                <Option :value="0">禁用</Option>
+                            </Select>
+                        </FormItem>
+                        <FormItem style="margin-bottom: 0">
+                            <Select v-model="searchConf.type" clearable placeholder="请选择类别" style="width:100px">
+                                <Option :value="1">用户账号</Option>
+                                <Option :value="2">真实姓名</Option>
+                            </Select>
+                        </FormItem>
+                        <FormItem style="margin-bottom: 0">
+                            <Input v-model="searchConf.keywords" placeholder=""></Input>
+                        </FormItem>
+                        <FormItem style="margin-bottom: 0">
+                            <Button type="primary" @click="search">查询</Button>
+                        </FormItem>
+                    </Form>
+                </Card>
+            </Col>
+        </Row>
+        <Row>
+            <Col span="24">
                 <Card>
                     <p slot="title" style="height: 32px">
                         <Button type="primary" @click="alertAdd" icon="plus-round">新增</Button>
@@ -122,19 +148,19 @@
                     {
                         title: '用户账号',
                         align: 'center',
-                        key: 'username',
-                        width: 160
+                        key: 'username'
                     },
                     {
                         title: '真实姓名',
                         align: 'center',
-                        key: 'nickname'
+                        key: 'nickname',
+                        width: 90
                     },
                     {
                         title: '登录次数',
                         align: 'center',
                         key: 'loginTimes',
-                        width: 85
+                        width: 90
                     },
                     {
                         title: '最后登录时间',
@@ -158,7 +184,7 @@
                         title: '操作',
                         align: 'center',
                         key: 'handle',
-                        width: 200,
+                        width: 175,
                         handle: ['edit', 'delete']
                     }
                 ],
@@ -167,6 +193,11 @@
                     currentPage: 1,
                     pageSize: 10,
                     listCount: 0
+                },
+                searchConf: {
+                    type: '',
+                    keywords: '',
+                    status: ''
                 },
                 modalSetting: {
                     show: false,
@@ -302,12 +333,18 @@
                 this.tableShow.pageSize = size;
                 this.getList();
             },
+            search () {
+                this.getList();
+            },
             getList () {
                 let vm = this;
                 axios.get('User/index', {
                     params: {
                         page: vm.tableShow.currentPage,
-                        size: vm.tableShow.pageSize
+                        size: vm.tableShow.pageSize,
+                        type: vm.searchConf.type,
+                        keywords: vm.searchConf.keywords,
+                        status: vm.searchConf.status
                     }
                 }).then(function (response) {
                     let res = response.data;
