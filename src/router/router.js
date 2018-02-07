@@ -107,9 +107,9 @@ export const appRouter = [
 
             },
             {
-                path: 'md-editor',
+                path: 'user',
                 icon: 'ios-people',
-                name: 'md-editor',
+                name: 'user',
                 title: '用户管理',
                 component: () => import('@/views/system/user.vue')
             },

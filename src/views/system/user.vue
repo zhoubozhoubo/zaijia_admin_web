@@ -5,36 +5,38 @@
     <div>
         <Row>
             <Col span="24">
-            <Card>
-                <p slot="title" style="height: 32px">
-                    <Button type="primary" @click="alertAdd" icon="plus-round">新增</Button>
-                </p>
-                <div>
-                    <Table :columns="columnsList" :data="tableData" border disabled-hover></Table>
-                </div>
-            </Card>
+                <Card>
+                    <p slot="title" style="height: 32px">
+                        <Button type="primary" @click="alertAdd" icon="plus-round">新增</Button>
+                    </p>
+                    <div>
+                        <Table :columns="columnsList" :data="tableData" border disabled-hover></Table>
+                    </div>
+                    <div class="margin-top-15" style="text-align: center">
+                        <Page :total="tableShow.listCount" :current="tableShow.currentPage"
+                              :page-size="tableShow.pageSize" @on-change="changePage"
+                              @on-page-size-change="changeSize" show-elevator show-sizer show-total></Page>
+                    </div>
+                </Card>
             </Col>
         </Row>
         <Modal v-model="modalSetting.show" width="668" :styles="{top: '30px'}">
             <p slot="header" style="color:#2d8cf0;">
                 <Icon type="information-circled"></Icon>
-                <span>{{formItem.id ? '编辑' : '新增'}}菜单</span>
+                <span>{{formItem.id ? '编辑' : '新增'}}用户</span>
             </p>
             <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="80">
-                <FormItem label="菜单名称" prop="name">
-                    <Input v-model="formItem.name" placeholder="请输入菜单名称"></Input>
+                <FormItem label="用户账号" prop="username">
+                    <Input v-model="formItem.username" placeholder="请输入账号"></Input>
                 </FormItem>
-                <FormItem label="父级菜单" prop="fid">
-                    <Select v-model="formItem.fid" filterable>
-                        <Option :value="0">顶级菜单</Option>
-                        <Option v-for="item in tableData" :value="item.id" :key="item.id">{{ item.showName }}</Option>
-                    </Select>
+                <FormItem label="真实姓名" prop="nickname">
+                    <Input v-model="formItem.nickname" placeholder="请输入账号"></Input>
                 </FormItem>
-                <FormItem label="菜单URL" prop="url">
-                    <Input v-model="formItem.url" placeholder="请输入菜单URL"></Input>
+                <FormItem label="用户密码" prop="password">
+                    <Input v-model="formItem.password" type="password" placeholder="用户密码"></Input>
                 </FormItem>
-                <FormItem label="菜单排序" prop="sort">
-                    <InputNumber :min="0" v-model="formItem.sort"></InputNumber>
+                <FormItem label="权限组" prop="groupId">
+                    <InputNumber :min="0" v-model="formItem.groupId"></InputNumber>
                     <Badge count="数字越大越靠前" style="margin-left:5px"></Badge>
                 </FormItem>
             </Form>
@@ -58,10 +60,10 @@
             on: {
                 'click': () => {
                     vm.formItem.id = currentRow.id;
-                    vm.formItem.name = currentRow.name;
-                    vm.formItem.fid = currentRow.fid;
-                    vm.formItem.url = currentRow.url;
-                    vm.formItem.sort = currentRow.sort;
+                    vm.formItem.username = currentRow.username;
+                    vm.formItem.nickname = currentRow.nickname;
+                    vm.formItem.password = currentRow.password;
+                    vm.formItem.groupId = currentRow.groupId;
                     vm.modalSetting.show = true;
                     vm.modalSetting.index = index;
                 }
@@ -118,26 +120,38 @@
                         align: 'center'
                     },
                     {
-                        title: '菜单名称',
-                        align: 'left',
-                        key: 'showName'
-                    },
-                    {
-                        title: '排序',
+                        title: '用户账号',
                         align: 'center',
-                        key: 'sort',
-                        width: 80
+                        key: 'username',
+                        width: 160
                     },
                     {
-                        title: '菜单URL',
-                        align: 'left',
-                        key: 'url',
-                        width: 180
+                        title: '真实姓名',
+                        align: 'center',
+                        key: 'nickname'
+                    },
+                    {
+                        title: '登录次数',
+                        align: 'center',
+                        key: 'loginTimes',
+                        width: 85
+                    },
+                    {
+                        title: '最后登录时间',
+                        align: 'center',
+                        key: 'lastLoginTime',
+                        width: 160
+                    },
+                    {
+                        title: '最后登录IP',
+                        align: 'center',
+                        key: 'lastLoginIp',
+                        width: 160
                     },
                     {
                         title: '状态',
                         align: 'center',
-                        key: 'hide',
+                        key: 'status',
                         width: 100
                     },
                     {
@@ -149,21 +163,32 @@
                     }
                 ],
                 tableData: [],
+                tableShow: {
+                    currentPage: 1,
+                    pageSize: 10,
+                    listCount: 0
+                },
                 modalSetting: {
                     show: false,
                     loading: false,
                     index: 0
                 },
                 formItem: {
-                    name: '',
-                    fid: 0,
-                    url: '',
-                    sort: 0,
+                    username: '',
+                    nickname: 0,
+                    password: '',
+                    groupId: 0,
                     id: 0
                 },
                 ruleValidate: {
-                    name: [
-                        { required: true, message: '菜单名称不能为空', trigger: 'blur' }
+                    username: [
+                        { required: true, message: '用户名不能为空', trigger: 'blur' }
+                    ],
+                    nickname: [
+                        { required: true, message: '用户昵称不能为空', trigger: 'blur' }
+                    ],
+                    password: [
+                        { required: true, message: '用户密码不能为空', trigger: 'blur' }
                     ]
                 }
             };
@@ -185,7 +210,7 @@
                             ]);
                         };
                     }
-                    if (item.key === 'hide') {
+                    if (item.key === 'status') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
                             return h('i-switch', {
@@ -195,11 +220,11 @@
                                 props: {
                                     'true-value': 1,
                                     'false-value': 0,
-                                    value: currentRowData.hide
+                                    value: currentRowData.status
                                 },
                                 on: {
                                     'on-change' : function (status) {
-                                        axios.get('Menu/changeStatus', {
+                                        axios.get('User/changeStatus', {
                                             params: {
                                                 status: status,
                                                 id: currentRowData.id
@@ -226,10 +251,10 @@
                             }, [
                                 h('span', {
                                     slot: 'open'
-                                }, '隐藏'),
+                                }, '启用'),
                                 h('span', {
                                     slot: 'close'
-                                }, '显示')
+                                }, '禁用')
                             ]);
                         };
                     }
@@ -246,9 +271,9 @@
                         self.modalSetting.loading = true;
                         let target = '';
                         if (this.formItem.id === 0) {
-                            target = 'Menu/add';
+                            target = 'User/add';
                         } else {
-                            target = 'Menu/edit';
+                            target = 'User/edit';
                         }
                         axios.post(target, this.formItem).then(function (response) {
                             if (response.data.code === 1) {
@@ -269,12 +294,26 @@
                 this.modalSetting.loading = false;
                 this.modalSetting.index = 0;
             },
+            changePage (page) {
+                this.tableShow.currentPage = page;
+                this.getList();
+            },
+            changeSize (size) {
+                this.tableShow.pageSize = size;
+                this.getList();
+            },
             getList () {
                 let vm = this;
-                axios.get('Menu/index').then(function (response) {
+                axios.get('User/index', {
+                    params: {
+                        page: vm.tableShow.currentPage,
+                        size: vm.tableShow.pageSize
+                    }
+                }).then(function (response) {
                     let res = response.data;
                     if (res.code === 1) {
                         vm.tableData = res.data.list;
+                        vm.tableShow.listCount = res.data.count;
                     } else {
                         if (res.code === -14) {
                             vm.$store.commit('logout', vm);
@@ -290,7 +329,3 @@
         }
     };
 </script>
-
-<style scoped>
-
-</style>
