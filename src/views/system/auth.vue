@@ -50,7 +50,7 @@
                     <Input v-model="formItem.name" placeholder="请输入权限组名称"></Input>
                 </FormItem>
                 <FormItem label="组描述" prop="description">
-                    <Input v-model="formItem.description" placeholder="请输入权限组描述"></Input>
+                    <Input type="textarea" v-model="formItem.description" placeholder="请输入权限组描述"></Input>
                 </FormItem>
                 <FormItem label="组授权" prop="rules">
                     <div class="rule-list">
@@ -162,8 +162,7 @@
                                 expand: true,
                                 children: [
                                     {
-                                        title: 'leaf 1-1-1',
-                                        disabled: true
+                                        title: 'leaf 1-1-1'
                                     },
                                     {
                                         title: 'leaf 1-1-2'
@@ -242,8 +241,8 @@
                 },
                 formItem: {
                     name: '',
-                    description: 0,
-                    rules: 0,
+                    description: '',
+                    rules: [],
                     id: 0
                 },
                 ruleValidate: {
@@ -329,6 +328,22 @@
                 });
             },
             alertAdd () {
+                let vm = this;
+                axios.get('Auth/getRuleList').then(function (response) {
+                    let res = response.data;
+                    if (res.code === 1) {
+                        vm.ruleList = res.data.list;
+                    } else {
+                        if (res.code === -14) {
+                            vm.$store.commit('logout', vm);
+                            vm.$router.push({
+                                name: 'login'
+                            });
+                        } else {
+                            vm.$Message.error(res.msg);
+                        }
+                    }
+                });
                 this.modalSetting.edit = false;
                 this.modalSetting.show = true;
             },
