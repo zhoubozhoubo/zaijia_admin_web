@@ -116,15 +116,61 @@ export const appRouter = [
             {
                 path: 'image-editor',
                 icon: 'locked',
-                name: 'image-editor',
+                name: 'auth',
                 title: '权限管理',
+                component: () => import('@/views/system/auth.vue')
+            },
+            {
+                path: 'log',
+                icon: 'clipboard',
+                name: 'log',
+                title: '操作日志',
+                component: () => import('@/views/error_page/404.vue')
+            }
+        ]
+    },
+    {
+        path: "/app",
+        icon: "android-cloud",
+        name: "app",
+        title: "应用接入",
+        component: Main,
+        children: [
+            {
+                path: "group",
+                icon: "ios-box",
+                name: "app_group",
+                title: "应用分组",
                 component: () => import('@/views/error_page/404.vue')
             },
             {
-                path: 'draggable-list',
-                icon: 'clipboard',
-                name: 'draggable-list',
-                title: '操作日志',
+                path: "index",
+                icon: "ios-list",
+                name: "app_index",
+                title: "应用列表",
+                component: () => import('@/views/error_page/404.vue')
+            }
+        ]
+    },
+    {
+        path: "/interface",
+        icon: "navigate",
+        name: "interface",
+        title: "接口管理",
+        component: Main,
+        children: [
+            {
+                path: "group",
+                icon: "folder",
+                name: "interface_group",
+                title: "接口分组",
+                component: () => import('@/views/error_page/404.vue')
+            },
+            {
+                path: "index",
+                icon: "document",
+                name: "interface_index",
+                title: "接口列表",
                 component: () => import('@/views/error_page/404.vue')
             }
         ]
