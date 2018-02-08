@@ -1,4 +1,4 @@
-<style lang="less">
+<style lang="less" scoped>
     @import './auth.less';
 </style>
 <template>
@@ -14,13 +14,7 @@
                             </Select>
                         </FormItem>
                         <FormItem style="margin-bottom: 0">
-                            <Select v-model="searchConf.type" clearable placeholder="请选择类别" style="width:100px">
-                                <Option :value="1">用户账号</Option>
-                                <Option :value="2">真实姓名</Option>
-                            </Select>
-                        </FormItem>
-                        <FormItem style="margin-bottom: 0">
-                            <Input v-model="searchConf.keywords" placeholder=""></Input>
+                            <Input v-model="searchConf.keywords" placeholder="请输入组名称"></Input>
                         </FormItem>
                         <FormItem style="margin-bottom: 0">
                             <Button type="primary" @click="search">查询</Button>
@@ -49,21 +43,19 @@
         <Modal v-model="modalSetting.show" width="668" :styles="{top: '30px'}">
             <p slot="header" style="color:#2d8cf0;">
                 <Icon type="information-circled"></Icon>
-                <span>{{formItem.id ? '编辑' : '新增'}}用户</span>
+                <span>{{formItem.id ? '编辑' : '新增'}}权限组</span>
             </p>
             <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="80">
-                <FormItem label="用户账号" prop="username">
-                    <Input v-model="formItem.username" placeholder="请输入账号"></Input>
+                <FormItem label="组名称" prop="name">
+                    <Input v-model="formItem.name" placeholder="请输入权限组名称"></Input>
                 </FormItem>
-                <FormItem label="真实姓名" prop="nickname">
-                    <Input v-model="formItem.nickname" placeholder="请输入账号"></Input>
+                <FormItem label="组描述" prop="description">
+                    <Input v-model="formItem.description" placeholder="请输入权限组描述"></Input>
                 </FormItem>
-                <FormItem label="用户密码" prop="password">
-                    <Input v-model="formItem.password" type="password" placeholder="用户密码"></Input>
-                </FormItem>
-                <FormItem label="权限组" prop="groupId">
-                    <InputNumber :min="0" v-model="formItem.groupId"></InputNumber>
-                    <Badge count="数字越大越靠前" style="margin-left:5px"></Badge>
+                <FormItem label="组授权" prop="rules">
+                    <div class="rule-list">
+                        <Tree :data="ruleList" show-checkbox multiple></Tree>
+                    </div>
                 </FormItem>
             </Form>
             <div slot="footer">
@@ -133,11 +125,67 @@
             }, '删除')
         ]);
     };
+    const memberButton = (vm, h, currentRow, index) => {
+        return h('Button', {
+            props: {
+                type: 'primary'
+            },
+            style: {
+                margin: '0 5px'
+            },
+            on: {
+                'click': () => {
+                    vm.formItem.id = currentRow.id;
+                    vm.formItem.username = currentRow.username;
+                    vm.formItem.nickname = currentRow.nickname;
+                    vm.formItem.password = currentRow.password;
+                    vm.formItem.groupId = currentRow.groupId;
+                    vm.modalSetting.show = true;
+                    vm.modalSetting.index = index;
+                }
+            }
+        }, '组成员');
+    };
 
     export default {
         name: 'user',
         data () {
             return {
+                ruleList: [
+                    {
+                        title: 'parent 1',
+                        expand: true,
+                        selected: true,
+                        children: [
+                            {
+                                title: 'parent 1-1',
+                                expand: true,
+                                children: [
+                                    {
+                                        title: 'leaf 1-1-1',
+                                        disabled: true
+                                    },
+                                    {
+                                        title: 'leaf 1-1-2'
+                                    }
+                                ]
+                            },
+                            {
+                                title: 'parent 1-2',
+                                expand: true,
+                                children: [
+                                    {
+                                        title: 'leaf 1-2-1',
+                                        checked: true
+                                    },
+                                    {
+                                        title: 'leaf 1-2-1'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
                 columnsList: [
                     {
                         title: '序号',
@@ -146,33 +194,22 @@
                         align: 'center'
                     },
                     {
-                        title: '用户账号',
+                        title: '权限组',
                         align: 'center',
-                        key: 'username'
+                        key: 'name',
+                        width: 100
                     },
                     {
-                        title: '真实姓名',
+                        title: '描述',
                         align: 'center',
-                        key: 'nickname',
-                        width: 90
+                        key: 'description'
                     },
                     {
-                        title: '登录次数',
+                        title: '成员授权',
                         align: 'center',
-                        key: 'loginTimes',
-                        width: 90
-                    },
-                    {
-                        title: '最后登录时间',
-                        align: 'center',
-                        key: 'lastLoginTime',
-                        width: 160
-                    },
-                    {
-                        title: '最后登录IP',
-                        align: 'center',
-                        key: 'lastLoginIp',
-                        width: 160
+                        key: 'member',
+                        width: 116,
+                        handle: ['member']
                     },
                     {
                         title: '状态',
@@ -195,7 +232,6 @@
                     listCount: 0
                 },
                 searchConf: {
-                    type: '',
                     keywords: '',
                     status: ''
                 },
@@ -205,21 +241,14 @@
                     index: 0
                 },
                 formItem: {
-                    username: '',
-                    nickname: 0,
-                    password: '',
-                    groupId: 0,
+                    name: '',
+                    description: 0,
+                    rules: 0,
                     id: 0
                 },
                 ruleValidate: {
-                    username: [
-                        { required: true, message: '用户名不能为空', trigger: 'blur' }
-                    ],
-                    nickname: [
-                        { required: true, message: '用户昵称不能为空', trigger: 'blur' }
-                    ],
-                    password: [
-                        { required: true, message: '用户密码不能为空', trigger: 'blur' }
+                    name: [
+                        { required: true, message: '组名称不能为空', trigger: 'blur' }
                     ]
                 }
             };
@@ -232,12 +261,20 @@
             init () {
                 let vm = this;
                 this.columnsList.forEach(item => {
-                    if (item.handle) {
+                    if (item.key === 'handle') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
                             return h('div', [
                                 editButton(vm, h, currentRowData, param.index),
                                 deleteButton(vm, h, currentRowData, param.index)
+                            ]);
+                        };
+                    }
+                    if (item.key === 'member') {
+                        item.render = (h, param) => {
+                            let currentRowData = vm.tableData[param.index];
+                            return h('div', [
+                                memberButton(vm, h, currentRowData, param.index)
                             ]);
                         };
                     }
@@ -255,7 +292,7 @@
                                 },
                                 on: {
                                     'on-change' : function (status) {
-                                        axios.get('User/changeStatus', {
+                                        axios.get('Auth/changeStatus', {
                                             params: {
                                                 status: status,
                                                 id: currentRowData.id
@@ -302,9 +339,9 @@
                         self.modalSetting.loading = true;
                         let target = '';
                         if (this.formItem.id === 0) {
-                            target = 'User/add';
+                            target = 'Auth/add';
                         } else {
-                            target = 'User/edit';
+                            target = 'Auth/edit';
                         }
                         axios.post(target, this.formItem).then(function (response) {
                             if (response.data.code === 1) {
@@ -338,11 +375,10 @@
             },
             getList () {
                 let vm = this;
-                axios.get('User/index', {
+                axios.get('Auth/index', {
                     params: {
                         page: vm.tableShow.currentPage,
                         size: vm.tableShow.pageSize,
-                        type: vm.searchConf.type,
                         keywords: vm.searchConf.keywords,
                         status: vm.searchConf.status
                     }
