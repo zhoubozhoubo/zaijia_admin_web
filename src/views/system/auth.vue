@@ -54,7 +54,7 @@
                 </FormItem>
                 <FormItem label="组授权" prop="rules">
                     <div class="rule-list">
-                        <Tree :data="ruleList" show-checkbox multiple></Tree>
+                        <Tree ref="formTree" :data="ruleList" show-checkbox multiple></Tree>
                     </div>
                 </FormItem>
             </Form>
@@ -81,7 +81,23 @@
                     vm.formItem.username = currentRow.username;
                     vm.formItem.nickname = currentRow.nickname;
                     vm.formItem.password = currentRow.password;
-                    vm.formItem.groupId = currentRow.groupId;
+                    axios.get('Auth/getRuleList', {
+                        params: {'groupId': currentRow.groupId}
+                    }).then(function (response) {
+                        let res = response.data;
+                        if (res.code === 1) {
+                            vm.ruleList = res.data.list;
+                        } else {
+                            if (res.code === -14) {
+                                vm.$store.commit('logout', vm);
+                                vm.$router.push({
+                                    name: 'login'
+                                });
+                            } else {
+                                vm.$Message.error(res.msg);
+                            }
+                        }
+                    });
                     vm.modalSetting.show = true;
                     vm.modalSetting.index = index;
                 }
@@ -151,40 +167,7 @@
         name: 'user',
         data () {
             return {
-                ruleList: [
-                    {
-                        title: 'parent 1',
-                        expand: true,
-                        selected: true,
-                        children: [
-                            {
-                                title: 'parent 1-1',
-                                expand: true,
-                                children: [
-                                    {
-                                        title: 'leaf 1-1-1'
-                                    },
-                                    {
-                                        title: 'leaf 1-1-2'
-                                    }
-                                ]
-                            },
-                            {
-                                title: 'parent 1-2',
-                                expand: true,
-                                children: [
-                                    {
-                                        title: 'leaf 1-2-1',
-                                        checked: true
-                                    },
-                                    {
-                                        title: 'leaf 1-2-1'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ],
+                ruleList: [],
                 columnsList: [
                     {
                         title: '序号',
@@ -348,6 +331,15 @@
                 this.modalSetting.show = true;
             },
             submit () {
+                this.formItem.rules = [];
+                let ruleNodes = this.$refs['formTree'].getCheckedNodes();
+                let ruleLength = ruleNodes.length;
+                if (ruleLength) {
+                    for (let i = 0; i < ruleLength - 1; i++) {
+                        this.formItem.rules.push(ruleNodes[i]['key']);
+                    }
+                }
+
                 let self = this;
                 this.$refs['myForm'].validate((valid) => {
                     if (valid) {
