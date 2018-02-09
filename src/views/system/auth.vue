@@ -78,11 +78,10 @@
             on: {
                 'click': () => {
                     vm.formItem.id = currentRow.id;
-                    vm.formItem.username = currentRow.username;
-                    vm.formItem.nickname = currentRow.nickname;
-                    vm.formItem.password = currentRow.password;
+                    vm.formItem.name = currentRow.name;
+                    vm.formItem.description = currentRow.description;
                     axios.get('Auth/getRuleList', {
-                        params: {'groupId': currentRow.groupId}
+                        params: {'groupId': currentRow.id}
                     }).then(function (response) {
                         let res = response.data;
                         if (res.code === 1) {
@@ -113,7 +112,7 @@
             },
             on: {
                 'on-ok': () => {
-                    axios.get('Menu/del', {
+                    axios.get('Auth/del', {
                         params: {
                             id: currentRow.id
                         }
