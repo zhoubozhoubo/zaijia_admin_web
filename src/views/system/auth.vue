@@ -334,7 +334,7 @@
                 let ruleNodes = this.$refs['formTree'].getCheckedNodes();
                 let ruleLength = ruleNodes.length;
                 if (ruleLength) {
-                    for (let i = 0; i < ruleLength - 1; i++) {
+                    for (let i = 0; i <= ruleLength - 1; i++) {
                         this.formItem.rules.push(ruleNodes[i]['key']);
                     }
                 }
