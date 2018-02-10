@@ -63,6 +63,21 @@
                 <Button type="primary" @click="submit" :loading="modalSetting.loading">确定</Button>
             </div>
         </Modal>
+        <Modal v-model="memberSetting.show" width="998" :styles="{top: '30px'}">
+            <p slot="header" style="color:#2d8cf0;">
+                <Icon type="information-circled"></Icon>
+                <span>组成员列表</span>
+            </p>
+            <div>
+                <Table :columns="memberColumns" :data="memberData" border disabled-hover></Table>
+            </div>
+            <div class="margin-top-15" style="text-align: center">
+                <Page :total="memberShow.listCount" :current="memberShow.currentPage"
+                      :page-size="memberShow.pageSize" @on-change="changeMemberPage"
+                      @on-page-size-change="changeMemberSize" show-elevator show-sizer show-total></Page>
+            </div>
+            <p slot="footer"></p>
+        </Modal>
     </div>
 </template>
 <script>
@@ -150,13 +165,48 @@
             },
             on: {
                 'click': () => {
-                    vm.formItem.id = currentRow.id;
-                    vm.formItem.username = currentRow.username;
-                    vm.formItem.nickname = currentRow.nickname;
-                    vm.formItem.password = currentRow.password;
-                    vm.formItem.groupId = currentRow.groupId;
-                    vm.modalSetting.show = true;
-                    vm.modalSetting.index = index;
+                    vm.memberSetting.show = true;
+                    axios.get('User/getUsers', {
+                        params: {
+                            page: vm.memberShow.currentPage,
+                            size: vm.memberShow.pageSize,
+                            gid: currentRow.id
+                        }
+                    }).then(function (response) {
+                        let res = response.data;
+                        if (res.code === 1) {
+                            vm.memberData = res.data.list;
+                            vm.memberShow.listCount = res.data.count;
+                            vm.memberColumns.forEach(item => {
+                                if (item.key === 'handle') {
+                                    item.render = (h, param) => {
+                                        let currentRowData = vm.memberData[param.index];
+                                        return h('div', [
+                                            deleteButton(vm, h, currentRowData, param.index)
+                                        ]);
+                                    };
+                                }
+                                console.log(1);
+                                if (item.key === 'status') {
+                                    console.log(2);
+                                    item.render = (h, param) => {
+                                        console.log(3);
+                                        let currentRowData = vm.memberData[param.index];
+                                        return h('Badge', {}, '启用');
+                                    };
+                                }
+                            });
+                        } else {
+                            if (res.code === -14) {
+                                vm.$store.commit('logout', vm);
+                                vm.$router.push({
+                                    name: 'login'
+                                });
+                            } else {
+                                vm.$Message.error(res.msg);
+                            }
+                        }
+                    });
                 }
             }
         }, '组成员');
@@ -206,8 +256,64 @@
                         handle: ['edit', 'delete']
                     }
                 ],
+                memberColumns: [
+                    {
+                        title: '序号',
+                        type: 'index',
+                        width: 65,
+                        align: 'center'
+                    },
+                    {
+                        title: '用户账号',
+                        align: 'center',
+                        key: 'username'
+                    },
+                    {
+                        title: '真实姓名',
+                        align: 'center',
+                        key: 'nickname',
+                        width: 90
+                    },
+                    {
+                        title: '登录次数',
+                        align: 'center',
+                        key: 'loginTimes',
+                        width: 90
+                    },
+                    {
+                        title: '最后登录时间',
+                        align: 'center',
+                        key: 'lastLoginTime',
+                        width: 160
+                    },
+                    {
+                        title: '最后登录IP',
+                        align: 'center',
+                        key: 'lastLoginIp',
+                        width: 160
+                    },
+                    {
+                        title: '状态',
+                        align: 'center',
+                        key: 'status',
+                        width: 100
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        key: 'handle',
+                        width: 175,
+                        handle: ['delete']
+                    }
+                ],
                 tableData: [],
+                memberData: [],
                 tableShow: {
+                    currentPage: 1,
+                    pageSize: 10,
+                    listCount: 0
+                },
+                memberShow: {
                     currentPage: 1,
                     pageSize: 10,
                     listCount: 0
@@ -217,6 +323,11 @@
                     status: ''
                 },
                 modalSetting: {
+                    show: false,
+                    loading: false,
+                    index: 0
+                },
+                memberSetting: {
                     show: false,
                     loading: false,
                     index: 0
@@ -374,6 +485,14 @@
             },
             changeSize (size) {
                 this.tableShow.pageSize = size;
+                this.getList();
+            },
+            changeMemberPage (page) {
+                this.memberShow.currentPage = page;
+                this.getList();
+            },
+            changeMemberSize (size) {
+                this.memberShow.pageSize = size;
                 this.getList();
             },
             search () {
