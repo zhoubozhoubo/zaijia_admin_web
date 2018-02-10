@@ -62,8 +62,9 @@
                     <Input v-model="formItem.password" type="password" placeholder="用户密码"></Input>
                 </FormItem>
                 <FormItem label="权限组" prop="groupId">
-                    <InputNumber :min="0" v-model="formItem.groupId"></InputNumber>
-                    <Badge count="数字越大越靠前" style="margin-left:5px"></Badge>
+                    <CheckboxGroup v-model="formItem.groupId">
+                        <Checkbox v-for="group in groupList" :key="group.id" :label="group.id + ''">{{ group.name }}</Checkbox>
+                    </CheckboxGroup>
                 </FormItem>
             </Form>
             <div slot="footer">
@@ -88,7 +89,22 @@
                     vm.formItem.id = currentRow.id;
                     vm.formItem.username = currentRow.username;
                     vm.formItem.nickname = currentRow.nickname;
-                    vm.formItem.password = currentRow.password;
+                    vm.formItem.password = 'ApiAdmin';
+                    axios.get('Auth/getGroups').then(function (response) {
+                        let res = response.data;
+                        if (res.code === 1) {
+                            vm.groupList = res.data.list;
+                        } else {
+                            if (res.code === -14) {
+                                vm.$store.commit('logout', vm);
+                                vm.$router.push({
+                                    name: 'login'
+                                });
+                            } else {
+                                vm.$Message.error(res.msg);
+                            }
+                        }
+                    });
                     vm.formItem.groupId = currentRow.groupId;
                     vm.modalSetting.show = true;
                     vm.modalSetting.index = index;
@@ -105,7 +121,7 @@
             },
             on: {
                 'on-ok': () => {
-                    axios.get('Menu/del', {
+                    axios.get('User/del', {
                         params: {
                             id: currentRow.id
                         }
@@ -189,6 +205,7 @@
                     }
                 ],
                 tableData: [],
+                groupList: [],
                 tableShow: {
                     currentPage: 1,
                     pageSize: 10,
@@ -206,9 +223,9 @@
                 },
                 formItem: {
                     username: '',
-                    nickname: 0,
+                    nickname: '',
                     password: '',
-                    groupId: 0,
+                    groupId: [],
                     id: 0
                 },
                 ruleValidate: {
@@ -254,7 +271,7 @@
                                     value: currentRowData.status
                                 },
                                 on: {
-                                    'on-change' : function (status) {
+                                    'on-change': function (status) {
                                         axios.get('User/changeStatus', {
                                             params: {
                                                 status: status,
@@ -292,6 +309,22 @@
                 });
             },
             alertAdd () {
+                let vm = this;
+                axios.get('Auth/getGroups').then(function (response) {
+                    let res = response.data;
+                    if (res.code === 1) {
+                        vm.groupList = res.data.list;
+                    } else {
+                        if (res.code === -14) {
+                            vm.$store.commit('logout', vm);
+                            vm.$router.push({
+                                name: 'login'
+                            });
+                        } else {
+                            vm.$Message.error(res.msg);
+                        }
+                    }
+                });
                 this.modalSetting.edit = false;
                 this.modalSetting.show = true;
             },
