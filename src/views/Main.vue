@@ -32,7 +32,6 @@
                 <div class="header-avator-con">
                     <full-screen v-model="isFullScreen" @on-change="fullscreenChange"></full-screen>
                     <lock-screen></lock-screen>
-                    <message-tip v-model="mesCount"></message-tip>
                     <theme-switch></theme-switch>
 
                     <div class="user-dropdown-menu-con">
@@ -71,9 +70,7 @@
     import breadcrumbNav from './main_components/breadcrumb-nav.vue';
     import fullScreen from './main_components/fullscreen.vue';
     import lockScreen from './main_components/lock_screen/lockscreen.vue';
-    import messageTip from './main_components/message-tip.vue';
     import themeSwitch from './main_components/theme-switch/theme-switch.vue';
-    import Cookies from 'js-cookie';
     import util from '@/libs/util.js';
 
     export default {
@@ -83,7 +80,6 @@
             breadcrumbNav,
             fullScreen,
             lockScreen,
-            messageTip,
             themeSwitch
         },
         data () {
@@ -115,9 +111,6 @@
             },
             menuTheme () {
                 return this.$store.state.app.menuTheme;
-            },
-            mesCount () {
-                return this.$store.state.app.messageCount;
             }
         },
         methods: {
@@ -128,10 +121,7 @@
                     this.$store.commit('addOpenSubmenu', pathArr[1].name);
                 }
                 this.userName = localStorage.getItem('user');
-                let messageCount = 3;
-                this.messageCount = messageCount.toString();
                 this.checkTag(this.$route.name);
-                this.$store.commit('setMessageCount', 3);
             },
             toggleClick () {
                 this.shrink = !this.shrink;

@@ -180,9 +180,6 @@ const app = {
         clearOpenedSubmenu (state) {
             state.openedSubmenuArr.length = 0;
         },
-        setMessageCount (state, count) {
-            state.messageCount = count;
-        },
         increateTag (state, tagObj) {
             if (!Util.oneOf(tagObj.name, state.dontCache)) {
                 state.cachePage.push(tagObj.name);
