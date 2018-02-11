@@ -166,50 +166,49 @@
             on: {
                 'click': () => {
                     vm.memberSetting.show = true;
-                    axios.get('User/getUsers', {
+                    vm.memberShow.gid = currentRow.id;
+                    vm.getMemberList();
+                }
+            }
+        }, '组成员');
+    };
+    const memberDelButton = (vm, h, currentRow, index) => {
+        return h('Poptip', {
+            props: {
+                confirm: true,
+                title: '您确定要删除这条数据吗? ',
+                transfer: true
+            },
+            on: {
+                'on-ok': () => {
+                    axios.get('Auth/delMember', {
                         params: {
-                            page: vm.memberShow.currentPage,
-                            size: vm.memberShow.pageSize,
-                            gid: currentRow.id
+                            uid: currentRow.id,
+                            gid: vm.memberShow.gid
                         }
                     }).then(function (response) {
-                        let res = response.data;
-                        if (res.code === 1) {
-                            vm.memberData = res.data.list;
-                            vm.memberShow.listCount = res.data.count;
-                            vm.memberColumns.forEach(item => {
-                                if (item.key === 'handle') {
-                                    item.render = (h, param) => {
-                                        let currentRowData = vm.memberData[param.index];
-                                        return h('div', [
-                                            deleteButton(vm, h, currentRowData, param.index)
-                                        ]);
-                                    };
-                                }
-                                console.log(1);
-                                if (item.key === 'status') {
-                                    console.log(2);
-                                    item.render = (h, param) => {
-                                        console.log(3);
-                                        let currentRowData = vm.memberData[param.index];
-                                        return h('Badge', {}, '启用');
-                                    };
-                                }
-                            });
+                        currentRow.loading = false;
+                        if (response.data.code === 1) {
+                            vm.memberData.splice(index, 1);
+                            vm.$Message.success(response.data.msg);
                         } else {
-                            if (res.code === -14) {
-                                vm.$store.commit('logout', vm);
-                                vm.$router.push({
-                                    name: 'login'
-                                });
-                            } else {
-                                vm.$Message.error(res.msg);
-                            }
+                            vm.$Message.error(response.data.msg);
                         }
                     });
                 }
             }
-        }, '组成员');
+        }, [
+            h('Button', {
+                style: {
+                    margin: '0 5px'
+                },
+                props: {
+                    type: 'error',
+                    placement: 'top',
+                    loading: currentRow.isDeleting
+                }
+            }, '删除')
+        ]);
     };
 
     export default {
@@ -316,7 +315,8 @@
                 memberShow: {
                     currentPage: 1,
                     pageSize: 10,
-                    listCount: 0
+                    listCount: 0,
+                    gid: 0
                 },
                 searchConf: {
                     keywords: '',
@@ -419,6 +419,37 @@
                         };
                     }
                 });
+                this.memberColumns.forEach(item => {
+                    if (item.key === 'handle') {
+                        item.render = (h, param) => {
+                            let currentRowData = vm.memberData[param.index];
+                            return h('div', [
+                                memberDelButton(vm, h, currentRowData, param.index)
+                            ]);
+                        };
+                    }
+                    if (item.key === 'status') {
+                        item.render = (h, param) => {
+                            let currentRowData = vm.memberData[param.index];
+                            if (currentRowData.status === 1) {
+                                return h('Badge', {
+                                    attrs: {
+                                        count: '启用'
+                                    },
+                                    props: {
+                                        'class-name': 'badge-success'
+                                    }
+                                });
+                            } else {
+                                return h('Badge', {
+                                    attrs: {
+                                        count: '禁用',
+                                    }
+                                });
+                            }
+                        };
+                    }
+                });
             },
             alertAdd () {
                 let vm = this;
@@ -489,11 +520,11 @@
             },
             changeMemberPage (page) {
                 this.memberShow.currentPage = page;
-                this.getList();
+                this.getMemberList();
             },
             changeMemberSize (size) {
                 this.memberShow.pageSize = size;
-                this.getList();
+                this.getMemberList();
             },
             search () {
                 this.getList();
@@ -512,6 +543,31 @@
                     if (res.code === 1) {
                         vm.tableData = res.data.list;
                         vm.tableShow.listCount = res.data.count;
+                    } else {
+                        if (res.code === -14) {
+                            vm.$store.commit('logout', vm);
+                            vm.$router.push({
+                                name: 'login'
+                            });
+                        } else {
+                            vm.$Message.error(res.msg);
+                        }
+                    }
+                });
+            },
+            getMemberList () {
+                let vm = this;
+                axios.get('User/getUsers', {
+                    params: {
+                        page: vm.memberShow.currentPage,
+                        size: vm.memberShow.pageSize,
+                        gid: vm.memberShow.gid
+                    }
+                }).then(function (response) {
+                    let res = response.data;
+                    if (res.code === 1) {
+                        vm.memberData = res.data.list;
+                        vm.memberShow.listCount = res.data.count;
                     } else {
                         if (res.code === -14) {
                             vm.$store.commit('logout', vm);
