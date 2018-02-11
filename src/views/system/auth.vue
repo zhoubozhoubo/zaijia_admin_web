@@ -17,7 +17,7 @@
                             <Input v-model="searchConf.keywords" placeholder="请输入组名称"></Input>
                         </FormItem>
                         <FormItem style="margin-bottom: 0">
-                            <Button type="primary" @click="search">查询</Button>
+                            <Button type="primary" @click="search">查询/刷新</Button>
                         </FormItem>
                     </Form>
                 </Card>
