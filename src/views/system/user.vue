@@ -151,7 +151,7 @@
     };
 
     export default {
-        name: 'user',
+        name: 'system_user',
         data () {
             return {
                 columnsList: [

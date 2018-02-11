@@ -212,7 +212,7 @@
     };
 
     export default {
-        name: 'user',
+        name: 'system_auth',
         data () {
             return {
                 ruleList: [],
