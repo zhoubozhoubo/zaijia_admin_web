@@ -136,7 +136,7 @@ export const appRouter = [
                 icon: "ios-list",
                 name: "app_index",
                 title: "应用列表",
-                component: () => import('@/views/error_page/404.vue')
+                component: () => import('@/views/app/list.vue')
             }
         ]
     },
