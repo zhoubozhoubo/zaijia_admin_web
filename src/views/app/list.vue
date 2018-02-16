@@ -71,11 +71,11 @@
                         <div class="api-group" v-for="(apiArr, groupId) in groupList" :key="groupId">
                             <div style="border-bottom: 1px solid #e9e9e9;padding-bottom:6px;margin-bottom:6px;">
                                 <Checkbox
-                                        :indeterminate="checkAllStatus[groupId]['indeterminate']"
-                                        :value="checkAllStatus[groupId]['check']"
+                                        :indeterminate="checkAllIndeterminate[groupId]"
+                                        :value="checkAllStatus[groupId]"
                                         @click.prevent.native="handleCheckAll(groupId)"> {{groupInfo[groupId]}} </Checkbox>
                             </div>
-                            <CheckboxGroup v-model="formItem.app_api" @on-change="checkAllGroupChange(groupId)">
+                            <CheckboxGroup v-model="formItem.app_api[groupId]" @on-change="checkAllGroupChange(groupId)">
                                 <Checkbox :key="apiKey" :label="api.hash" v-for="(api, apiKey) in apiArr"> {{api.info}} </Checkbox>
                             </CheckboxGroup>
                         </div>
@@ -199,8 +199,8 @@
                     }
                 ],
                 tableData: [],
-                groupInfo: [],
-                groupList: [],
+                groupInfo: {},
+                groupList: {},
                 tableShow: {
                     currentPage: 1,
                     pageSize: 10,
@@ -229,7 +229,8 @@
                         { required: true, message: '用户名不能为空', trigger: 'blur' }
                     ]
                 },
-                checkAllStatus: []
+                checkAllStatus: {},
+                checkAllIndeterminate: {}
             };
         },
         created () {
@@ -309,10 +310,9 @@
                         vm.groupInfo = res.data.groupInfo;
                         vm.groupList = res.data.apiList;
                         for (let index in vm.groupInfo) {
-                            vm.checkAllStatus[index] = {
-                                'indeterminate': false,
-                                'check': false
-                            };
+                            vm.$set(vm.checkAllStatus, index, false);
+                            vm.$set(vm.checkAllIndeterminate, index, false);
+                            vm.$set(vm.formItem.app_api, index, []);
                         }
                     } else {
                         if (res.code === -14) {
@@ -367,10 +367,33 @@
                 this.getList();
             },
             handleCheckAll (groupId) {
+                if (this.checkAllStatus[groupId]) {
+                    this.checkAllStatus[groupId] = false;
+                } else {
+                    this.checkAllStatus[groupId] = !this.checkAllStatus[groupId];
+                }
+                this.checkAllIndeterminate[groupId] = false;
 
+                if (this.checkAllStatus[groupId]) {
+                    let vm = this;
+                    this.groupList[groupId].forEach(item => {
+                        vm.formItem.app_api[groupId].push(item.hash);
+                    });
+                } else {
+                    this.formItem.app_api[groupId] = [];
+                }
             },
-            checkAllGroupChange (data) {
-
+            checkAllGroupChange (groupId) {
+                if (this.formItem.app_api[groupId].length === this.groupList[groupId].length) {
+                    this.checkAllIndeterminate[groupId] = false;
+                    this.checkAllStatus[groupId] = true;
+                } else if (this.formItem.app_api[groupId].length > 0) {
+                    this.checkAllIndeterminate[groupId] = true;
+                    this.checkAllStatus[groupId] = false;
+                } else {
+                    this.checkAllIndeterminate[groupId] = false;
+                    this.checkAllStatus[groupId] = false;
+                }
             },
             search () {
                 this.getList();
