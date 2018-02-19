@@ -5,48 +5,48 @@
     <div>
         <Row>
             <Col span="24">
-                <Card style="margin-bottom: 10px">
-                    <Form inline>
-                        <FormItem style="margin-bottom: 0">
-                            <Select v-model="searchConf.status" clearable placeholder='请选择状态' style="width:100px">
-                                <Option :value="1">启用</Option>
-                                <Option :value="0">禁用</Option>
-                            </Select>
-                        </FormItem>
-                        <FormItem style="margin-bottom: 0">
-                            <Select v-model="searchConf.type" clearable placeholder="请选择类别" style="width:100px">
-                                <Option :value="1">AppId</Option>
-                                <Option :value="2">应用名称</Option>
-                            </Select>
-                        </FormItem>
-                        <FormItem style="margin-bottom: 0">
-                            <Input v-model="searchConf.keywords" placeholder=""></Input>
-                        </FormItem>
-                        <FormItem style="margin-bottom: 0">
-                            <Button type="primary" @click="search">查询/刷新</Button>
-                        </FormItem>
-                    </Form>
-                </Card>
+            <Card style="margin-bottom: 10px">
+                <Form inline>
+                    <FormItem style="margin-bottom: 0">
+                        <Select v-model="searchConf.status" clearable placeholder='请选择状态' style="width:100px">
+                            <Option :value="1">启用</Option>
+                            <Option :value="0">禁用</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem style="margin-bottom: 0">
+                        <Select v-model="searchConf.type" clearable placeholder="请选择类别" style="width:100px">
+                            <Option :value="1">AppId</Option>
+                            <Option :value="2">应用名称</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem style="margin-bottom: 0">
+                        <Input v-model="searchConf.keywords" placeholder=""></Input>
+                    </FormItem>
+                    <FormItem style="margin-bottom: 0">
+                        <Button type="primary" @click="search">查询/刷新</Button>
+                    </FormItem>
+                </Form>
+            </Card>
             </Col>
         </Row>
         <Row>
             <Col span="24">
-                <Card>
-                    <p slot="title" style="height: 32px">
-                        <Button type="primary" @click="alertAdd" icon="plus-round">新增</Button>
-                    </p>
-                    <div>
-                        <Table :columns="columnsList" :data="tableData" border disabled-hover></Table>
-                    </div>
-                    <div class="margin-top-15" style="text-align: center">
-                        <Page :total="tableShow.listCount" :current="tableShow.currentPage"
-                              :page-size="tableShow.pageSize" @on-change="changePage"
-                              @on-page-size-change="changeSize" show-elevator show-sizer show-total></Page>
-                    </div>
-                </Card>
+            <Card>
+                <p slot="title" style="height: 32px">
+                    <Button type="primary" @click="alertAdd" icon="plus-round">新增</Button>
+                </p>
+                <div>
+                    <Table :columns="columnsList" :data="tableData" border disabled-hover></Table>
+                </div>
+                <div class="margin-top-15" style="text-align: center">
+                    <Page :total="tableShow.listCount" :current="tableShow.currentPage"
+                          :page-size="tableShow.pageSize" @on-change="changePage"
+                          @on-page-size-change="changeSize" show-elevator show-sizer show-total></Page>
+                </div>
+            </Card>
             </Col>
         </Row>
-        <Modal v-model="modalSetting.show" width="668" :styles="{top: '30px'}">
+        <Modal v-model="modalSetting.show" width="668" :styles="{top: '30px'}" @on-visible-change="doCancel">
             <p slot="header" style="color:#2d8cf0;">
                 <Icon type="information-circled"></Icon>
                 <span>{{formItem.id ? '编辑' : '新增'}}应用</span>
@@ -60,7 +60,8 @@
                     <Badge count="系统自动生成，不允许修改" style="margin-left:5px"></Badge>
                 </FormItem>
                 <FormItem label="AppSecret" prop="app_secret">
-                    <Input style="width: 300px" disabled v-model="formItem.app_secret" placeholder="请输入AppSecret"></Input>
+                    <Input style="width: 300px" disabled v-model="formItem.app_secret"
+                           placeholder="请输入AppSecret"></Input>
                     <Badge count="系统自动生成，不允许修改" style="margin-left:5px"></Badge>
                 </FormItem>
                 <FormItem label="应用描述" prop="app_info">
@@ -73,10 +74,14 @@
                                 <Checkbox
                                         :indeterminate="checkAllIndeterminate[groupId]"
                                         :value="checkAllStatus[groupId]"
-                                        @click.prevent.native="handleCheckAll(groupId)"> {{groupInfo[groupId]}} </Checkbox>
+                                        @click.prevent.native="handleCheckAll(groupId)"> {{groupInfo[groupId]}}
+                                </Checkbox>
                             </div>
-                            <CheckboxGroup v-model="formItem.app_api[groupId]" @on-change="checkAllGroupChange(groupId)">
-                                <Checkbox :key="apiKey" :label="api.hash" v-for="(api, apiKey) in apiArr"> {{api.info}} </Checkbox>
+                            <CheckboxGroup v-model="formItem.app_api[groupId]"
+                                           @on-change="checkAllGroupChange(groupId)">
+                                <Checkbox :key="apiKey" :label="api.hash" v-for="(api, apiKey) in apiArr">
+                                    {{api.info}}
+                                </Checkbox>
                             </CheckboxGroup>
                         </div>
                     </div>
@@ -91,6 +96,7 @@
 </template>
 <script>
     import axios from 'axios';
+
     const editButton = (vm, h, currentRow, index) => {
         return h('Button', {
             props: {
@@ -102,10 +108,52 @@
             on: {
                 'click': () => {
                     vm.formItem.id = currentRow.id;
-                    vm.formItem.username = currentRow.username;
-                    vm.formItem.nickname = currentRow.nickname;
-                    vm.formItem.password = 'ApiAdmin';
-                    vm.formItem.groupId = currentRow.groupId;
+                    vm.formItem.app_name = currentRow.app_name;
+                    vm.formItem.app_info = currentRow.app_info;
+                    vm.formItem.app_id = currentRow.app_id;
+                    vm.formItem.app_secret = currentRow.app_secret;
+                    axios.get('App/getAppInfo', {
+                        params: {
+                            id: currentRow.id
+                        }
+                    }).then(function (response) {
+                        let res = response.data;
+                        if (res.code === 1) {
+                            vm.groupInfo = res.data.groupInfo;
+                            vm.groupList = res.data.apiList;
+                            for (let index in vm.groupInfo) {
+                                if (res.data.app_detail === null) {
+                                    vm.$set(vm.checkAllStatus, index, false);
+                                    vm.$set(vm.checkAllIndeterminate, index, false);
+                                    vm.$set(vm.formItem.app_api, index, []);
+                                } else {
+                                    let hasLength = res.data.app_detail[index].length;
+                                    if (hasLength === 0) {
+                                        vm.$set(vm.checkAllStatus, index, false);
+                                        vm.$set(vm.checkAllIndeterminate, index, false);
+                                        vm.$set(vm.formItem.app_api, index, []);
+                                    } else if (vm.groupList[index].length === hasLength) {
+                                        vm.$set(vm.checkAllStatus, index, true);
+                                        vm.$set(vm.checkAllIndeterminate, index, false);
+                                        vm.$set(vm.formItem.app_api, index, res.data.app_detail[index]);
+                                    } else {
+                                        vm.$set(vm.checkAllStatus, index, false);
+                                        vm.$set(vm.checkAllIndeterminate, index, true);
+                                        vm.$set(vm.formItem.app_api, index, res.data.app_detail[index]);
+                                    }
+                                }
+                            }
+                        } else {
+                            if (res.code === -14) {
+                                vm.$store.commit('logout', vm);
+                                vm.$router.push({
+                                    name: 'login'
+                                });
+                            } else {
+                                vm.$Message.error(res.msg);
+                            }
+                        }
+                    });
                     vm.modalSetting.show = true;
                     vm.modalSetting.index = index;
                 }
@@ -176,7 +224,7 @@
                         title: 'AppSecret',
                         align: 'center',
                         key: 'app_secret',
-                        width: 265
+                        width: 285
                     },
                     {
                         title: '应用说明',
@@ -221,12 +269,12 @@
                     app_id: '',
                     app_secret: '',
                     app_info: '',
-                    app_api: [],
+                    app_api: {},
                     id: 0
                 },
                 ruleValidate: {
                     app_name: [
-                        { required: true, message: '用户名不能为空', trigger: 'blur' }
+                        {required: true, message: '用户名不能为空', trigger: 'blur'}
                     ]
                 },
                 checkAllStatus: {},
@@ -339,7 +387,7 @@
                         } else {
                             target = 'App/edit';
                         }
-                        axios.post(target, this.formItem).then(function (response) {
+                        axios.post(target, self.formItem).then(function (response) {
                             if (response.data.code === 1) {
                                 self.$Message.success(response.data.msg);
                             } else {
@@ -424,6 +472,14 @@
                         }
                     }
                 });
+            },
+            doCancel (data) {
+                if (!data) {
+                    this.formItem.id = 0;
+                    this.$refs['myForm'].resetFields();
+                    this.modalSetting.loading = false;
+                    this.modalSetting.index = 0;
+                }
             }
         }
     };
