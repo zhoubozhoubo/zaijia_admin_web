@@ -155,11 +155,11 @@ export const appRouter = [
                 component: () => import('@/views/error_page/404.vue')
             },
             {
-                path: "index",
+                path: "list",
                 icon: "document",
-                name: "interface_index",
+                name: "interface_list",
                 title: "接口列表",
-                component: () => import('@/views/error_page/404.vue')
+                component: () => import('@/views/interface/list.vue')
             }
         ]
     },

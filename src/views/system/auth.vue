@@ -443,7 +443,7 @@
                             } else {
                                 return h('Badge', {
                                     attrs: {
-                                        count: '禁用',
+                                        count: '禁用'
                                     }
                                 });
                             }
