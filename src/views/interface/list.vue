@@ -160,6 +160,80 @@
             }, '删除')
         ]);
     };
+    const requestButton = (vm, h, currentRow, index) => {
+        return h('Poptip', {
+            props: {
+                confirm: true,
+                title: '您确定要删除这条数据吗? ',
+                transfer: true
+            },
+            on: {
+                'on-ok': () => {
+                    axios.get('InterfaceList/del', {
+                        params: {
+                            id: currentRow.id
+                        }
+                    }).then(function (response) {
+                        currentRow.loading = false;
+                        if (response.data.code === 1) {
+                            vm.tableData.splice(index, 1);
+                            vm.$Message.success(response.data.msg);
+                        } else {
+                            vm.$Message.error(response.data.msg);
+                        }
+                    });
+                }
+            }
+        }, [
+            h('Button', {
+                style: {
+                    margin: '0 5px'
+                },
+                props: {
+                    type: 'info',
+                    placement: 'top',
+                    loading: currentRow.isDeleting
+                }
+            }, '请求参数')
+        ]);
+    };
+    const responseButton = (vm, h, currentRow, index) => {
+        return h('Poptip', {
+            props: {
+                confirm: true,
+                title: '您确定要删除这条数据吗? ',
+                transfer: true
+            },
+            on: {
+                'on-ok': () => {
+                    axios.get('InterfaceList/del', {
+                        params: {
+                            id: currentRow.id
+                        }
+                    }).then(function (response) {
+                        currentRow.loading = false;
+                        if (response.data.code === 1) {
+                            vm.tableData.splice(index, 1);
+                            vm.$Message.success(response.data.msg);
+                        } else {
+                            vm.$Message.error(response.data.msg);
+                        }
+                    });
+                }
+            }
+        }, [
+            h('Button', {
+                style: {
+                    margin: '0 5px'
+                },
+                props: {
+                    type: 'warning',
+                    placement: 'top',
+                    loading: currentRow.isDeleting
+                }
+            }, '返回参数')
+        ]);
+    };
 
     export default {
         name: 'interface_list',
@@ -181,13 +255,13 @@
                         title: '真实类库',
                         align: 'center',
                         key: 'apiClass',
-                        width: 200
+                        width: 190
                     },
                     {
                         title: '接口映射',
                         align: 'center',
                         key: 'hash',
-                        width: 150
+                        width: 130
                     },
                     {
                         title: '请求方式',
@@ -199,13 +273,13 @@
                         title: '接口状态',
                         align: 'center',
                         key: 'status',
-                        width: 120
+                        width: 90
                     },
                     {
                         title: '操作',
                         align: 'center',
                         key: 'handle',
-                        width: 175,
+                        width: 355,
                         handle: ['edit', 'delete']
                     }
                 ],
@@ -258,6 +332,8 @@
                             let currentRowData = vm.tableData[param.index];
                             return h('div', [
                                 editButton(vm, h, currentRowData, param.index),
+                                requestButton(vm, h, currentRowData, param.index),
+                                responseButton(vm, h, currentRowData, param.index),
                                 deleteButton(vm, h, currentRowData, param.index)
                             ]);
                         };
