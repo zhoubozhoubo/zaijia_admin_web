@@ -161,78 +161,46 @@
         ]);
     };
     const requestButton = (vm, h, currentRow, index) => {
-        return h('Poptip', {
+        return h('Button', {
+            style: {
+                margin: '0 5px'
+            },
             props: {
-                confirm: true,
-                title: '您确定要删除这条数据吗? ',
-                transfer: true
+                type: 'info',
+                placement: 'top',
+                loading: currentRow.isDeleting
             },
             on: {
-                'on-ok': () => {
-                    axios.get('InterfaceList/del', {
-                        params: {
-                            id: currentRow.id
-                        }
-                    }).then(function (response) {
-                        currentRow.loading = false;
-                        if (response.data.code === 1) {
-                            vm.tableData.splice(index, 1);
-                            vm.$Message.success(response.data.msg);
-                        } else {
-                            vm.$Message.error(response.data.msg);
-                        }
+                click: () => {
+                    let query = {shopping_id: params.row.shopping_id};
+                    this.$router.push({
+                        name: 'shopping',
+                        query: query
                     });
                 }
             }
-        }, [
-            h('Button', {
-                style: {
-                    margin: '0 5px'
-                },
-                props: {
-                    type: 'info',
-                    placement: 'top',
-                    loading: currentRow.isDeleting
-                }
-            }, '请求参数')
-        ]);
+        }, '请求参数');
     };
     const responseButton = (vm, h, currentRow, index) => {
-        return h('Poptip', {
+        return h('Button', {
+            style: {
+                margin: '0 5px'
+            },
             props: {
-                confirm: true,
-                title: '您确定要删除这条数据吗? ',
-                transfer: true
+                type: 'warning',
+                placement: 'top',
+                loading: currentRow.isDeleting
             },
             on: {
-                'on-ok': () => {
-                    axios.get('InterfaceList/del', {
-                        params: {
-                            id: currentRow.id
-                        }
-                    }).then(function (response) {
-                        currentRow.loading = false;
-                        if (response.data.code === 1) {
-                            vm.tableData.splice(index, 1);
-                            vm.$Message.success(response.data.msg);
-                        } else {
-                            vm.$Message.error(response.data.msg);
-                        }
+                click: () => {
+                    let query = {shopping_id: params.row.shopping_id};
+                    this.$router.push({
+                        name: 'shopping',
+                        query: query
                     });
                 }
             }
-        }, [
-            h('Button', {
-                style: {
-                    margin: '0 5px'
-                },
-                props: {
-                    type: 'warning',
-                    placement: 'top',
-                    loading: currentRow.isDeleting
-                }
-            }, '返回参数')
-        ]);
+        }, '返回参数');
     };
 
     export default {
