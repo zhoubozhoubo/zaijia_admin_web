@@ -7,7 +7,7 @@
             <Col span="24">
             <Card>
                 <p slot="title" style="height: 32px">
-                    <Button type="primary" @click="alertAdd" icon="plus-round">新增</Button>
+                    <Button type="warning" @click="alertUpload" icon="upload">上传</Button>
                 </p>
                 <div>
                     <Table :columns="columnsList" :data="tableData" border disabled-hover></Table>
@@ -23,11 +23,11 @@
         <Modal v-model="modalSetting.show" width="668" :styles="{top: '30px'}" @on-visible-change="doCancel">
             <p slot="header" style="color:#2d8cf0;">
                 <Icon type="information-circled"></Icon>
-                <span>{{formItem.id ? '编辑' : '新增'}}请求字段</span>
+                <span>{{formItem.id ? '编辑' : '新增'}}返回字段</span>
             </p>
             <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="80">
                 <FormItem label="字段名称" prop="fieldName">
-                    <Input v-model="formItem.fieldName" placeholder="请输入字段名称"></Input>
+                    <Input v-model="formItem.fieldName" disabled placeholder="请输入字段名称"></Input>
                 </FormItem>
                 <FormItem label="数据类型" prop="dataType">
                     <Select v-model="formItem.dataType" style="width:200px">
@@ -41,11 +41,11 @@
                     </RadioGroup>
                 </FormItem>
                 <FormItem label="默认值" prop="default" v-if="formItem.isMust.toString() === '0'">
-                    <Input style="width: 300px" v-model="formItem.defaults"></Input>
+                    <Input disabled style="width: 300px" v-model="formItem.defaults"></Input>
                     <Badge count="仅在字段非必填的情况下生效" style="margin-left:5px"></Badge>
                 </FormItem>
                 <FormItem label="规则细节" prop="range">
-                    <Input v-model="formItem.range" type="textarea" placeholder="请输入符合要求的JSON字符串"></Input>
+                    <Input disabled v-model="formItem.range" type="textarea" placeholder="请输入符合要求的JSON字符串"></Input>
                 </FormItem>
                 <FormItem label="字段说明" prop="info">
                     <Input v-model="formItem.info" type="textarea" placeholder="请输入字段描述"></Input>
@@ -54,6 +54,24 @@
             <div slot="footer">
                 <Button type="text" @click="cancel" style="margin-right: 8px">取消</Button>
                 <Button type="primary" @click="submit" :loading="modalSetting.loading">确定</Button>
+            </div>
+        </Modal>
+        <Modal v-model="uploadModal.show" width="668" :styles="{top: '30px'}" @on-visible-change="doUploadCancel">
+            <p slot="header" style="color:#2d8cf0;">
+                <Icon type="information-circled"></Icon>
+                <span>上传返回字段</span>
+            </p>
+            <Form ref="uploadForm" :rules="uploadValidate" :model="uploadItem" :label-width="80">
+                <FormItem label="数据模板" prop="jsonStr">
+                    <Input v-model="uploadItem.jsonStr" type="textarea" placeholder="请务必包含code,msg,data全部返回数据"></Input>
+                </FormItem>
+                <FormItem label="格式化数据" prop="jsons">
+                    <Input type="textarea" disabled placeholder="">{{uploadItem.jsonStr}}</Input>
+                </FormItem>
+            </Form>
+            <div slot="footer">
+                <Button type="text" @click="cancelUpload" style="margin-right: 8px">取消</Button>
+                <Button type="primary" @click="submitUpload" :loading="uploadModal.loading">确定</Button>
             </div>
         </Modal>
     </div>
@@ -136,7 +154,7 @@
                     {
                         title: '字段名称',
                         align: 'left',
-                        key: 'fieldName',
+                        key: 'showName',
                         width: 200
                     },
                     {
@@ -182,6 +200,11 @@
                     loading: false,
                     index: 0
                 },
+                uploadModal: {
+                    show: false,
+                    loading: false,
+                    index: 0
+                },
                 formItem: {
                     fieldName: '',
                     dataType: '2',
@@ -192,9 +215,18 @@
                     type: 1,
                     id: 0
                 },
+                uploadItem: {
+                    jsonStr: '',
+                    type: 1
+                },
                 ruleValidate: {
                     fieldName: [
                         {required: true, message: '字段名称不能为空', trigger: 'blur'}
+                    ]
+                },
+                uploadValidate: {
+                    jsonStr: [
+                        {required: true, message: '数据模板不能为空', trigger: 'blur'}
                     ]
                 }
             };
@@ -255,9 +287,8 @@
                     }
                 });
             },
-            alertAdd () {
-                this.modalSetting.edit = false;
-                this.modalSetting.show = true;
+            alertUpload () {
+                this.uploadModal.show = true;
             },
             submit () {
                 this.formItem.hash = this.hash;
@@ -283,8 +314,29 @@
                     }
                 });
             },
+            submitUpload () {
+                this.uploadItem.hash = this.hash;
+                let self = this;
+                this.$refs['uploadForm'].validate((valid) => {
+                    if (valid) {
+                        self.uploadModal.loading = true;
+                        axios.post('Fields/upload', self.uploadItem).then(function (response) {
+                            if (response.data.code === 1) {
+                                self.$Message.success(response.data.msg);
+                            } else {
+                                self.$Message.error(response.data.msg);
+                            }
+                            self.getList();
+                            self.cancelUpload();
+                        });
+                    }
+                });
+            },
             cancel () {
                 this.modalSetting.show = false;
+            },
+            cancelUpload () {
+                this.uploadModal.show = false;
             },
             changePage (page) {
                 this.tableShow.currentPage = page;
@@ -331,6 +383,11 @@
                     this.$refs['myForm'].resetFields();
                     this.modalSetting.loading = false;
                     this.modalSetting.index = 0;
+                }
+            },
+            doUploadCancel (data) {
+                if (!data) {
+                    this.uploadItem.jsonStr = '';
                 }
             }
         }

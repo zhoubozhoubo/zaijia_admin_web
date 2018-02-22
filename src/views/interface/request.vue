@@ -136,7 +136,7 @@
                     {
                         title: '字段名称',
                         align: 'left',
-                        key: 'fieldName',
+                        key: 'showName',
                         width: 200
                     },
                     {
@@ -256,7 +256,6 @@
                 });
             },
             alertAdd () {
-                this.modalSetting.edit = false;
                 this.modalSetting.show = true;
             },
             submit () {

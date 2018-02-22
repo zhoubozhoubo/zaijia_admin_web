@@ -325,7 +325,6 @@
                         }
                     }
                 });
-                this.modalSetting.edit = false;
                 this.modalSetting.show = true;
             },
             submit () {
