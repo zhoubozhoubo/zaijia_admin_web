@@ -152,7 +152,7 @@ export const appRouter = [
                 icon: "folder",
                 name: "interface_group",
                 title: "接口分组",
-                component: () => import('@/views/error_page/404.vue')
+                component: () => import('@/views/interface/group.vue')
             },
             {
                 path: "list",
