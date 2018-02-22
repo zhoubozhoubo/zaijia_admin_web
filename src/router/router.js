@@ -63,17 +63,17 @@ export const otherRouter = {
             component: () => import('@/views/own_space/index.vue')
         },
         {
-            path: 'order/:order_id',
-            title: '订单详情',
-            name: 'order-info',
-            component: () => import('@/views/advanced-router/component/order-info.vue')
+            path: 'request/:hash',
+            title: '请求参数',
+            name: 'interface_request',
+            component: () => import('@/views/interface/request.vue')
         },
         {
-            path: 'shopping',
-            title: '购物详情',
-            name: 'shopping',
-            component: () => import('@/views/advanced-router/component/shopping-info.vue')
-        }
+            path: 'response/:hash',
+            title: '返回参数',
+            name: 'interface_response',
+            component: () => import('@/views/interface/response.vue')
+        },
     ]
 };
 
@@ -207,44 +207,6 @@ export const appRouter = [
                 title: {i18n: 'international'},
                 name: 'international_index',
                 component: () => import('@/views/international/international.vue')
-            }
-        ]
-    },
-    {
-        path: '/advanced-router',
-        icon: 'ios-infinite',
-        name: 'advanced-router',
-        title: '高级路由',
-        component: Main,
-        children: [
-            {
-                path: 'mutative-router',
-                title: '动态路由',
-                name: 'mutative-router',
-                icon: 'link',
-                component: () => import('@/views/advanced-router/mutative-router.vue')
-            },
-            {
-                path: 'argument-page',
-                title: '带参页面',
-                name: 'argument-page',
-                icon: 'android-send',
-                component: () => import('@/views/advanced-router/argument-page.vue')
-            }
-        ]
-    },
-    {
-        path: '/error_page',
-        icon: 'android-sad',
-        title: '错误页面',
-        name: 'errorpage',
-        component: Main,
-        children: [
-            {
-                path: 'index',
-                title: '错误页面',
-                name: 'errorpage_index',
-                component: () => import('@/views/error_page/index.vue')
             }
         ]
     }

@@ -59,6 +59,12 @@
                 <FormItem label="真实类库" prop="apiClass">
                     <Input v-model="formItem.apiClass" placeholder="请输入真实类库"></Input>
                 </FormItem>
+                <FormItem label="接口分组" prop="groupHash">
+                    <Select v-model="formItem.groupHash" style="width:200px">
+                        <Option value="default" key="default"> 默认分组 </Option>
+                        <Option :value="1" :key="1"> 验证Token </Option>
+                    </Select>
+                </FormItem>
                 <FormItem label="请求方式" prop="method">
                     <Select v-model="formItem.method" style="width:200px">
                         <Option :value="0" :key="0"> 不限 </Option>
@@ -172,10 +178,10 @@
             },
             on: {
                 click: () => {
-                    let query = {shopping_id: params.row.shopping_id};
-                    this.$router.push({
-                        name: 'shopping',
-                        query: query
+                    let hash = currentRow.hash;
+                    vm.$router.push({
+                        name: 'interface_request',
+                        params: { hash: hash }
                     });
                 }
             }
@@ -193,10 +199,10 @@
             },
             on: {
                 click: () => {
-                    let query = {shopping_id: params.row.shopping_id};
-                    this.$router.push({
-                        name: 'shopping',
-                        query: query
+                    let hash = currentRow.hash;
+                    vm.$router.push({
+                        name: 'interface_response',
+                        params: { hash: hash }
                     });
                 }
             }
@@ -270,6 +276,7 @@
                 formItem: {
                     apiClass: '',
                     info: '',
+                    groupHash: 'default',
                     method: 2,
                     hash: '',
                     accessToken: 1,
@@ -326,7 +333,6 @@
                                                 'class-name': 'badge-success'
                                             }
                                         });
-                                        break;
                                     case 2:
                                         return h('Badge', {
                                             attrs: {
@@ -336,7 +342,6 @@
                                                 'class-name': 'badge-info'
                                             }
                                         });
-                                        break;
                                     case 0:
                                         return h('Badge', {
                                             attrs: {
@@ -346,7 +351,6 @@
                                                 'class-name': 'badge-warning'
                                             }
                                         });
-                                        break;
                                 }
                             }
                         };
