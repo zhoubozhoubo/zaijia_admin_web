@@ -41,7 +41,7 @@
                     </RadioGroup>
                 </FormItem>
                 <FormItem label="默认值" prop="default" v-if="formItem.isMust.toString() === '0'">
-                    <Input style="width: 300px" v-model="formItem.default"></Input>
+                    <Input style="width: 300px" v-model="formItem.defaults"></Input>
                     <Badge count="仅在字段非必填的情况下生效" style="margin-left:5px"></Badge>
                 </FormItem>
                 <FormItem label="规则细节" prop="range">
@@ -74,7 +74,7 @@
                     vm.formItem.id = currentRow.id;
                     vm.formItem.fieldName = currentRow.fieldName;
                     vm.formItem.dataType = currentRow.dataType.toString();
-                    vm.formItem.default = currentRow.default;
+                    vm.formItem.defaults = currentRow.default;
                     vm.formItem.range = currentRow.range;
                     vm.formItem.isMust = currentRow.isMust.toString();
                     vm.formItem.info = currentRow.info;
@@ -93,7 +93,7 @@
             },
             on: {
                 'on-ok': () => {
-                    axios.get('InterfaceList/del', {
+                    axios.get('Fields/del', {
                         params: {
                             id: currentRow.id
                         }
@@ -185,12 +185,11 @@
                 formItem: {
                     fieldName: '',
                     dataType: '2',
-                    default: '',
+                    defaults: '',
                     range: '',
                     isMust: '1',
                     info: '',
-                    hash: this.hash,
-                    type: 0,
+                    type: 1,
                     id: 0
                 },
                 ruleValidate: {
@@ -261,15 +260,16 @@
                 this.modalSetting.show = true;
             },
             submit () {
+                this.formItem.hash = this.hash;
                 let self = this;
                 this.$refs['myForm'].validate((valid) => {
                     if (valid) {
                         self.modalSetting.loading = true;
                         let target = '';
                         if (this.formItem.id === 0) {
-                            target = 'InterfaceList/add';
+                            target = 'Fields/add';
                         } else {
-                            target = 'InterfaceList/edit';
+                            target = 'Fields/edit';
                         }
                         axios.post(target, self.formItem).then(function (response) {
                             if (response.data.code === 1) {
@@ -326,6 +326,7 @@
             doCancel (data) {
                 if (!data) {
                     this.formItem.id = 0;
+                    this.formItem.defaults = '';
                     this.formItem.isMust = '1';
                     this.$refs['myForm'].resetFields();
                     this.modalSetting.loading = false;

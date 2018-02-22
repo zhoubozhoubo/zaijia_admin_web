@@ -140,7 +140,7 @@
                 'on-ok': () => {
                     axios.get('InterfaceList/del', {
                         params: {
-                            id: currentRow.id
+                            hash: currentRow.hash
                         }
                     }).then(function (response) {
                         currentRow.loading = false;
