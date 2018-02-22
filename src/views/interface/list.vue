@@ -62,7 +62,7 @@
                 <FormItem label="接口分组" prop="groupHash">
                     <Select v-model="formItem.groupHash" style="width:200px">
                         <Option value="default" key="default"> 默认分组 </Option>
-                        <Option :value="1" :key="1"> 验证Token </Option>
+                        <Option v-for="(v, i) in apiGroup" :value="v.hash" :key="v.hash"> {{v.name}} </Option>
                     </Select>
                 </FormItem>
                 <FormItem label="请求方式" prop="method">
@@ -120,6 +120,7 @@
                     vm.formItem.info = currentRow.info;
                     vm.formItem.method = currentRow.method;
                     vm.formItem.hash = currentRow.hash;
+                    vm.formItem.groupHash = currentRow.groupHash;
                     vm.formItem.accessToken = currentRow.accessToken;
                     vm.formItem.isTest = currentRow.isTest;
                     vm.formItem.needLogin = currentRow.needLogin;
@@ -258,6 +259,7 @@
                     }
                 ],
                 tableData: [],
+                apiGroup: [],
                 tableShow: {
                     currentPage: 1,
                     pageSize: 10,
@@ -301,6 +303,21 @@
         methods: {
             init () {
                 let vm = this;
+                axios.get('InterfaceGroup/getAll').then(function (response) {
+                    let res = response.data;
+                    if (res.code === 1) {
+                        vm.apiGroup = res.data.list;
+                    } else {
+                        if (res.code === -14) {
+                            vm.$store.commit('logout', vm);
+                            vm.$router.push({
+                                name: 'login'
+                            });
+                        } else {
+                            vm.$Message.error(res.msg);
+                        }
+                    }
+                });
                 this.columnsList.forEach(item => {
                     if (item.handle) {
                         item.render = (h, param) => {

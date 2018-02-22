@@ -31,7 +31,7 @@
                 </FormItem>
                 <FormItem label="数据类型" prop="dataType">
                     <Select v-model="formItem.dataType" style="width:200px">
-                        <Option v-for="(i, v) in tableShow.dataType" :value="v" :key="v"> {{i}} </Option>
+                        <Option v-for="(v, i) in tableShow.dataType" :value="i" :key="i"> {{v}} </Option>
                     </Select>
                 </FormItem>
                 <FormItem label="是否必填">
