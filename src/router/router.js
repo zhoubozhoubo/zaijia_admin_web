@@ -163,53 +163,53 @@ export const appRouter = [
             }
         ]
     },
-    {
-        path: '/access',
-        icon: 'key',
-        name: 'access',
-        title: '权限管理',
-        component: Main,
-        children: [
-            {
-                path: 'index',
-                title: '权限管理',
-                name: 'access_index',
-                component: () => import('@/views/access/access.vue')
-            }
-        ]
-    },
-    {
-        path: '/access-test',
-        icon: 'lock-combination',
-        title: '权限测试页',
-        name: 'accesstest',
-        access: 0,
-        component: Main,
-        children: [
-            {
-                path: 'index',
-                title: '权限测试页',
-                name: 'accesstest_index',
-                access: 0,
-                component: () => import('@/views/access/access-test.vue')
-            }
-        ]
-    },
-    {
-        path: '/international',
-        icon: 'earth',
-        title: {i18n: 'international'},
-        name: 'international',
-        component: Main,
-        children: [
-            {
-                path: 'index',
-                title: {i18n: 'international'},
-                name: 'international_index',
-                component: () => import('@/views/international/international.vue')
-            }
-        ]
-    }
+    // {
+    //     path: '/access',
+    //     icon: 'key',
+    //     name: 'access',
+    //     title: '权限管理',
+    //     component: Main,
+    //     children: [
+    //         {
+    //             path: 'index',
+    //             title: '权限管理',
+    //             name: 'access_index',
+    //             component: () => import('@/views/access/access.vue')
+    //         }
+    //     ]
+    // },
+    // {
+    //     path: '/access-test',
+    //     icon: 'lock-combination',
+    //     title: '权限测试页',
+    //     name: 'accesstest',
+    //     access: 0,
+    //     component: Main,
+    //     children: [
+    //         {
+    //             path: 'index',
+    //             title: '权限测试页',
+    //             name: 'accesstest_index',
+    //             access: 0,
+    //             component: () => import('@/views/access/access-test.vue')
+    //         }
+    //     ]
+    // },
+    // {
+    //     path: '/international',
+    //     icon: 'earth',
+    //     title: {i18n: 'international'},
+    //     name: 'international',
+    //     component: Main,
+    //     children: [
+    //         {
+    //             path: 'index',
+    //             title: {i18n: 'international'},
+    //             name: 'international_index',
+    //             component: () => import('@/views/international/international.vue')
+    //         }
+    //     ]
+    // }
 ];
 
 // 所有上面定义的路由都要写在下面的routers里
