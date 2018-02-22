@@ -449,11 +449,7 @@
                 });
             },
             cancel () {
-                this.formItem.id = 0;
-                this.$refs['myForm'].resetFields();
                 this.modalSetting.show = false;
-                this.modalSetting.loading = false;
-                this.modalSetting.index = 0;
             },
             changePage (page) {
                 this.tableShow.currentPage = page;

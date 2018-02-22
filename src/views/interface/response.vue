@@ -23,49 +23,32 @@
         <Modal v-model="modalSetting.show" width="668" :styles="{top: '30px'}" @on-visible-change="doCancel">
             <p slot="header" style="color:#2d8cf0;">
                 <Icon type="information-circled"></Icon>
-                <span>{{formItem.id ? '编辑' : '新增'}}接口</span>
+                <span>{{formItem.id ? '编辑' : '新增'}}请求字段</span>
             </p>
             <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="80">
-                <FormItem label="接口名称" prop="info">
-                    <Input v-model="formItem.info" placeholder="请输入接口名称"></Input>
+                <FormItem label="字段名称" prop="fieldName">
+                    <Input v-model="formItem.fieldName" placeholder="请输入字段名称"></Input>
                 </FormItem>
-                <FormItem label="真实类库" prop="apiClass">
-                    <Input v-model="formItem.apiClass" placeholder="请输入真实类库"></Input>
-                </FormItem>
-                <FormItem label="接口分组" prop="groupHash">
-                    <Select v-model="formItem.groupHash" style="width:200px">
-                        <Option value="default" key="default"> 默认分组 </Option>
-                        <Option :value="1" :key="1"> 验证Token </Option>
+                <FormItem label="数据类型" prop="dataType">
+                    <Select v-model="formItem.dataType" style="width:200px">
+                        <Option v-for="(i, v) in tableShow.dataType" :value="v" :key="v"> {{i}} </Option>
                     </Select>
                 </FormItem>
-                <FormItem label="请求方式" prop="method">
-                    <Select v-model="formItem.method" style="width:200px">
-                        <Option :value="0" :key="0"> 不限 </Option>
-                        <Option :value="1" :key="1"> POST </Option>
-                        <Option :value="2" :key="2"> GET </Option>
-                    </Select>
+                <FormItem label="是否必填">
+                    <RadioGroup v-model="formItem.isMust">
+                        <Radio label="0">不必填</Radio>
+                        <Radio label="1">必填</Radio>
+                    </RadioGroup>
                 </FormItem>
-                <FormItem label="接口映射" prop="hash">
-                    <Input style="width: 300px" disabled v-model="formItem.hash"></Input>
-                    <Badge count="系统自动生成，不允许修改" style="margin-left:5px"></Badge>
+                <FormItem label="默认值" prop="default" v-if="formItem.isMust.toString() === '0'">
+                    <Input style="width: 300px" v-model="formItem.default"></Input>
+                    <Badge count="仅在字段非必填的情况下生效" style="margin-left:5px"></Badge>
                 </FormItem>
-                <FormItem label="AccessToken" prop="accessToken">
-                    <Select v-model="formItem.accessToken" style="width:200px">
-                        <Option :value="0" :key="0"> 忽略Token </Option>
-                        <Option :value="1" :key="1"> 验证Token </Option>
-                    </Select>
+                <FormItem label="规则细节" prop="range">
+                    <Input v-model="formItem.range" type="textarea" placeholder="请输入符合要求的JSON字符串"></Input>
                 </FormItem>
-                <FormItem label="用户登录" prop="needLogin">
-                    <Select v-model="formItem.needLogin" style="width:200px">
-                        <Option :value="0" :key="0"> 忽略登录 </Option>
-                        <Option :value="1" :key="1"> 验证登录 </Option>
-                    </Select>
-                </FormItem>
-                <FormItem label="测试模式" prop="isTest">
-                    <Select v-model="formItem.isTest" style="width:200px">
-                        <Option :value="0" :key="0"> 生产模式 </Option>
-                        <Option :value="1" :key="1"> 测试模式 </Option>
-                    </Select>
+                <FormItem label="字段说明" prop="info">
+                    <Input v-model="formItem.info" type="textarea" placeholder="请输入字段描述"></Input>
                 </FormItem>
             </Form>
             <div slot="footer">
@@ -89,13 +72,12 @@
             on: {
                 'click': () => {
                     vm.formItem.id = currentRow.id;
-                    vm.formItem.apiClass = currentRow.apiClass;
+                    vm.formItem.fieldName = currentRow.fieldName;
+                    vm.formItem.dataType = currentRow.dataType.toString();
+                    vm.formItem.default = currentRow.default;
+                    vm.formItem.range = currentRow.range;
+                    vm.formItem.isMust = currentRow.isMust.toString();
                     vm.formItem.info = currentRow.info;
-                    vm.formItem.method = currentRow.method;
-                    vm.formItem.hash = currentRow.hash;
-                    vm.formItem.accessToken = currentRow.accessToken;
-                    vm.formItem.isTest = currentRow.isTest;
-                    vm.formItem.needLogin = currentRow.needLogin;
                     vm.modalSetting.show = true;
                     vm.modalSetting.index = index;
                 }
@@ -143,6 +125,7 @@
         name: 'interface_response',
         data () {
             return {
+                hash: '',
                 columnsList: [
                     {
                         title: '序号',
@@ -152,7 +135,7 @@
                     },
                     {
                         title: '字段名称',
-                        align: 'center',
+                        align: 'left',
                         key: 'fieldName',
                         width: 200
                     },
@@ -176,7 +159,7 @@
                     },
                     {
                         title: '字段说明',
-                        align: 'center',
+                        align: 'left',
                         key: 'info'
                     },
                     {
@@ -200,28 +183,28 @@
                     index: 0
                 },
                 formItem: {
-                    apiClass: '',
+                    fieldName: '',
+                    dataType: '2',
+                    default: '',
+                    range: '',
+                    isMust: '1',
                     info: '',
-                    groupHash: 'default',
-                    method: 2,
-                    hash: '',
-                    accessToken: 1,
-                    isTest: 0,
-                    needLogin: 0,
+                    hash: this.hash,
+                    type: 0,
                     id: 0
                 },
                 ruleValidate: {
-                    apiClass: [
-                        {required: true, message: '真实类库不能为空', trigger: 'blur'}
-                    ],
-                    info: [
-                        {required: true, message: '接口名称不能为空', trigger: 'blur'}
+                    fieldName: [
+                        {required: true, message: '字段名称不能为空', trigger: 'blur'}
                     ]
                 }
             };
         },
         created () {
             this.init();
+        },
+        activated () {
+            this.hash = this.$route.params.hash.toString();
             this.getList();
         },
         methods: {
@@ -274,22 +257,6 @@
                 });
             },
             alertAdd () {
-                let vm = this;
-                axios.get('InterfaceList/getHash').then(function (response) {
-                    let res = response.data;
-                    if (res.code === 1) {
-                        vm.formItem.hash = res.data.hash;
-                    } else {
-                        if (res.code === -14) {
-                            vm.$store.commit('logout', vm);
-                            vm.$router.push({
-                                name: 'login'
-                            });
-                        } else {
-                            vm.$Message.error(res.msg);
-                        }
-                    }
-                });
                 this.modalSetting.edit = false;
                 this.modalSetting.show = true;
             },
@@ -317,11 +284,7 @@
                 });
             },
             cancel () {
-                this.formItem.id = 0;
-                this.$refs['myForm'].resetFields();
                 this.modalSetting.show = false;
-                this.modalSetting.loading = false;
-                this.modalSetting.index = 0;
             },
             changePage (page) {
                 this.tableShow.currentPage = page;
@@ -340,7 +303,7 @@
                     params: {
                         page: vm.tableShow.currentPage,
                         size: vm.tableShow.pageSize,
-                        hash: vm.$route.params.hash.toString()
+                        hash: vm.hash
                     }
                 }).then(function (response) {
                     let res = response.data;
@@ -363,6 +326,7 @@
             doCancel (data) {
                 if (!data) {
                     this.formItem.id = 0;
+                    this.formItem.isMust = '1';
                     this.$refs['myForm'].resetFields();
                     this.modalSetting.loading = false;
                     this.modalSetting.index = 0;
