@@ -31,7 +31,7 @@
                 </FormItem>
                 <FormItem label="数据类型" prop="dataType">
                     <Select v-model="formItem.dataType" style="width:200px">
-                        <Option v-for="(i, v) in tableShow.dataType" :value="v" :key="v"> {{i}} </Option>
+                        <Option v-for="(i, v) in tableShow.dataType" :value="v" :key="v"> {{i}}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="是否必填">
@@ -63,10 +63,8 @@
             </p>
             <Form ref="uploadForm" :rules="uploadValidate" :model="uploadItem" :label-width="80">
                 <FormItem label="数据模板" prop="jsonStr">
-                    <Input v-model="uploadItem.jsonStr" type="textarea" placeholder="请务必包含code,msg,data全部返回数据"></Input>
-                </FormItem>
-                <FormItem label="格式化数据" prop="jsons">
-                    <Input type="textarea" disabled placeholder="">{{uploadItem.jsonStr}}</Input>
+                    <Input v-model="uploadItem.jsonStr" :autosize="{maxRows: 10}" type="textarea"
+                           placeholder="请务必包含code,msg,data全部返回数据"></Input>
                 </FormItem>
             </Form>
             <div slot="footer">
@@ -388,6 +386,7 @@
             doUploadCancel (data) {
                 if (!data) {
                     this.uploadItem.jsonStr = '';
+                    this.uploadModal.loading = false;
                 }
             }
         }
