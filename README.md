@@ -5,10 +5,10 @@
 </p>
 
 # ApiAdmin-WEB
-[![](https://img.shields.io/travis/iview/iview-admin.svg?style=flat-square)](https://travis-ci.org/iview/iview-admin)
+[![](https://img.shields.io/wercker/ci/wercker/docs.svg)]()
+[![ApiAdmin](https://img.shields.io/badge/ApiAdmin-v3.0.1-brightgreen.svg)](https://gitee.com/apiadmin/ApiAdmin)
 [![vue](https://img.shields.io/badge/vue-2.5.13-brightgreen.svg?style=flat-square)](https://github.com/vuejs/vue)
 [![iview ui](https://img.shields.io/badge/iview-2.8.0-brightgreen.svg?style=flat-square)](https://github.com/iview/iview)
-[![ApiAdmin](https://img.shields.io/badge/ApiAdmin-v3.0.1-brightgreen.svg)](https://gitee.com/apiadmin/ApiAdmin)
 
 # 特别提示
 本项目依赖于[ApiAdmin](https://gitee.com/apiadmin/ApiAdmin)，请确保您同时具备PHP和Vue的技能，否则使用本项目存在技术性障碍！
