@@ -129,7 +129,7 @@ export const appRouter = [
                 icon: "ios-box",
                 name: "app_group",
                 title: "应用分组",
-                component: () => import('@/views/error_page/404.vue')
+                component: () => import('@/views/app/group.vue')
             },
             {
                 path: "index",
