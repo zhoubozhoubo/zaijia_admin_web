@@ -64,6 +64,12 @@
                            placeholder="请输入AppSecret"></Input>
                     <Badge count="系统自动生成，不允许修改" style="margin-left:5px"></Badge>
                 </FormItem>
+                <FormItem label="应用分组" prop="app_group">
+                    <Select v-model="formItem.app_group" style="width:200px">
+                        <Option value="default" key="default"> 默认分组 </Option>
+                        <Option v-for="(v, i) in appGroup" :value="v.hash" :key="v.hash"> {{v.name}} </Option>
+                    </Select>
+                </FormItem>
                 <FormItem label="应用描述" prop="app_info">
                     <Input v-model="formItem.app_info" type="textarea"></Input>
                 </FormItem>
@@ -112,6 +118,7 @@
                     vm.formItem.app_info = currentRow.app_info;
                     vm.formItem.app_id = currentRow.app_id;
                     vm.formItem.app_secret = currentRow.app_secret;
+                    vm.formItem.app_group = currentRow.app_group;
                     axios.get('App/getAppInfo', {
                         params: {
                             id: currentRow.id
@@ -199,9 +206,10 @@
     };
 
     export default {
-        name: 'system_user',
+        name: 'interface_list',
         data () {
             return {
+                appGroup: [],
                 columnsList: [
                     {
                         title: '序号',
@@ -270,6 +278,7 @@
                     app_secret: '',
                     app_info: '',
                     app_api: {},
+                    app_group: 'default',
                     id: 0
                 },
                 ruleValidate: {
@@ -284,6 +293,24 @@
         created () {
             this.init();
             this.getList();
+        },
+        activated () {
+            let vm = this;
+            axios.get('AppGroup/getAll').then(function (response) {
+                let res = response.data;
+                if (res.code === 1) {
+                    vm.appGroup = res.data.list;
+                } else {
+                    if (res.code === -14) {
+                        vm.$store.commit('logout', vm);
+                        vm.$router.push({
+                            name: 'login'
+                        });
+                    } else {
+                        vm.$Message.error(res.msg);
+                    }
+                }
+            });
         },
         methods: {
             init () {
