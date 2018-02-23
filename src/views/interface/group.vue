@@ -49,7 +49,7 @@
         <Modal v-model="modalSetting.show" width="668" :styles="{top: '30px'}" @on-visible-change="doCancel">
             <p slot="header" style="color:#2d8cf0;">
                 <Icon type="information-circled"></Icon>
-                <span>{{formItem.id ? '编辑' : '新增'}}接口</span>
+                <span>{{formItem.id ? '编辑' : '新增'}}接口组</span>
             </p>
             <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="80">
                 <FormItem label="组名称" prop="name">

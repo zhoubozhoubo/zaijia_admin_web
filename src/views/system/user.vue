@@ -170,7 +170,7 @@
                         title: '真实姓名',
                         align: 'center',
                         key: 'nickname',
-                        width: 90
+                        width: 120
                     },
                     {
                         title: '登录次数',

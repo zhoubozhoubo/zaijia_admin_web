@@ -122,7 +122,7 @@
                             vm.groupInfo = res.data.groupInfo;
                             vm.groupList = res.data.apiList;
                             for (let index in vm.groupInfo) {
-                                if (res.data.app_detail === null) {
+                                if (res.data.app_detail === null || typeof (res.data.app_detail[index]) === 'undefined') {
                                     vm.$set(vm.checkAllStatus, index, false);
                                     vm.$set(vm.checkAllIndeterminate, index, false);
                                     vm.$set(vm.formItem.app_api, index, []);
