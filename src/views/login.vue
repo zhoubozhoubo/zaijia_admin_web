@@ -67,7 +67,7 @@ export default {
                         password: this.form.password
                     }).then(function (response) {
                         if (response.data.code === 1) {
-                            Cookies.set('access', 1);
+                            Cookies.set('access', response.data.data.access);
                             localStorage.setItem('user', vm.form.username);
                             vm.$store.commit('setUserToken', response.data.data.userToken);
                             vm.$Message.success(response.data.msg);
