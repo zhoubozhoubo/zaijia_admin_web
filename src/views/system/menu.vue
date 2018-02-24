@@ -32,11 +32,13 @@
                     </Select>
                 </FormItem>
                 <FormItem label="菜单URL" prop="url">
-                    <Input v-model="formItem.url" placeholder="请输入菜单URL"></Input>
+                    <Input v-model="formItem.url" placeholder="请输入菜单URL">
+                    <span slot="prepend">admin/</span>
+                    </Input>
                 </FormItem>
                 <FormItem label="菜单排序" prop="sort">
                     <InputNumber :min="0" v-model="formItem.sort"></InputNumber>
-                    <Badge count="数字越大越靠前" style="margin-left:5px"></Badge>
+                    <Badge count="数字越小越靠前" style="margin-left:5px"></Badge>
                 </FormItem>
             </Form>
             <div slot="footer">
@@ -62,7 +64,7 @@
                     vm.formItem.id = currentRow.id;
                     vm.formItem.name = currentRow.name;
                     vm.formItem.fid = currentRow.fid;
-                    vm.formItem.url = currentRow.url;
+                    vm.formItem.url = currentRow.url.slice(6);
                     vm.formItem.sort = currentRow.sort;
                     vm.modalSetting.show = true;
                     vm.modalSetting.index = index;
@@ -133,7 +135,7 @@
                         title: '菜单URL',
                         align: 'left',
                         key: 'url',
-                        width: 180
+                        width: 200
                     },
                     {
                         title: '状态',
