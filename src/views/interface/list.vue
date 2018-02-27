@@ -61,7 +61,6 @@
                 </FormItem>
                 <FormItem label="接口分组" prop="groupHash">
                     <Select v-model="formItem.groupHash" style="width:200px">
-                        <Option value="default" key="default"> 默认分组 </Option>
                         <Option v-for="(v, i) in apiGroup" :value="v.hash" :key="v.hash"> {{v.name}} </Option>
                     </Select>
                 </FormItem>

@@ -153,6 +153,12 @@
                         key: 'description'
                     },
                     {
+                        title: '接口组热度',
+                        align: 'center',
+                        key: 'hot',
+                        width: 120
+                    },
+                    {
                         title: '接口组标识',
                         align: 'center',
                         key: 'hash',
@@ -264,6 +270,16 @@
                                     slot: 'close'
                                 }, '禁用')
                             ]);
+                        };
+                    }
+                    if (item.key === 'hot') {
+                        item.render = (h, param) => {
+                            let currentRowData = vm.tableData[param.index];
+                            if (currentRowData.hot > 10000) {
+                                return (parseInt(currentRowData.hot) / 10000).toFixed(1) + '万';
+                            } else {
+                                return currentRowData.hot;
+                            }
                         };
                     }
                 });
