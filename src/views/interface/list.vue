@@ -35,6 +35,7 @@
             <Card>
                 <p slot="title" style="height: 32px">
                     <Button type="primary" @click="alertAdd" icon="plus-round">新增</Button>
+                    <Button type="warning" @click="confirmRefresh = true" icon="refresh">刷新路由</Button>
                 </p>
                 <div>
                     <Table :columns="columnsList" :data="tableData" border disabled-hover></Table>
@@ -97,6 +98,18 @@
             <div slot="footer">
                 <Button type="text" @click="cancel" style="margin-right: 8px">取消</Button>
                 <Button type="primary" @click="submit" :loading="modalSetting.loading">确定</Button>
+            </div>
+        </Modal>
+        <Modal v-model="confirmRefresh" width="360">
+            <p slot="header" style="color:#f60;text-align:center">
+                <Icon type="information-circled"></Icon>
+                <span>确定要刷新路由么</span>
+            </p>
+            <div style="text-align:center">
+                <p>刷新路由是一个非常危险的操作，它有可能影响到您现有接口的访问，请确认无误后刷新！！</p>
+            </div>
+            <div slot="footer">
+                <Button type="error" size="large" long @click="refreshRoute">确定刷新</Button>
             </div>
         </Modal>
     </div>
@@ -213,6 +226,7 @@
         name: 'interface_list',
         data () {
             return {
+                confirmRefresh: false,
                 columnsList: [
                     {
                         title: '序号',
@@ -514,6 +528,25 @@
                     this.modalSetting.loading = false;
                     this.modalSetting.index = 0;
                 }
+            },
+            refreshRoute () {
+                let vm = this;
+                axios.get('InterfaceList/refresh').then(function (response) {
+                    let res = response.data;
+                    if (res.code === 1) {
+                        vm.$Message.success(res.msg);
+                    } else {
+                        if (res.code === -14) {
+                            vm.$store.commit('logout', vm);
+                            vm.$router.push({
+                                name: 'login'
+                            });
+                        } else {
+                            vm.$Message.error(res.msg);
+                        }
+                    }
+                    vm.confirmRefresh = false;
+                });
             }
         }
     };
