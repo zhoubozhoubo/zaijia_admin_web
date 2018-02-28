@@ -102,7 +102,7 @@ export const appRouter = [
                 component: () => import('@/views/system/user.vue')
             },
             {
-                path: 'image-editor',
+                path: 'auth',
                 icon: 'locked',
                 name: 'auth',
                 title: '权限管理',
@@ -113,7 +113,7 @@ export const appRouter = [
                 icon: 'clipboard',
                 name: 'log',
                 title: '操作日志',
-                component: () => import('@/views/error_page/404.vue')
+                component: () => import('@/views/system/log.vue')
             }
         ]
     },
