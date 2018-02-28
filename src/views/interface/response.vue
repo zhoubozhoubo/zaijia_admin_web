@@ -88,7 +88,7 @@
             on: {
                 'click': () => {
                     vm.formItem.id = currentRow.id;
-                    vm.formItem.fieldName = currentRow.fieldName;
+                    vm.formItem.fieldName = currentRow.showName;
                     vm.formItem.dataType = currentRow.dataType.toString();
                     vm.formItem.defaults = currentRow.default;
                     vm.formItem.range = currentRow.range;
