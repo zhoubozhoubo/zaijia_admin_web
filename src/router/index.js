@@ -42,7 +42,7 @@ router.beforeEach((to, from, next) => {
             // 统一处理请求的UserToken
             axios.defaults.baseURL = config.baseUrl;
             axios.interceptors.request.use(function (config) {
-                config.headers['Authorization'] = store.getters.userToken;
+                config.headers['ApiAuth'] = store.getters.userToken;
                 return config;
             });
             const curRouterObj = Util.getRouterObjByName([otherRouter, ...appRouter], to.name);
