@@ -526,6 +526,7 @@
                 this.getMemberList();
             },
             search () {
+                this.tableShow.currentPage = 1;
                 this.getList();
             },
             getList () {

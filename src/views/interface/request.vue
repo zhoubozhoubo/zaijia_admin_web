@@ -294,6 +294,7 @@
                 this.getList();
             },
             search () {
+                this.tableShow.currentPage = 1;
                 this.getList();
             },
             getList () {
