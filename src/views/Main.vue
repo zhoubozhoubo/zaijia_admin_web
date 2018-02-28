@@ -72,6 +72,7 @@
     import lockScreen from './main_components/lock_screen/lockscreen.vue';
     import themeSwitch from './main_components/theme-switch/theme-switch.vue';
     import util from '@/libs/util.js';
+    import axios from 'axios';
 
     export default {
         components: {
@@ -134,10 +135,18 @@
                     });
                 } else if (name === 'loginout') {
                     // 退出登录
-                    this.$store.commit('logout', this);
-                    this.$store.commit('clearOpenedSubmenu');
-                    this.$router.push({
-                        name: 'login'
+                    axios.get('Login/logout').then(function (response) {
+                        let vm = this;
+                        let res = response.data;
+                        if (res.code === 1) {
+                            vm.$store.commit('logout', vm);
+                            vm.$store.commit('clearOpenedSubmenu');
+                            vm.$router.push({
+                                name: 'login'
+                            });
+                        } else {
+                            vm.$Message.error(res.msg);
+                        }
                     });
                 }
             },
