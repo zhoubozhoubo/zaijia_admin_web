@@ -12,7 +12,7 @@
 [![iview ui](https://img.shields.io/badge/iview-2.8.0-brightgreen.svg?style=flat-square)](https://github.com/iview/iview)
 
 # 特别提示
-本项目依赖于[ApiAdmin](https://gitee.com/apiadmin/ApiAdmin)，请确保您同时具备PHP和Vue的技能，否则使用本项目存在技术性障碍！
+本项目依赖于[ApiAdmin](https://github.com/Zhao-github/ApiAdmin)，请确保您同时具备PHP和Vue的技能，否则使用本项目存在技术性障碍！
 
 ## 线上体验
 [https://admin.apiadmin.org](https://admin.apiadmin.org)。账号请加群获取！
