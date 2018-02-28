@@ -69,7 +69,7 @@ export default {
                         if (response.data.code === 1) {
                             Cookies.set('access', response.data.data.access);
                             localStorage.setItem('user', vm.form.username);
-                            vm.$store.commit('setUserToken', response.data.data.userToken);
+                            vm.$store.commit('setApiAuth', response.data.data.apiAuth);
                             vm.$Message.success(response.data.msg);
                             vm.$store.commit('setAvator', 'http://tx.haiqq.com/uploads/allimg/150325/1223213930-12.jpg');
                             vm.$router.push({

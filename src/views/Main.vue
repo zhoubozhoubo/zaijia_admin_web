@@ -135,8 +135,8 @@
                     });
                 } else if (name === 'loginout') {
                     // 退出登录
+                    let vm = this;
                     axios.get('Login/logout').then(function (response) {
-                        let vm = this;
                         let res = response.data;
                         if (res.code === 1) {
                             vm.$store.commit('logout', vm);

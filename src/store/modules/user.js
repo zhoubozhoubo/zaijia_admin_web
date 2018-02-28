@@ -2,21 +2,21 @@ import Cookies from 'js-cookie';
 
 const user = {
     state: {
-        userToken: ''
+        apiAuth: ''
     },
     getters: {
         userToken: (state) => {
-            return state.userToken || localStorage.getItem('userToken');
+            return state.apiAuth || localStorage.getItem('apiAuth');
         }
     },
     mutations: {
-        setUserToken (state, token) {
-            state.userToken = token;
-            localStorage.setItem('userToken', token);
+        setApiAuth (state, token) {
+            state.apiAuth = token;
+            localStorage.setItem('apiAuth', token);
         },
         logout (state, vm) {
             Cookies.remove('access');
-            state.userToken = '';
+            state.apiAuth = '';
             // 恢复默认样式
             let themeLink = document.querySelector('link[name="theme"]');
             themeLink.setAttribute('href', '');
