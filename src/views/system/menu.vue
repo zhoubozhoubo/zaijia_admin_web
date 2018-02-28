@@ -16,7 +16,7 @@
                 </Card>
             </Col>
         </Row>
-        <Modal v-model="modalSetting.show" width="668" :styles="{top: '30px'}">
+        <Modal v-model="modalSetting.show" width="668" :styles="{top: '30px'}" @on-visible-change="doCancel">
             <p slot="header" style="color:#2d8cf0;">
                 <Icon type="information-circled"></Icon>
                 <span>{{formItem.id ? '编辑' : '新增'}}菜单</span>
@@ -265,11 +265,15 @@
                 });
             },
             cancel () {
-                this.formItem.id = 0;
-                this.$refs['myForm'].resetFields();
                 this.modalSetting.show = false;
-                this.modalSetting.loading = false;
-                this.modalSetting.index = 0;
+            },
+            doCancel (data) {
+                if (!data) {
+                    this.formItem.id = 0;
+                    this.$refs['myForm'].resetFields();
+                    this.modalSetting.loading = false;
+                    this.modalSetting.index = 0;
+                }
             },
             getList () {
                 let vm = this;
