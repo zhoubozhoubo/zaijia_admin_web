@@ -22,6 +22,13 @@
 // install dependencies
 npm install
 ```
+
+## prepare
+```bush
+/build/webpack.prod.config.js中的publicPath参数需要变更为你自己的项目域名
+/build/config.js中的baseUrl需要换成你自己搭建的后台接口域名
+```
+
 ## Run
 ### Development
 ```bush
@@ -30,9 +37,6 @@ npm run dev
 ### Production(Build)
 ```bush
 npm run build
-
-注：/build/webpack.prod.config.js中的publicPath参数需要变更为你自己的项目域名
-/build/config.js中的baseUrl需要换成你自己搭建的后台接口域名
 ```
 
 ## 愿景
