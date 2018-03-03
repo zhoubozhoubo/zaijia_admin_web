@@ -1,8 +1,7 @@
 const user = {
     mutations: {
         logout () {
-            sessionStorage.removeItem('access');
-            sessionStorage.removeItem('apiAuth');
+            sessionStorage.clear();
             // 恢复默认样式
             let themeLink = document.querySelector('link[name="theme"]');
             themeLink.setAttribute('href', '');
