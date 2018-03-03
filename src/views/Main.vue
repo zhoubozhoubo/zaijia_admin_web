@@ -121,7 +121,7 @@
                 if (pathArr.length >= 2) {
                     this.$store.commit('addOpenSubmenu', pathArr[1].name);
                 }
-                this.userName = localStorage.getItem('user');
+                this.userName = sessionStorage.getItem('user');
                 this.checkTag(this.$route.name);
             },
             toggleClick () {
