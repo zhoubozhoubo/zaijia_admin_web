@@ -6,7 +6,7 @@ const user = {
     },
     getters: {
         apiAuth: (state) => {
-            return state.apiAuth;
+            return state.apiAuth || localStorage.getItem('apiAuth');
         }
     },
     mutations: {
