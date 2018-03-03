@@ -1,5 +1,3 @@
-import Cookies from 'js-cookie';
-
 const user = {
     state: {
         apiAuth: ''
@@ -15,7 +13,7 @@ const user = {
             localStorage.setItem('apiAuth', token);
         },
         logout (state, vm) {
-            Cookies.remove('access');
+            sessionStorage.removeItem('access');
             state.apiAuth = '';
             // 恢复默认样式
             let themeLink = document.querySelector('link[name="theme"]');

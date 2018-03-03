@@ -18,7 +18,6 @@
 </template>
 
 <script>
-import Cookies from 'js-cookie';
 import config from '../../../../build/config.js';
 export default {
     name: 'themeSwitch',
@@ -82,7 +81,7 @@ export default {
             }
             let path = '';
             let themeLink = document.querySelector('link[name="theme"]');
-            let userName = Cookies.get('user');
+            let userName = sessionStorage.getItem('user');
             if (localStorage.theme) {
                 let themeList = JSON.parse(localStorage.theme);
                 let index = 0;
@@ -133,7 +132,7 @@ export default {
         } else {
             path = 'dist/';
         }
-        let name = Cookies.get('user');
+        let name = sessionStorage.getItem('user');
         if (localStorage.theme) {
             let hasThisUser = JSON.parse(localStorage.theme).some(item => {
                 if (item.userName === name) {

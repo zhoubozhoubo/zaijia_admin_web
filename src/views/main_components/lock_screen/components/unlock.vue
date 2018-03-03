@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import Cookies from 'js-cookie';
 import axios from 'axios';
 export default {
     name: 'Unlock',
@@ -64,7 +63,7 @@ export default {
                 if (response.data.code === 1) {
                     vObj.avatorLeft = '0px';
                     vObj.inputLeft = '400px';
-                    Cookies.set('locking', '0');
+                    sessionStorage.setItem('locking', '0');
                     vObj.$emit('on-unlock');
                     vObj.$store.commit('setUserToken', response.data.data.userToken);
                 } else {

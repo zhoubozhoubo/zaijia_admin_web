@@ -2,9 +2,8 @@ import Vue from 'vue';
 import iView from 'iview';
 import Util from '../libs/util';
 import VueRouter from 'vue-router';
-import Cookies from 'js-cookie';
 import store from '../store';
-import {routers, otherRouter, appRouter} from './router';
+import {routers} from './router';
 import config from '../../build/config';
 import axios from 'axios';
 
@@ -21,12 +20,12 @@ router.beforeEach((to, from, next) => {
     let apiAuth = store.getters.apiAuth;
     iView.LoadingBar.start();
     Util.title(to.meta.title);
-    if (Cookies.get('locking') === '1' && to.name !== 'locking') { // 判断当前是否是锁定状态
+    if (sessionStorage.getItem('locking') === '1' && to.name !== 'locking') { // 判断当前是否是锁定状态
         next({
             replace: true,
             name: 'locking'
         });
-    } else if (Cookies.get('locking') === '0' && to.name === 'locking') {
+    } else if (sessionStorage.getItem('locking') === '0' && to.name === 'locking') {
         next(false);
     } else {
         if (!apiAuth && to.name !== 'login') { // 判断是否已经登录且前往的页面不是登录页
