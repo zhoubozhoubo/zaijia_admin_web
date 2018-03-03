@@ -169,9 +169,6 @@ const app = {
         setCurrentPageName (state, name) {
             state.currentPageName = name;
         },
-        setAvator (state, path) {
-            localStorage.avatorImgPath = path;
-        },
         switchLang (state, lang) {
             state.lang = lang;
             Vue.config.lang = lang;
