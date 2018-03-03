@@ -36,7 +36,7 @@ const app = {
         setTagsList (state, list) {
             state.tagsList.push(...list);
         },
-        updateMenulist (state) {
+        updateMenuList (state) {
             let accessCode = sessionStorage.getItem('access');
             let menuList = [];
             appRouter.forEach((item, index) => {
@@ -112,7 +112,7 @@ const app = {
                 }
             });
         },
-        initCachepage (state) {
+        initCachePage (state) {
             if (localStorage.cachePage) {
                 state.cachePage = JSON.parse(localStorage.cachePage);
             }

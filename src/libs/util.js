@@ -234,9 +234,9 @@ util.toDefaultPage = function (routers, name, route, next) {
 };
 
 util.fullscreenEvent = function (vm) {
-    vm.$store.commit('initCachepage');
+    vm.$store.commit('initCachePage');
     // 权限菜单过滤相关
-    vm.$store.commit('updateMenulist');
+    vm.$store.commit('updateMenuList');
     // 全屏相关
 };
 
