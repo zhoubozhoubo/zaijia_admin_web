@@ -90,6 +90,7 @@ export const appRouter = [
                 path: 'menu',
                 icon: 'navicon-round',
                 name: 'menu',
+                access: 'admin/Menu/index',
                 title: '菜单维护',
                 component: () => import('@/views/system/menu.vue')
 
@@ -98,6 +99,7 @@ export const appRouter = [
                 path: 'user',
                 icon: 'ios-people',
                 name: 'user',
+                access: 'admin/User/index',
                 title: '用户管理',
                 component: () => import('@/views/system/user.vue')
             },
@@ -105,6 +107,7 @@ export const appRouter = [
                 path: 'auth',
                 icon: 'locked',
                 name: 'auth',
+                access: 'admin/Auth/index',
                 title: '权限管理',
                 component: () => import('@/views/system/auth.vue')
             },
@@ -112,6 +115,7 @@ export const appRouter = [
                 path: 'log',
                 icon: 'clipboard',
                 name: 'log',
+                access: 'admin/Log/index',
                 title: '操作日志',
                 component: () => import('@/views/system/log.vue')
             }
@@ -128,6 +132,7 @@ export const appRouter = [
                 path: "group",
                 icon: "ios-box",
                 name: "app_group",
+                access: 'admin/AppGroup/index',
                 title: "应用分组",
                 component: () => import('@/views/app/group.vue')
             },
@@ -135,6 +140,7 @@ export const appRouter = [
                 path: "index",
                 icon: "ios-list",
                 name: "app_index",
+                access: 'admin/App/index',
                 title: "应用列表",
                 component: () => import('@/views/app/list.vue')
             }
@@ -151,6 +157,7 @@ export const appRouter = [
                 path: "group",
                 icon: "folder",
                 name: "interface_group",
+                access: 'admin/InterfaceGroup/index',
                 title: "接口分组",
                 component: () => import('@/views/interface/group.vue')
             },
@@ -158,6 +165,7 @@ export const appRouter = [
                 path: "list",
                 icon: "document",
                 name: "interface_list",
+                access: 'admin/InterfaceList/index',
                 title: "接口列表",
                 component: () => import('@/views/interface/list.vue')
             }

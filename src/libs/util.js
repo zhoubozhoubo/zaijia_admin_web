@@ -29,7 +29,7 @@ util.oneOf = function (ele, targetArr) {
     }
 };
 
-util.showThisRoute = function (itAccess, currentAccess) {
+util.showThisRoute = function (currentAccess, itAccess) {
     if (typeof itAccess === 'object' && Array.isArray(itAccess)) {
         return util.oneOf(currentAccess, itAccess);
     } else {
