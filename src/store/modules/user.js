@@ -1,20 +1,8 @@
 const user = {
-    state: {
-        apiAuth: ''
-    },
-    getters: {
-        apiAuth: (state) => {
-            return state.apiAuth || localStorage.getItem('apiAuth');
-        }
-    },
     mutations: {
-        setApiAuth (state, token) {
-            state.apiAuth = token;
-            localStorage.setItem('apiAuth', token);
-        },
-        logout (state, vm) {
+        logout () {
             sessionStorage.removeItem('access');
-            state.apiAuth = '';
+            sessionStorage.removeItem('apiAuth');
             // 恢复默认样式
             let themeLink = document.querySelector('link[name="theme"]');
             themeLink.setAttribute('href', '');

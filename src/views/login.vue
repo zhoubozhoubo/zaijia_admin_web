@@ -68,7 +68,7 @@ export default {
                         if (response.data.code === 1) {
                             sessionStorage.setItem('access', response.data.data.access);
                             sessionStorage.setItem('user', vm.form.username);
-                            vm.$store.commit('setApiAuth', response.data.data.apiAuth);
+                            sessionStorage.setItem('apiAuth', response.data.data.apiAuth);
                             vm.$Message.success(response.data.msg);
                             vm.$store.commit('setAvator', 'http://tx.haiqq.com/uploads/allimg/150325/1223213930-12.jpg');
                             vm.$router.push({

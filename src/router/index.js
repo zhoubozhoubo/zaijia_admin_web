@@ -2,7 +2,6 @@ import Vue from 'vue';
 import iView from 'iview';
 import Util from '../libs/util';
 import VueRouter from 'vue-router';
-import store from '../store';
 import {routers} from './router';
 import config from '../../build/config';
 import axios from 'axios';
@@ -17,7 +16,7 @@ const RouterConfig = {
 export const router = new VueRouter(RouterConfig);
 
 router.beforeEach((to, from, next) => {
-    let apiAuth = store.getters.apiAuth;
+    let apiAuth = sessionStorage.getItem('apiAuth');
     iView.LoadingBar.start();
     Util.title(to.meta.title);
     if (sessionStorage.getItem('locking') === '1' && to.name !== 'locking') { // 判断当前是否是锁定状态
@@ -41,7 +40,7 @@ router.beforeEach((to, from, next) => {
             // 统一处理请求的UserToken
             axios.defaults.baseURL = config.baseUrl;
             axios.interceptors.request.use(function (config) {
-                config.headers['ApiAuth'] = store.getters.apiAuth;
+                config.headers['ApiAuth'] = sessionStorage.getItem('apiAuth');
                 return config;
             });
             Util.toDefaultPage([...routers], to.name, router, next);
