@@ -14,6 +14,13 @@ const user = {
             if (theme) {
                 localStorage.theme = theme;
             }
+        },
+        login (state, data) {
+            sessionStorage.setItem('access', data.access);
+            sessionStorage.setItem('user', data.nickname);
+            sessionStorage.setItem('headImg', data.headImg);
+            sessionStorage.setItem('apiAuth', data.apiAuth);
+            sessionStorage.setItem('userInfo', JSON.stringify(data));
         }
     }
 };

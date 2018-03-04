@@ -66,10 +66,7 @@ export default {
                         password: this.form.password
                     }).then(function (response) {
                         if (response.data.code === 1) {
-                            sessionStorage.setItem('access', response.data.data.access);
-                            sessionStorage.setItem('user', response.data.data.nickname);
-                            sessionStorage.setItem('headImg', response.data.data.headImg);
-                            sessionStorage.setItem('apiAuth', response.data.data.apiAuth);
+                            vm.$store.commit('login', response.data.data);
                             vm.$Message.success(response.data.msg);
                             vm.$router.push({
                                 name: 'home_index'
