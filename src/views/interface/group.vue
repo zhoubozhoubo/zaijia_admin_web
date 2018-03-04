@@ -55,6 +55,29 @@
                 <FormItem label="组名称" prop="name">
                     <Input v-model="formItem.name" placeholder="请输入接口组名称"></Input>
                 </FormItem>
+                <FormItem label="组头像" prop="image">
+                    <div class="demo-upload-list" v-if="formItem.image">
+                        <img :src="formItem.image">
+                        <div class="demo-upload-list-cover">
+                            <Icon type="ios-trash-outline" @click.native="handleImgRemove()"></Icon>
+                        </div>
+                    </div>
+                    <input v-if="formItem.image" v-model="formItem.image" type="hidden" name="image">
+                    <Upload type="drag"
+                            :action="uploadUrl"
+                            :headers="uploadHeader"
+                            v-if="!formItem.image"
+                            :format="['jpg','jpeg','png']"
+                            :max-size="5120"
+                            :on-success="handleImgSuccess"
+                            :on-format-error="handleImgFormatError"
+                            :on-exceeded-size="handleImgMaxSize"
+                            style="display: inline-block;width:58px;">
+                        <div style="width: 58px;height:58px;line-height: 58px;">
+                            <Icon type="camera" size="20"></Icon>
+                        </div>
+                    </Upload>
+                </FormItem>
                 <FormItem label="组标识" prop="hash">
                     <Input style="width: 300px" disabled v-model="formItem.hash"></Input>
                     <Badge count="系统自动生成，不允许修改" style="margin-left:5px"></Badge>
@@ -71,6 +94,7 @@
     </div>
 </template>
 <script>
+    import config from '../../../build/config';
     import axios from 'axios';
 
     const editButton = (vm, h, currentRow, index) => {
@@ -86,6 +110,7 @@
                     vm.formItem.id = currentRow.id;
                     vm.formItem.name = currentRow.name;
                     vm.formItem.hash = currentRow.hash;
+                    vm.formItem.image = currentRow.image;
                     vm.formItem.description = currentRow.description;
                     vm.modalSetting.show = true;
                     vm.modalSetting.index = index;
@@ -135,6 +160,8 @@
         name: 'interface_group',
         data () {
             return {
+                uploadUrl: '',
+                uploadHeader: {},
                 columnsList: [
                     {
                         title: '序号',
@@ -198,6 +225,7 @@
                     description: '',
                     name: '',
                     hash: '',
+                    image: '',
                     id: 0
                 },
                 ruleValidate: {
@@ -214,6 +242,8 @@
         methods: {
             init () {
                 let vm = this;
+                this.uploadUrl = config.baseUrl + 'Index/upload';
+                this.uploadHeader = {'ApiAuth': sessionStorage.getItem('apiAuth')};
                 this.columnsList.forEach(item => {
                     if (item.handle) {
                         item.render = (h, param) => {
@@ -368,9 +398,33 @@
                     }
                 });
             },
+            handleImgFormatError (file) {
+                this.$Notice.warning({
+                    title: '文件类型不合法',
+                    desc: file.name + '的文件类型不正确，请上传jpg或者png图片。'
+                });
+            },
+            handleImgRemove () {
+                this.formItem.image = '';
+            },
+            handleImgSuccess (response) {
+                if (response.code === 1) {
+                    this.$Message.success(response.msg);
+                    this.formItem.image = response.data.fileUrl;
+                } else {
+                    this.$Message.error(response.msg);
+                }
+            },
+            handleImgMaxSize (file) {
+                this.$Notice.warning({
+                    title: '文件大小不合法',
+                    desc: file.name + '太大啦请上传小于5M的文件。'
+                });
+            },
             doCancel (data) {
                 if (!data) {
                     this.formItem.id = 0;
+                    this.formItem.image = '';
                     this.$refs['myForm'].resetFields();
                     this.modalSetting.loading = false;
                     this.modalSetting.index = 0;
