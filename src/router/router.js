@@ -57,10 +57,10 @@ export const otherRouter = {
             component: () => import('@/views/home/home.vue')
         },
         {
-            path: 'ownspace',
+            path: 'own',
             title: '个人中心',
-            name: 'ownspace_index',
-            component: () => import('@/views/own_space/index.vue')
+            name: 'own_index',
+            component: () => import('@/views/own/index.vue')
         },
         {
             path: 'request/:hash',

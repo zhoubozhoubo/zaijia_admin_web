@@ -129,9 +129,9 @@
             },
             handleClickUserDropdown (name) {
                 if (name === 'ownSpace') {
-                    util.openNewPage(this, 'ownspace_index');
+                    util.openNewPage(this, 'own_index');
                     this.$router.push({
-                        name: 'ownspace_index'
+                        name: 'own_index'
                     });
                 } else if (name === 'loginout') {
                     // 退出登录
