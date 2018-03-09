@@ -30,7 +30,7 @@ module.exports = merge(webpackBaseConfig, {
         }),
         new CopyWebpackPlugin([
             {
-                from: 'src/views/main_components/theme-switch/theme'
+                from: 'src/views/main_components/theme_switch/theme'
             }
         ])
     ]

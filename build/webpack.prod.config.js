@@ -59,7 +59,7 @@ module.exports = merge(webpackBaseConfig, {
                 to: 'fonts'
             },
             {
-                from: 'src/views/main_components/theme-switch/theme'
+                from: 'src/views/main_components/theme_switch/theme'
             }
         ]),
         new HtmlWebpackPlugin({

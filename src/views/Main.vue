@@ -70,7 +70,7 @@
     import breadcrumbNav from './main_components/breadcrumb-nav.vue';
     import fullScreen from './main_components/fullscreen.vue';
     import lockScreen from './main_components/lock_screen/lockscreen.vue';
-    import themeSwitch from './main_components/theme-switch/theme-switch.vue';
+    import themeSwitch from './main_components/theme_switch/theme_switch.vue';
     import util from '@/libs/util.js';
     import axios from 'axios';
 
