@@ -122,7 +122,7 @@
         return h('Poptip', {
             props: {
                 confirm: true,
-                title: '您确定要删除这条数据吗? ',
+                title: '您确定要删除此接口分组么? 如当前分组下仍有接口，将自动划归于默认分组！',
                 transfer: true
             },
             on: {

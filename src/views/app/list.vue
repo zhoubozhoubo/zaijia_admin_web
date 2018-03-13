@@ -66,7 +66,6 @@
                 </FormItem>
                 <FormItem label="应用分组" prop="app_group">
                     <Select v-model="formItem.app_group" style="width:200px">
-                        <Option value="default" key="default"> 默认分组 </Option>
                         <Option v-for="(v, i) in appGroup" :value="v.hash" :key="v.hash"> {{v.name}} </Option>
                     </Select>
                 </FormItem>
