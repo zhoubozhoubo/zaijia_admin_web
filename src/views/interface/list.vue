@@ -405,7 +405,7 @@
                                         axios.get('InterfaceList/changeStatus', {
                                             params: {
                                                 status: status,
-                                                id: currentRowData.id
+                                                hash: currentRowData.hash
                                             }
                                         }).then(function (response) {
                                             let res = response.data;
