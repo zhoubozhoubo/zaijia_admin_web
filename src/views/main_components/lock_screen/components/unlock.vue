@@ -45,7 +45,7 @@ export default {
     },
     computed: {
         headImgPath () {
-            return sessionStorage.headImg ? sessionStorage.headImg : require('../../images/defaultImg.jpg');
+            return sessionStorage.headImg ? sessionStorage.headImg : require('../../../../images/defaultImg.jpg');
         }
     },
     methods: {
