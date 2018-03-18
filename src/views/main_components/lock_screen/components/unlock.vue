@@ -56,8 +56,9 @@ export default {
         },
         handleUnlock () {
             let vObj = this;
+            let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
             axios.post('Login/index', {
-                username: sessionStorage.getItem('user'),
+                username: userInfo.username,
                 password: vObj.password
             }).then(function (response) {
                 if (response.data.code === 1) {
