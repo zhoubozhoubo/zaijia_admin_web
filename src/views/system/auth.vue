@@ -432,20 +432,17 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.memberData[param.index];
                             if (currentRowData.status === 1) {
-                                return h('Badge', {
-                                    attrs: {
-                                        count: '启用'
-                                    },
+                                return h('Tag', {
                                     props: {
-                                        'class-name': 'badge-success'
+                                        'color': 'green'
                                     }
-                                });
+                                }, '启用');
                             } else {
-                                return h('Badge', {
-                                    attrs: {
-                                        count: '禁用'
+                                return h('Tag', {
+                                    props: {
+                                        'color': 'red'
                                     }
-                                });
+                                }, '禁用');
                             }
                         };
                     }
