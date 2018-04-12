@@ -306,9 +306,10 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
                             if (currentRowData.hot > 10000) {
-                                return (parseInt(currentRowData.hot) / 10000).toFixed(1) + '万';
+                                let hot = (parseInt(currentRowData.hot) / 10000).toFixed(1) + '万';
+                                return h('span', hot);
                             } else {
-                                return currentRowData.hot;
+                                return h('span', currentRowData.hot);
                             }
                         };
                     }

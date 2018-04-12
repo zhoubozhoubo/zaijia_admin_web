@@ -174,7 +174,7 @@
                     if (item.key === 'addTime') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
-                            return util.formatDate(currentRowData.addTime, 'yyyy-MM-dd hh:mm:ss');
+                            return h('span', util.formatDate(currentRowData.addTime));
                         };
                     }
                 });
