@@ -11,7 +11,7 @@
                         <Button type="primary" @click="alertAdd" icon="plus-round">新增</Button>
                     </p>
                     <div>
-                        <Table :columns="columnsList" :data="tableData" border disabled-hover></Table>
+                        <Table :loading="tableLoading" :columns="columnsList" :data="tableData" border disabled-hover></Table>
                     </div>
                 </Card>
             </Col>
@@ -151,6 +151,7 @@
                         handle: ['edit', 'delete']
                     }
                 ],
+                tableLoading: false,
                 tableData: [],
                 modalSetting: {
                     show: false,
@@ -277,8 +278,10 @@
             },
             getList () {
                 let vm = this;
+                vm.tableLoading = true;
                 axios.get('Menu/index').then(function (response) {
                     let res = response.data;
+                    vm.tableLoading = false;
                     if (res.code === 1) {
                         vm.tableData = res.data.list;
                     } else {
