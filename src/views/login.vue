@@ -12,7 +12,7 @@
                 </p>
                 <div class="form-con">
                     <Form ref="loginForm" :model="form" :rules="rules">
-                        <FormItem prop="userName">
+                        <FormItem prop="username">
                             <Input v-model="form.username" placeholder="请输入用户名">
                             <span slot="prepend">
                                     <Icon :size="16" type="person"></Icon>
