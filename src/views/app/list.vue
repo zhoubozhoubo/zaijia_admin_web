@@ -293,24 +293,6 @@
             this.init();
             this.getList();
         },
-        activated () {
-            let vm = this;
-            axios.get('AppGroup/getAll').then(function (response) {
-                let res = response.data;
-                if (res.code === 1) {
-                    vm.appGroup = res.data.list;
-                } else {
-                    if (res.code === -14) {
-                        vm.$store.commit('logout', vm);
-                        vm.$router.push({
-                            name: 'login'
-                        });
-                    } else {
-                        vm.$Message.error(res.msg);
-                    }
-                }
-            });
-        },
         methods: {
             init () {
                 let vm = this;
@@ -376,6 +358,21 @@
             },
             alertAdd () {
                 let vm = this;
+                axios.get('AppGroup/getAll').then(function (response) {
+                    let res = response.data;
+                    if (res.code === 1) {
+                        vm.appGroup = res.data.list;
+                    } else {
+                        if (res.code === -14) {
+                            vm.$store.commit('logout', vm);
+                            vm.$router.push({
+                                name: 'login'
+                            });
+                        } else {
+                            vm.$Message.error(res.msg);
+                        }
+                    }
+                });
                 axios.get('App/getAppInfo').then(function (response) {
                     let res = response.data;
                     if (res.code === 1) {
