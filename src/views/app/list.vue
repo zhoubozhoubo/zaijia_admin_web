@@ -61,8 +61,9 @@
                 </FormItem>
                 <FormItem label="AppSecret" prop="app_secret">
                     <Input style="width: 300px" disabled v-model="formItem.app_secret"
-                           placeholder="请输入AppSecret"></Input>
-                    <Badge count="系统自动生成，不允许修改" style="margin-left:5px"></Badge>
+                           placeholder="请输入AppSecret">
+                        <Button slot="append" icon="refresh" @click="refreshAppSecret"></Button>
+                    </Input>
                 </FormItem>
                 <FormItem label="应用分组" prop="app_group">
                     <Select v-model="formItem.app_group" style="width:200px">
@@ -468,6 +469,28 @@
             search () {
                 this.tableShow.currentPage = 1;
                 this.getList();
+            },
+            refreshAppSecret () {
+                let vm = this;
+                axios.get('App/refreshAppSecret', {
+                    params: {
+                        id: vm.formItem.id
+                    }
+                }).then(function (response) {
+                    let res = response.data;
+                    if (res.code === 1) {
+                        vm.formItem.app_secret = res.data.app_secret;
+                    } else {
+                        if (res.code === -14) {
+                            vm.$store.commit('logout', vm);
+                            vm.$router.push({
+                                name: 'login'
+                            });
+                        } else {
+                            vm.$Message.error(res.msg);
+                        }
+                    }
+                });
             },
             getList () {
                 let vm = this;
