@@ -469,6 +469,7 @@
                             target = 'InterfaceList/edit';
                         }
                         axios.post(target, self.formItem).then(function (response) {
+                            self.modalSetting.loading = false;
                             if (response.data.code === 1) {
                                 self.$Message.success(response.data.msg);
                                 self.getList();
