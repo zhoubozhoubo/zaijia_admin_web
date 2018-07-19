@@ -471,11 +471,11 @@
                         axios.post(target, self.formItem).then(function (response) {
                             if (response.data.code === 1) {
                                 self.$Message.success(response.data.msg);
+                                self.getList();
+                                self.cancel();
                             } else {
                                 self.$Message.error(response.data.msg);
                             }
-                            self.getList();
-                            self.cancel();
                         });
                     }
                 });
