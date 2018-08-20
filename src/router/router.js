@@ -159,7 +159,7 @@ export const appRouter = [
                 name: "interface_group",
                 access: 'admin/InterfaceGroup/index',
                 title: "接口分组",
-                component: () => import('@/views/error_page/404.vue')
+                component: () => import('@/views/interface/group.vue')
             },
             {
                 path: "list",
