@@ -22,7 +22,7 @@
         </Row>
         <Modal v-model="modalSetting.show" width="668" :styles="{top: '30px'}" @on-visible-change="doCancel">
             <p slot="header" style="color:#2d8cf0;">
-                <Icon type="information-circled"></Icon>
+                <Icon type="md-information-circle"></Icon>
                 <span>{{formItem.id ? '编辑' : '新增'}}返回字段</span>
             </p>
             <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="80">
@@ -58,7 +58,7 @@
         </Modal>
         <Modal v-model="uploadModal.show" width="668" :styles="{top: '30px'}" @on-visible-change="doUploadCancel">
             <p slot="header" style="color:#2d8cf0;">
-                <Icon type="information-circled"></Icon>
+                <Icon type="md-information-circle"></Icon>
                 <span>上传返回字段</span>
             </p>
             <Form ref="uploadForm" :rules="uploadValidate" :model="uploadItem" :label-width="80">

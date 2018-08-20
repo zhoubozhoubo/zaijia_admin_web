@@ -25,7 +25,7 @@ export const page403 = {
         title: '403-权限不足'
     },
     name: 'error_403',
-    component: () => import('@//views/error_page/403.vue')
+    component: () => import('@/views/error_page/403.vue')
 };
 
 export const page500 = {
@@ -159,7 +159,7 @@ export const appRouter = [
                 name: "interface_group",
                 access: 'admin/InterfaceGroup/index',
                 title: "接口分组",
-                component: () => import('@/views/interface/group.vue')
+                component: () => import('@/views/error_page/404.vue')
             },
             {
                 path: "list",

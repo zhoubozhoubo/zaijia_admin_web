@@ -6,7 +6,7 @@
     <div>
         <Card>
             <p slot="title">
-                <Icon type="person"></Icon>
+                <Icon type="md-person"></Icon>
                 个人信息
             </p>
             <div>
@@ -40,7 +40,7 @@
                                 :on-exceeded-size="handleImgMaxSize"
                                 style="display: inline-block;width:58px;">
                             <div style="width: 58px;height:58px;line-height: 58px;">
-                                <Icon type="camera" size="20"></Icon>
+                                <Icon type="ios-camera" size="20"></Icon>
                             </div>
                         </Upload>
                     </FormItem>
@@ -68,7 +68,7 @@
         </Card>
         <Modal v-model="confirmSub" width="360">
             <p slot="header" style="color:#f60;text-align:center">
-                <Icon type="information-circled"></Icon>
+                <Icon type="md-information-circle"></Icon>
                 <span>确定要提交么</span>
             </p>
             <div style="text-align:center">
