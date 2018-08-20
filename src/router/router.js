@@ -81,14 +81,14 @@ export const otherRouter = {
 export const appRouter = [
     {
         path: '/system',
-        icon: 'wrench',
+        icon: 'ios-build',
         name: 'system',
         title: '系统配置',
         component: Main,
         children: [
             {
                 path: 'menu',
-                icon: 'navicon-round',
+                icon: 'md-menu',
                 name: 'menu',
                 access: 'admin/Menu/index',
                 title: '菜单维护',
@@ -105,7 +105,7 @@ export const appRouter = [
             },
             {
                 path: 'auth',
-                icon: 'locked',
+                icon: 'md-warning',
                 name: 'auth',
                 access: 'admin/Auth/index',
                 title: '权限管理',
@@ -113,7 +113,7 @@ export const appRouter = [
             },
             {
                 path: 'log',
-                icon: 'clipboard',
+                icon: 'md-list-box',
                 name: 'log',
                 access: 'admin/Log/index',
                 title: '操作日志',
@@ -123,14 +123,14 @@ export const appRouter = [
     },
     {
         path: "/app",
-        icon: "android-cloud",
+        icon: 'md-globe',
         name: "app",
         title: "应用接入",
         component: Main,
         children: [
             {
                 path: "group",
-                icon: "ios-box",
+                icon: 'logo-buffer',
                 name: "app_group",
                 access: 'admin/AppGroup/index',
                 title: "应用分组",
@@ -138,7 +138,7 @@ export const appRouter = [
             },
             {
                 path: "index",
-                icon: "ios-list",
+                icon: "md-code-working",
                 name: "app_index",
                 access: 'admin/App/index',
                 title: "应用列表",
@@ -148,14 +148,14 @@ export const appRouter = [
     },
     {
         path: "/interface",
-        icon: "navigate",
+        icon: "md-cube",
         name: "interface",
         title: "接口管理",
         component: Main,
         children: [
             {
                 path: "group",
-                icon: "folder",
+                icon: "ios-folder-open",
                 name: "interface_group",
                 access: 'admin/InterfaceGroup/index',
                 title: "接口分组",
@@ -163,7 +163,7 @@ export const appRouter = [
             },
             {
                 path: "list",
-                icon: "document",
+                icon: "ios-document-outline",
                 name: "interface_list",
                 access: 'admin/InterfaceList/index',
                 title: "接口列表",

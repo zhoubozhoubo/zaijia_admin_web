@@ -62,7 +62,7 @@
                 <FormItem label="AppSecret" prop="app_secret">
                     <Input style="width: 300px" disabled v-model="formItem.app_secret"
                            placeholder="请输入AppSecret">
-                        <Button slot="append" icon="refresh" @click="refreshAppSecret"></Button>
+                        <Button slot="append" icon="md-refresh" @click="refreshAppSecret"></Button>
                     </Input>
                 </FormItem>
                 <FormItem label="应用分组" prop="app_group">
