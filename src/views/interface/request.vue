@@ -42,7 +42,7 @@
                 </FormItem>
                 <FormItem label="默认值" prop="default" v-if="formItem.isMust.toString() === '0'">
                     <Input style="width: 300px" v-model="formItem.defaults"></Input>
-                    <Badge count="仅在字段非必填的情况下生效" style="margin-left:5px"></Badge>
+                    <Tag color="error" style="margin-left:5px">仅在字段非必填的情况下生效</Tag>
                 </FormItem>
                 <FormItem label="规则细节" prop="range">
                     <Input v-model="formItem.range" type="textarea" placeholder="请输入符合要求的JSON字符串"></Input>
@@ -143,7 +143,7 @@
                         title: '数据类型',
                         align: 'center',
                         key: 'dataType',
-                        width: 90
+                        width: 100
                     },
                     {
                         title: '是否必须',
@@ -223,34 +223,28 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
                             if (currentRowData.isMust === 1) {
-                                return h('Badge', {
+                                return h('Tag', {
                                     attrs: {
-                                        count: '必填'
+                                        color: 'error'
                                     }
-                                });
+                                }, '必填');
                             } else {
-                                return h('Badge', {
+                                return h('Tag', {
                                     attrs: {
-                                        count: '可选'
-                                    },
-                                    props: {
-                                        'class-name': 'badge-success'
+                                        color: 'success'
                                     }
-                                });
+                                }, '可选');
                             }
                         };
                     }
                     if (item.key === 'dataType') {
                         item.render = (h, param) => {
                             let type = vm.tableData[param.index].dataType;
-                            return h('Badge', {
+                            return h('Tag', {
                                 attrs: {
-                                    count: vm.tableShow.dataType[type]
-                                },
-                                props: {
-                                    'class-name': 'badge-info'
+                                    color: 'volcano'
                                 }
-                            });
+                            }, vm.tableShow.dataType[type]);
                         };
                     }
                 });

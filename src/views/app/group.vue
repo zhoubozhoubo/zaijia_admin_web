@@ -57,7 +57,7 @@
                 </FormItem>
                 <FormItem label="组标识" prop="hash">
                     <Input style="width: 300px" disabled v-model="formItem.hash"></Input>
-                    <Badge count="系统自动生成，不允许修改" style="margin-left:5px"></Badge>
+                    <Tag color="error" style="margin-left:5px">系统自动生成，不允许修改</Tag>
                 </FormItem>
                 <FormItem label="组描述" prop="description">
                     <Input v-model="formItem.description" :autosize="{maxRows: 10, minRows: 4}" type="textarea" placeholder="请输入应用组描述"></Input>

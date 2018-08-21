@@ -38,7 +38,7 @@
                 </FormItem>
                 <FormItem label="菜单排序" prop="sort">
                     <InputNumber :min="0" v-model="formItem.sort"></InputNumber>
-                    <Badge count="数字越小越靠前" style="margin-left:5px"></Badge>
+                    <Tag color="error" style="margin-left:5px">数字越小越靠前</Tag>
                 </FormItem>
             </Form>
             <div slot="footer">

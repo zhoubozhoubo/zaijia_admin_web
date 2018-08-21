@@ -38,11 +38,11 @@
                     <Col :md="12" :lg="24" :style="{marginBottom: '10px'}">
                         <Card>
                             <p slot="title" class="card-title">
-                                <Icon type="android-checkbox-outline"></Icon>
+                                <Icon type="md-checkbox-outline"></Icon>
                                 待办事项
                             </p>
                             <a type="text" slot="extra" @click.prevent="addNewToDoItem">
-                                <Icon type="plus-round"></Icon>
+                                <Icon type="md-add" size="23"></Icon>
                             </a>
                             <Modal
                                 v-model="showAddNewTodo"
@@ -72,7 +72,7 @@
                         <infor-card
                             id-name="user_created_count"
                             :end-val="count.createUser"
-                            iconType="android-person-add"
+                            iconType="md-person-add"
                             color="#2d8cf0"
                             intro-text="今日新增用户"
                         ></infor-card>
@@ -91,7 +91,7 @@
                         <infor-card
                             id-name="collection_count"
                             :end-val="count.collection"
-                            iconType="upload"
+                            iconType="md-cloud-upload"
                             color="#ffd572"
                             intro-text="今日数据采集量"
                         ></infor-card>
@@ -100,7 +100,7 @@
                         <infor-card
                             id-name="transfer_count"
                             :end-val="count.transfer"
-                            iconType="shuffle"
+                            iconType="md-swap"
                             color="#f25e43"
                             intro-text="今日服务调用量"
                         ></infor-card>
@@ -109,7 +109,7 @@
                 <Row>
                     <Card :padding="0">
                         <p slot="title" class="card-title">
-                            <Icon type="map"></Icon>
+                            <Icon type="md-map"></Icon>
                             今日服务调用地理分布
                         </p>
                         <div class="map-con">
@@ -130,7 +130,7 @@
             <Col :md="24" :lg="8" :style="{marginBottom: '10px'}">
                 <Card>
                     <p slot="title" class="card-title">
-                        <Icon type="android-map"></Icon>
+                        <Icon type="ios-map"></Icon>
                         上周每日来访量统计
                     </p>
                     <div class="data-source-row">
@@ -141,7 +141,7 @@
             <Col :md="24" :lg="8" :style="{marginBottom: '10px'}">
                 <Card>
                     <p slot="title" class="card-title">
-                        <Icon type="ios-pulse-strong"></Icon>
+                        <Icon type="ios-pulse"></Icon>
                         数据来源统计
                     </p>
                     <div class="data-source-row">
@@ -152,7 +152,7 @@
             <Col :md="24" :lg="8">
                 <Card>
                     <p slot="title" class="card-title">
-                        <Icon type="android-wifi"></Icon>
+                        <Icon type="md-wifi"></Icon>
                         各类用户服务调用变化统计
                     </p>
                     <div class="data-source-row">
@@ -164,7 +164,7 @@
         <Row class="margin-top-10">
             <Card>
                 <p slot="title" class="card-title">
-                    <Icon type="ios-shuffle-strong"></Icon>
+                    <Icon type="ios-shuffle"></Icon>
                     上周每日服务调用量(万)
                 </p>
                 <div class="line-chart-con">

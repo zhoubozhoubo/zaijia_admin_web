@@ -74,7 +74,7 @@
                 </FormItem>
                 <FormItem label="接口映射" prop="hash">
                     <Input style="width: 300px" disabled v-model="formItem.hash"></Input>
-                    <Badge count="系统自动生成，不允许修改" style="margin-left:5px"></Badge>
+                    <Tag color="error" style="margin-left:5px">系统自动生成，不允许修改</Tag>
                 </FormItem>
                 <FormItem label="AccessToken" prop="accessToken">
                     <Select v-model="formItem.accessToken" style="width:200px">
@@ -255,7 +255,7 @@
                         title: '请求方式',
                         align: 'center',
                         key: 'method',
-                        width: 90
+                        width: 100
                     },
                     {
                         title: '接口状态',
@@ -332,40 +332,31 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
                             if (currentRowData.isTest === 1) {
-                                return h('Badge', {
+                                return h('Tag', {
                                     attrs: {
-                                        count: '测试'
+                                        color: 'error'
                                     }
-                                });
+                                }, '测试');
                             } else {
                                 switch (currentRowData.method) {
                                     case 1:
-                                        return h('Badge', {
+                                        return h('Tag', {
                                             attrs: {
-                                                count: 'POST'
-                                            },
-                                            props: {
-                                                'class-name': 'badge-success'
+                                                color: 'green'
                                             }
-                                        });
+                                        }, 'POST');
                                     case 2:
-                                        return h('Badge', {
+                                        return h('Tag', {
                                             attrs: {
-                                                count: 'GET'
-                                            },
-                                            props: {
-                                                'class-name': 'badge-info'
+                                                color: 'red'
                                             }
-                                        });
+                                        }, 'GET');
                                     case 0:
-                                        return h('Badge', {
+                                        return h('Tag', {
                                             attrs: {
-                                                count: '不限'
-                                            },
-                                            props: {
-                                                'class-name': 'badge-warning'
+                                                color: 'success'
                                             }
-                                        });
+                                        }, '不限');
                                 }
                             }
                         };
