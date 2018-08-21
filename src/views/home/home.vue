@@ -50,7 +50,7 @@
                                 @on-ok="addNew"
                                 @on-cancel="cancelAdd">
                                 <Row type="flex" justify="center">
-                                    <Input v-model="newToDoItemValue" icon="compose" placeholder="请输入..." style="width: 300px" />
+                                    <Input v-model="newToDoItemValue" icon="ios-create-outline" placeholder="请输入..." style="width: 300px" />
                                 </Row>
                                 <Row slot="footer">
                                     <Button type="text" @click="cancelAdd">取消</Button>

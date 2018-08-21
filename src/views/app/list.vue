@@ -57,7 +57,7 @@
                 </FormItem>
                 <FormItem label="AppId" prop="app_id">
                     <Input style="width: 300px" disabled v-model="formItem.app_id" placeholder="请输入AppId"></Input>
-                    <Badge count="系统自动生成，不允许修改" style="margin-left:5px"></Badge>
+                    <Tag color="error" style="margin-left:5px">系统自动生成，不允许修改</Tag>
                 </FormItem>
                 <FormItem label="AppSecret" prop="app_secret">
                     <Input style="width: 300px" disabled v-model="formItem.app_secret"
