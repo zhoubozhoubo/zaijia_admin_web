@@ -69,6 +69,7 @@
                     <Select v-model="formItem.app_group" style="width:200px">
                         <Option v-for="(v, i) in appGroup" :value="v.hash" :key="v.hash"> {{v.name}} </Option>
                     </Select>
+                    <Button icon="md-refresh" @click="getAppGroups(true)"></Button>
                 </FormItem>
                 <FormItem label="应用描述" prop="app_info">
                     <Input v-model="formItem.app_info" type="textarea"></Input>
@@ -119,6 +120,7 @@
                     vm.formItem.app_id = currentRow.app_id;
                     vm.formItem.app_secret = currentRow.app_secret;
                     vm.formItem.app_group = currentRow.app_group;
+                    vm.getAppGroups(false);
                     axios.get('App/getAppInfo', {
                         params: {
                             id: currentRow.id
@@ -359,21 +361,7 @@
             },
             alertAdd () {
                 let vm = this;
-                axios.get('AppGroup/getAll').then(function (response) {
-                    let res = response.data;
-                    if (res.code === 1) {
-                        vm.appGroup = res.data.list;
-                    } else {
-                        if (res.code === -14) {
-                            vm.$store.commit('logout', vm);
-                            vm.$router.push({
-                                name: 'login'
-                            });
-                        } else {
-                            vm.$Message.error(res.msg);
-                        }
-                    }
-                });
+                vm.getAppGroups(false);
                 axios.get('App/getAppInfo').then(function (response) {
                     let res = response.data;
                     if (res.code === 1) {
@@ -525,6 +513,26 @@
                     this.$refs['myForm'].resetFields();
                     this.modalSetting.loading = false;
                     this.modalSetting.index = 0;
+                }
+            },
+            getAppGroups (refresh) {
+                let vm = this;
+                if (refresh || vm.appGroup === null || vm.appGroup.length === 0) {
+                    axios.get('AppGroup/getAll').then(function (response) {
+                        let res = response.data;
+                        if (res.code === 1) {
+                            vm.appGroup = res.data.list;
+                        } else {
+                            if (res.code === -14) {
+                                vm.$store.commit('logout', vm);
+                                vm.$router.push({
+                                    name: 'login'
+                                });
+                            } else {
+                                vm.$Message.error(res.msg);
+                            }
+                        }
+                    });
                 }
             }
         }

@@ -64,6 +64,7 @@
                     <Select v-model="formItem.groupHash" style="width:200px">
                         <Option v-for="(v, i) in apiGroup" :value="v.hash" :key="v.hash"> {{v.name}} </Option>
                     </Select>
+                    <Button icon="md-refresh" @click="getInterfaceGroups(true)"></Button>
                 </FormItem>
                 <FormItem label="请求方式" prop="method">
                     <Select v-model="formItem.method" style="width:200px">
@@ -138,6 +139,7 @@
                     vm.formItem.needLogin = currentRow.needLogin;
                     vm.modalSetting.show = true;
                     vm.modalSetting.index = index;
+                    vm.getInterfaceGroups(false);
                 }
             }
         }, '编辑');
@@ -413,21 +415,7 @@
             },
             alertAdd () {
                 let vm = this;
-                axios.get('InterfaceGroup/getAll').then(function (response) {
-                    let res = response.data;
-                    if (res.code === 1) {
-                        vm.apiGroup = res.data.list;
-                    } else {
-                        if (res.code === -14) {
-                            vm.$store.commit('logout', vm);
-                            vm.$router.push({
-                                name: 'login'
-                            });
-                        } else {
-                            vm.$Message.error(res.msg);
-                        }
-                    }
-                });
+                vm.getInterfaceGroups(false);
                 axios.get('InterfaceList/getHash').then(function (response) {
                     let res = response.data;
                     if (res.code === 1) {
@@ -537,6 +525,26 @@
                     }
                     vm.confirmRefresh = false;
                 });
+            },
+            getInterfaceGroups (refresh) {
+                let vm = this;
+                if (refresh || vm.apiGroup === null || vm.apiGroup.length === 0) {
+                    axios.get('InterfaceGroup/getAll').then(function (response) {
+                        let res = response.data;
+                        if (res.code === 1) {
+                            vm.apiGroup = res.data.list;
+                        } else {
+                            if (res.code === -14) {
+                                vm.$store.commit('logout', vm);
+                                vm.$router.push({
+                                    name: 'login'
+                                });
+                            } else {
+                                vm.$Message.error(res.msg);
+                            }
+                        }
+                    });
+                }
             }
         }
     };

@@ -5,7 +5,7 @@
 </p>
 
 # ApiAdmin-WEB
-[![](https://img.shields.io/wercker/ci/wercker/docs.svg)]()
+[![](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
 [![ApiAdmin](https://img.shields.io/hexpm/l/plug.svg)](http://www.apiadmin.org/)
 [![ApiAdmin](https://img.shields.io/badge/ApiAdmin-v3.0.6-brightgreen.svg)](https://gitee.com/apiadmin/ApiAdmin)
 [![vue](https://img.shields.io/badge/vue-2.5.13-brightgreen.svg?style=flat-square)](https://github.com/vuejs/vue)

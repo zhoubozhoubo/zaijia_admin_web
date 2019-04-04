@@ -43,6 +43,24 @@ router.beforeEach((to, from, next) => {
                 config.headers['ApiAuth'] = sessionStorage.getItem('apiAuth');
                 return config;
             });
+            axios.interceptors.response.use(response => {
+                // 如果session过期就重新登陆
+                if (response.data.code === -14) {
+                    // 清除掉session
+                    sessionStorage.clear();
+                    router.push({path: '/login'});
+                }
+                return response;
+            }, err => {
+                if (err.response.status === 504 || err.response.status === 404) {
+                    iView.Message.error('服务器异常');
+                } else if (err.response.status === 403) {
+                    iView.Message.error('权限不足,请联系管理员!');
+                } else if (err.response.status === 413) {
+                    iView.Message.error('文件过大超过限制!');
+                }
+                return Promise.resolve(err);
+            });
             Util.toDefaultPage([...routers], to.name, router, next);
         }
     }
