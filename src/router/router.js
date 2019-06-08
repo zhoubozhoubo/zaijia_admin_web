@@ -74,6 +74,18 @@ export const otherRouter = {
             name: 'interface_response',
             component: () => import('@/views/interface/response.vue')
         },
+        {
+            path: 'response/:hash',
+            title: '返回参数',
+            name: 'interface_response',
+            component: () => import('@/views/interface/response.vue')
+        },
+        {
+            path: 'db_table_details/:tableName',
+            title: '数据表配置',
+            name: 'db_table_details',
+            component: () => import('@/views/db_table/details.vue')
+        }
     ]
 };
 
@@ -168,6 +180,48 @@ export const appRouter = [
                 access: 'admin/InterfaceList/index',
                 title: "接口列表",
                 component: () => import('@/views/interface/list.vue')
+            }
+        ]
+    },
+    {
+        path: "/db_table",
+        icon: "md-cube",
+        name: "db_table",
+        title: "数据库管理",
+        component: Main,
+        children: [
+            {
+                path: "db_table_list",
+                icon: "ios-folder-open",
+                name: "db_table_list",
+                access: 'admin/DbTable/index',
+                title: "数据库管理",
+                component: () => import('@/views/db_table/list.vue')
+            }
+        ]
+    },
+    {
+        path: "/index",
+        icon: "md-cube",
+        name: "index",
+        title: "首页管理",
+        component: Main,
+        children: [
+            {
+                path: "banner",
+                icon: "ios-folder-open",
+                name: "banner_list",
+                access: 'admin/Banner/getList',
+                title: "轮播图列表",
+                component: () => import('@/views/index/banner/banner_list.vue')
+            },
+            {
+                path: "link",
+                icon: "ios-document-outline",
+                name: "link_list",
+                access: 'admin/Link/getList',
+                title: "链接列表",
+                component: () => import('@/views/index/link/link_list.vue')
             }
         ]
     },
