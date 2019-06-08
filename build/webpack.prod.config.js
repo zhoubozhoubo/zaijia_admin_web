@@ -13,7 +13,8 @@ const package = require('../package.json');
 
 module.exports = merge(webpackBaseConfig, {
     output: {
-        publicPath: 'https://admin.apiadmin.org/dist/',  // 修改 https://iv...admin 这部分为你的服务器域名
+        // publicPath: 'https://admin.apiadmin.org/dist/',  // 修改 https://iv...admin 这部分为你的服务器域名
+        publicPath: './',
         filename: '[name].[hash].js',
         chunkFilename: '[name].[hash].chunk.js'
     },
@@ -65,7 +66,7 @@ module.exports = merge(webpackBaseConfig, {
         new HtmlWebpackPlugin({
             title: 'ApiAdmin',
             favicon: './td_icon.ico',
-            filename: '../index.html',
+            filename: '../dist/index.html',
             template: '!!ejs-loader!./src/template/index.ejs',
             inject: false
         })
