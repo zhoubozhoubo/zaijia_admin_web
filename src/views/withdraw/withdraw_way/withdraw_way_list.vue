@@ -5,12 +5,6 @@
                 <Card style="margin-bottom: 10px">
                     <Form inline>
                         <FormItem style="margin-bottom: 0">
-                            <Select v-model="searchConf.status" clearable placeholder='请选择状态' style="width:100px">
-                                <Option value="0">关闭</Option>
-                                <Option value="1">开启</Option>
-                            </Select>
-                        </FormItem>
-                        <FormItem style="margin-bottom: 0">
                             <Button type="primary" shape="circle" icon="ios-search" @click="search">查询/刷新</Button>
                         </FormItem>
                     </Form>
@@ -20,9 +14,6 @@
         <Row>
             <Col span="24">
                 <Card>
-                    <p slot="title" style="height: 40px">
-                        <Button type="primary" @click="alertAdd" icon="md-add">新增</Button>
-                    </p>
                     <div>
                         <Table :loading="loading" :columns="columnsList" :data="tableData" border
                                disabled-hover></Table>
@@ -38,44 +29,17 @@
         <Modal v-model="modalSetting.show" width="700" :styles="{top: '30px'}" @on-visible-change="doCancel">
             <p slot="header" style="color:#2d8cf0;">
                 <Icon type="md-information-circle"></Icon>
-                <span>{{formItem.id ? '编辑' : '新增'}}</span>
+                <span>{{formItem.withdraw_way_id ? '编辑' : '新增'}}</span>
             </p>
             <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="100">
-                <FormItem label="轮播图名称" prop="name">
-                    <Input v-model="formItem.name" placeholder="轮播图名称"></Input>
+                <FormItem label="提现方式名称" prop="name">
+                    <Input v-model="formItem.name" placeholder="提现方式名称"></Input>
                 </FormItem>
-                <FormItem label="轮播图图片" prop="img">
-                    <div class="demo-upload-list" v-if="formItem.img">
-                        <img :src="formItem.img">
-                        <div class="demo-upload-list-cover">
-                            <Icon type="ios-eye-outline" @click.native="handleView()"></Icon>
-                            <Icon type="ios-trash-outline" @click.native="handleImgRemove()"></Icon>
-                        </div>
-                    </div>
-                    <input v-if="formItem.img" v-model="formItem.img" type="hidden" name="image">
-                    <Upload type="drag"
-                            :action="uploadUrl"
-                            :headers="uploadHeader"
-                            v-if="!formItem.img"
-                            :format="['jpg','jpeg','png']"
-                            :max-size="5120"
-                            :on-success="handleImgSuccess"
-                            :on-format-error="handleImgFormatError"
-                            :on-exceeded-size="handleImgMaxSize"
-                            style="display: inline-block;width:58px;">
-                        <div style="width: 58px;height:58px;line-height: 58px;">
-                            <Icon type="ios-camera" size="20"></Icon>
-                        </div>
-                    </Upload>
-                    <Modal title="View Image" v-model="visible">
-                        <img :src="formItem.img" v-if="visible" style="width: 100%">
-                    </Modal>
+                <FormItem label="提现最小金额" prop="min_money">
+                    <Input v-model="formItem.min_money" placeholder="提现最小金额"></Input>
                 </FormItem>
-                <FormItem label="轮播图跳转地址" prop="url">
-                    <Input v-model="formItem.url" placeholder="轮播图跳转地址"></Input>
-                </FormItem>
-                <FormItem label="排序" prop="sort">
-                    <Input v-model="formItem.sort" placeholder="排序"></Input>
+                <FormItem label="提现最大金额" prop="max_money">
+                    <Input v-model="formItem.max_money" placeholder="提现最大金额"></Input>
                 </FormItem>
             </Form>
             <div slot="footer">
@@ -93,8 +57,7 @@
 </template>
 
 <script>
-    import config from '../../../../build/config';
-    import {getDataList, saveData, deleteData, change} from '@/api/banner_list'
+    import {getDataList, saveData, deleteData, change} from '@/api/withdraw_way_list'
 
     const editButton = (vm, h, currentRow, index) => {
         return h('Button', {
@@ -106,11 +69,10 @@
             },
             on: {
                 'click': () => {
-                    vm.formItem.id = currentRow.id;
+                    vm.formItem.withdraw_way_id = currentRow.withdraw_way_id;
                     vm.formItem.name = currentRow.name;
-                    vm.formItem.img = currentRow.img;
-                    vm.formItem.url = currentRow.url;
-                    vm.formItem.sort = currentRow.sort;
+                    vm.formItem.min_money = currentRow.min_money;
+                    vm.formItem.max_money = currentRow.max_money;
                     vm.modalSetting.show = true
                     vm.modalSetting.index = index
                 }
@@ -126,7 +88,7 @@
             },
             on: {
                 'on-ok': () => {
-                    deleteData({id:currentRow.id}).then(res => {
+                    deleteData(currentRow.withdraw_way_id).then(res => {
                         if (res.data.code === 1) {
                             vm.tableData.splice(index, 1)
                             vm.$Message.success(res.data.msg)
@@ -152,32 +114,32 @@
     }
 
     export default {
-        name: 'banner_list',
+        name: 'withdraw_way_list',
         components: {},
         data() {
             return {
-                columnsList: [
-                    {title: "id", key: "id", align: "center", width: 80}, {
-                        title: "轮播图名称",
-                        key: "name",
-                        align: "center"
-                    }, {title: "轮播图图片", key: "img", align: "center"}, {
-                        title: "轮播图跳转地址",
-                        key: "url",
-                        align: "center"
-                    }, {title: "排序", key: "sort", align: "center", width: 100}, {
-                        title: "状态",
-                        key: "status",
-                        align: "center", width: 100
-                    }, {title: "操作", key: "handle", align: "center", handle: ["edit", "delete"], width: 180}
-                ],
+                columnsList: [{title: "id", key: "withdraw_way_id", align: "center", width: 80}, {
+                    title: "提现方式名称",
+                    key: "name",
+                    align: "center"
+                }, {title: "提现最小金额", key: "min_money", align: "center"}, {
+                    title: "提现最大金额",
+                    key: "max_money",
+                    align: "center"
+                }, {title: "状态", key: "status", align: "center", width: 100}, {
+                    title: "操作",
+                    key: "handle",
+                    align: "center",
+                    handle: ["edit", "delete"],
+                    width: 180
+                }],
                 tableData: [],
                 tableShow: {
                     currentPage: 1,
                     pageSize: 10,
                     listCount: 0
                 },
-                searchConf: {status: ""},
+                searchConf: [],
                 modalSetting: {
                     show: false,
                     loading: false,
@@ -188,13 +150,11 @@
                     img: '',
                     show: false
                 },
-                visible: false,
-                uploadUrl: '',
-                uploadHeader: {},
-                formItem: {id: "", name: "", img: "", url: "", sort: ""},
+                formItem: {withdraw_way_id: "", name: "", min_money: "", max_money: ""},
                 ruleValidate: {
-                    name: [{required: true, message: "请输入轮播图名称", trigger: "blur"}],
-                    img: [{required: true, message: "请上传图片", trigger: "blur"}]
+                    name: [{required: true, message: "请输入提现名称", trigger: "blur"}],
+                    min_money: [{required: true, message: "请输入最小金额", trigger: "blur"}],
+                    max_money: [{required: true, message: "请输入最大金额", trigger: "blur"}]
                 },
                 loading: true,
             }
@@ -202,8 +162,6 @@
         created() {
             this.init()
             this.getList()
-            this.uploadUrl = config.baseUrl + 'Index/upload';
-            this.uploadHeader = {'ApiAuth': sessionStorage.getItem('apiAuth')};
         },
         methods: {
             init() {
@@ -213,37 +171,28 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index]
                             return h('div', [
-                                editButton(vm, h, currentRowData, param.index),
-                                deleteButton(vm, h, currentRowData, param.index)
+                                editButton(vm, h, currentRowData, param.index)
                             ])
                         }
                     }
-                    if (item.key === 'img') {
+                    if (item.key === 'min_money') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
-                            if (currentRowData.img) {
-                                return h('img', {
-                                    style: {
-                                        width: '40px',
-                                        height: '40px',
-                                        cursor: 'pointer',
-                                        margin: '5px 0'
-                                    },
-                                    attrs: {
-                                        src: currentRowData.img,
-                                        shape: 'square',
-                                        size: 'large'
-                                    },
-                                    on: {
-                                        click: (e) => {
-                                            vm.modalSeeingImg.img = currentRowData.img;
-                                            vm.modalSeeingImg.show = true;
-                                        }
-                                    }
-                                });
-                            } else {
-                                return h('Tag', {}, '暂无图片');
-                            }
+                            return h('Tag', {
+                                attrs: {
+                                    color: 'green'
+                                }
+                            }, currentRowData.min_money);
+                        };
+                    }
+                    if (item.key === 'max_money') {
+                        item.render = (h, param) => {
+                            let currentRowData = vm.tableData[param.index];
+                            return h('Tag', {
+                                attrs: {
+                                    color: 'red'
+                                }
+                            }, currentRowData.max_money);
                         };
                     }
                     if (item.key === 'status') {
@@ -260,7 +209,10 @@
                                 },
                                 on: {
                                     'on-change': function (status) {
-                                        change({id: currentRowData.id, status: status}).then(res => {
+                                        change({
+                                            withdraw_way_id: currentRowData.withdraw_way_id,
+                                            status: status
+                                        }).then(res => {
                                             vm.$Message.success(res.data.msg)
                                             vm.cancel()
                                         }, err => {
@@ -272,44 +224,18 @@
                             }, [
                                 h('span', {
                                     slot: 'open'
-                                }, '开启'),
+                                }, '启用'),
                                 h('span', {
                                     slot: 'close'
-                                }, '关闭')
+                                }, '禁用')
                             ]);
                         };
                     }
                 })
             },
             alertAdd() {
-                this.formItem.id = 0
+                this.formItem.withdraw_way_id = 0
                 this.modalSetting.show = true
-            },
-            handleView() {
-                this.visible = true;
-            },
-            handleImgRemove() {
-                this.formItem.img = '';
-            },
-            handleImgFormatError(file) {
-                this.$Notice.warning({
-                    title: '文件类型不合法',
-                    desc: file.name + '的文件类型不正确，请上传jpg或者png图片。'
-                });
-            },
-            handleImgMaxSize(file) {
-                this.$Notice.warning({
-                    title: '文件大小不合法',
-                    desc: file.name + '太大啦请上传小于5M的文件。'
-                });
-            },
-            handleImgSuccess(response) {
-                if (response.code === 1) {
-                    this.$Message.success(response.msg);
-                    this.formItem.img = response.data.fileUrl;
-                } else {
-                    this.$Message.error(response.msg);
-                }
             },
             submit() {
                 this.$refs['myForm'].validate((valid) => {
@@ -332,7 +258,7 @@
             },
             doCancel(data) {
                 if (!data) {
-                    this.formItem.id = 0
+                    this.formItem.withdraw_way_id = 0
                     this.$refs['myForm'].resetFields()
                     this.modalSetting.loading = false
                     this.modalSetting.index = 0
@@ -364,46 +290,6 @@
 </script>
 
 <style scoped>
-    .demo-upload-list {
-        display: inline-block;
-        width: 60px;
-        height: 60px;
-        text-align: center;
-        line-height: 60px;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        overflow: hidden;
-        background: #fff;
-        position: relative;
-        box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
-        margin-right: 4px;
-    }
-
-    .demo-upload-list img {
-        width: 100%;
-        height: 100%;
-    }
-
-    .demo-upload-list-cover {
-        display: none;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(0, 0, 0, .6);
-    }
-
-    .demo-upload-list:hover .demo-upload-list-cover {
-        display: block;
-    }
-
-    .demo-upload-list-cover i {
-        color: #fff;
-        font-size: 20px;
-        cursor: pointer;
-        margin: 0 2px;
-    }
 </style>
 <style>
 </style>

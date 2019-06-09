@@ -225,6 +225,122 @@ export const appRouter = [
             }
         ]
     },
+    {
+        path: "/user",
+        icon: "md-cube",
+        name: "user",
+        title: "用户管理",
+        component: Main,
+        children: [
+            {
+                path: "user",
+                icon: "ios-folder-open",
+                name: "user_list",
+                access: 'admin/UserCon/getList',
+                title: "用户列表",
+                component: () => import('@/views/user/user/user_list.vue')
+            },
+            {
+                path: "user_income",
+                icon: "ios-folder-open",
+                name: "user_income_list",
+                access: 'admin/UserIncome/getList',
+                title: "用户收入列表",
+                component: () => import('@/views/user/user_income/user_income_list.vue')
+            },
+            {
+                path: "user_notice",
+                icon: "ios-folder-open",
+                name: "user_notice_list",
+                access: 'admin/UserNotice/getList',
+                title: "用户消息列表",
+                component: () => import('@/views/user/user_notice/user_notice_list.vue')
+            },
+            {
+                path: "user_task",
+                icon: "ios-folder-open",
+                name: "user_task_list",
+                access: 'admin/UserTask/getList',
+                title: "用户任务列表",
+                component: () => import('@/views/user/user_task/user_task_list.vue')
+            },
+        ]
+    },
+    {
+        path: "/withdraw",
+        icon: "md-cube",
+        name: "withdraw",
+        title: "提现管理",
+        component: Main,
+        children: [
+            {
+                path: "withdraw",
+                icon: "ios-folder-open",
+                name: "withdraw_list",
+                access: 'admin/Withdraw/getList',
+                title: "提现列表",
+                component: () => import('@/views/withdraw/withdraw/withdraw_list.vue')
+            },
+            {
+                path: "withdraw_way",
+                icon: "ios-folder-open",
+                name: "withdraw_way_list",
+                access: 'admin/Withdraw/getList',
+                title: "提现方式列表",
+                component: () => import('@/views/withdraw/withdraw_way/withdraw_way_list.vue')
+            }
+        ]
+    },
+    {
+        path: "/commission",
+        icon: "md-cube",
+        name: "commission",
+        title: "佣金管理",
+        component: Main,
+        children: [
+            {
+                path: "commission",
+                icon: "ios-folder-open",
+                name: "commission_list",
+                access: 'admin/Commission/getList',
+                title: "佣金列表",
+                component: () => import('@/views/commission/commission/commission_list.vue')
+            },
+            {
+                path: "commission_conf",
+                icon: "ios-folder-open",
+                name: "commission_conf_list",
+                access: 'admin/CommissionConf/getList',
+                title: "佣金配置列表",
+                component: () => import('@/views/commission/commission_conf/commission_conf_list.vue')
+            }
+        ]
+    },
+    {
+        path: "/task",
+        icon: "md-cube",
+        name: "task",
+        title: "任务管理",
+        component: Main,
+        children: [
+            {
+                path: "task",
+                icon: "ios-folder-open",
+                name: "task_list",
+                access: 'admin/Task/getList',
+                title: "任务列表",
+                component: () => import('@/views/task/task/task_list.vue')
+            },
+            {
+                path: "task_type",
+                icon: "ios-folder-open",
+                name: "task_type_list",
+                access: 'admin/TaskType/getList',
+                title: "任务类型列表",
+                component: () => import('@/views/task/task_type/task_type_list.vue')
+            }
+        ]
+    },
     // {
     //     path: '/international',
     //     icon: 'earth',

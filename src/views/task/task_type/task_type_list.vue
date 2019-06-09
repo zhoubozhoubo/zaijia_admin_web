@@ -5,6 +5,9 @@
                 <Card style="margin-bottom: 10px">
                     <Form inline>
                         <FormItem style="margin-bottom: 0">
+                            <Input v-model="searchConf.name" clearable placeholder="类型名称"></Input>
+                        </FormItem>
+                        <FormItem style="margin-bottom: 0">
                             <Select v-model="searchConf.status" clearable placeholder='请选择状态' style="width:100px">
                                 <Option value="0">关闭</Option>
                                 <Option value="1">开启</Option>
@@ -41,10 +44,10 @@
                 <span>{{formItem.id ? '编辑' : '新增'}}</span>
             </p>
             <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="100">
-                <FormItem label="轮播图名称" prop="name">
-                    <Input v-model="formItem.name" placeholder="轮播图名称"></Input>
+                <FormItem label="类型名称" prop="name">
+                    <Input v-model="formItem.name" placeholder="类型名称"></Input>
                 </FormItem>
-                <FormItem label="轮播图图片" prop="img">
+                <FormItem label="类型图片" prop="img">
                     <div class="demo-upload-list" v-if="formItem.img">
                         <img :src="formItem.img">
                         <div class="demo-upload-list-cover">
@@ -71,8 +74,8 @@
                         <img :src="formItem.img" v-if="visible" style="width: 100%">
                     </Modal>
                 </FormItem>
-                <FormItem label="轮播图跳转地址" prop="url">
-                    <Input v-model="formItem.url" placeholder="轮播图跳转地址"></Input>
+                <FormItem label="类型描述" prop="comment">
+                    <Input v-model="formItem.comment" placeholder="类型描述"></Input>
                 </FormItem>
                 <FormItem label="排序" prop="sort">
                     <Input v-model="formItem.sort" placeholder="排序"></Input>
@@ -94,7 +97,7 @@
 
 <script>
     import config from '../../../../build/config';
-    import {getDataList, saveData, deleteData, change} from '@/api/banner_list'
+    import {getDataList, saveData, deleteData, change} from '@/api/task_type_list'
 
     const editButton = (vm, h, currentRow, index) => {
         return h('Button', {
@@ -109,7 +112,7 @@
                     vm.formItem.id = currentRow.id;
                     vm.formItem.name = currentRow.name;
                     vm.formItem.img = currentRow.img;
-                    vm.formItem.url = currentRow.url;
+                    vm.formItem.comment = currentRow.comment;
                     vm.formItem.sort = currentRow.sort;
                     vm.modalSetting.show = true
                     vm.modalSetting.index = index
@@ -126,7 +129,7 @@
             },
             on: {
                 'on-ok': () => {
-                    deleteData({id:currentRow.id}).then(res => {
+                    deleteData(currentRow.id).then(res => {
                         if (res.data.code === 1) {
                             vm.tableData.splice(index, 1)
                             vm.$Message.success(res.data.msg)
@@ -152,32 +155,30 @@
     }
 
     export default {
-        name: 'banner_list',
+        name: 'task_type_list',
         components: {},
         data() {
             return {
-                columnsList: [
-                    {title: "id", key: "id", align: "center", width: 80}, {
-                        title: "轮播图名称",
-                        key: "name",
-                        align: "center"
-                    }, {title: "轮播图图片", key: "img", align: "center"}, {
-                        title: "轮播图跳转地址",
-                        key: "url",
-                        align: "center"
-                    }, {title: "排序", key: "sort", align: "center", width: 100}, {
-                        title: "状态",
-                        key: "status",
-                        align: "center", width: 100
-                    }, {title: "操作", key: "handle", align: "center", handle: ["edit", "delete"], width: 180}
-                ],
+                columnsList: [{title: "id", key: "id", align: "center", width: 80}, {
+                    title: "类型名称",
+                    key: "name",
+                    align: "center"
+                }, {title: "类型图片", key: "img", align: "center"}, {
+                    title: "类型描述",
+                    key: "comment",
+                    align: "center"
+                }, {title: "排序", key: "sort", align: "center", width: 100}, {
+                    title: "状态",
+                    key: "status",
+                    align: "center", width: 100
+                }, {title: "操作", key: "handle", align: "center", handle: ["edit", "delete"], width: 180}],
                 tableData: [],
                 tableShow: {
                     currentPage: 1,
                     pageSize: 10,
                     listCount: 0
                 },
-                searchConf: {status: ""},
+                searchConf: {name: "", status: ""},
                 modalSetting: {
                     show: false,
                     loading: false,
@@ -191,9 +192,9 @@
                 visible: false,
                 uploadUrl: '',
                 uploadHeader: {},
-                formItem: {id: "", name: "", img: "", url: "", sort: ""},
+                formItem: {id: "", name: "", img: "", comment: "", sort: ""},
                 ruleValidate: {
-                    name: [{required: true, message: "请输入轮播图名称", trigger: "blur"}],
+                    name: [{required: true, message: "请输入类型名称", trigger: "blur"}],
                     img: [{required: true, message: "请上传图片", trigger: "blur"}]
                 },
                 loading: true,

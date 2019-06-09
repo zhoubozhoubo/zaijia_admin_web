@@ -5,10 +5,31 @@
                 <Card style="margin-bottom: 10px">
                     <Form inline>
                         <FormItem style="margin-bottom: 0">
+                            <Input v-model="searchConf.nickname" clearable placeholder="用户昵称"></Input>
+                        </FormItem>
+                        <FormItem style="margin-bottom: 0">
+                            <Input v-model="searchConf.title" clearable placeholder="任务标题"></Input>
+                        </FormItem>
+                        <FormItem style="margin-bottom: 0">
+                            <DatePicker type="daterange" @on-change="searchConf.submit_time=$event" placeholder="提交日期范围"
+                                        style="width: 200px"></DatePicker>
+                        </FormItem>
+                        <FormItem style="margin-bottom: 0">
+                            <DatePicker type="daterange" @on-change="searchConf.check_time=$event" placeholder="审核日期范围"
+                                        style="width: 200px"></DatePicker>
+                        </FormItem>
+                        <FormItem style="margin-bottom: 0">
                             <Select v-model="searchConf.status" clearable placeholder='请选择状态' style="width:100px">
-                                <Option value="0">关闭</Option>
-                                <Option value="1">开启</Option>
+                                <Option value="0">执行中</Option>
+                                <Option value="1">待审核</Option>
+                                <Option value="2">已通过</Option>
+                                <Option value="3">未通过</Option>
+                                <Option value="4">已放弃</Option>
                             </Select>
+                        </FormItem>
+                        <FormItem style="margin-bottom: 0">
+                            <DatePicker type="daterange" @on-change="searchConf.gmt_create=$event" placeholder="领取日期范围"
+                                        style="width: 200px"></DatePicker>
                         </FormItem>
                         <FormItem style="margin-bottom: 0">
                             <Button type="primary" shape="circle" icon="ios-search" @click="search">查询/刷新</Button>
@@ -20,9 +41,6 @@
         <Row>
             <Col span="24">
                 <Card>
-                    <p slot="title" style="height: 40px">
-                        <Button type="primary" @click="alertAdd" icon="md-add">新增</Button>
-                    </p>
                     <div>
                         <Table :loading="loading" :columns="columnsList" :data="tableData" border
                                disabled-hover></Table>
@@ -41,22 +59,25 @@
                 <span>{{formItem.id ? '编辑' : '新增'}}</span>
             </p>
             <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="100">
-                <FormItem label="轮播图名称" prop="name">
-                    <Input v-model="formItem.name" placeholder="轮播图名称"></Input>
+                <FormItem label="用户id" prop="user_id">
+                    <Input v-model="formItem.user_id" placeholder="用户id"></Input>
                 </FormItem>
-                <FormItem label="轮播图图片" prop="img">
-                    <div class="demo-upload-list" v-if="formItem.img">
-                        <img :src="formItem.img">
+                <FormItem label="任务id" prop="task_id">
+                    <Input v-model="formItem.task_id" placeholder="任务id"></Input>
+                </FormItem>
+                <FormItem label="上传图片" prop="submit_img">
+                    <div class="demo-upload-list" v-if="formItem.submit_img">
+                        <img :src="formItem.submit_img">
                         <div class="demo-upload-list-cover">
                             <Icon type="ios-eye-outline" @click.native="handleView()"></Icon>
                             <Icon type="ios-trash-outline" @click.native="handleImgRemove()"></Icon>
                         </div>
                     </div>
-                    <input v-if="formItem.img" v-model="formItem.img" type="hidden" name="image">
+                    <input v-if="formItem.submit_img" v-model="formItem.submit_img" type="hidden" name="image">
                     <Upload type="drag"
                             :action="uploadUrl"
                             :headers="uploadHeader"
-                            v-if="!formItem.img"
+                            v-if="!formItem.submit_img"
                             :format="['jpg','jpeg','png']"
                             :max-size="5120"
                             :on-success="handleImgSuccess"
@@ -68,14 +89,20 @@
                         </div>
                     </Upload>
                     <Modal title="View Image" v-model="visible">
-                        <img :src="formItem.img" v-if="visible" style="width: 100%">
+                        <img :src="formItem.submit_img" v-if="visible" style="width: 100%">
                     </Modal>
                 </FormItem>
-                <FormItem label="轮播图跳转地址" prop="url">
-                    <Input v-model="formItem.url" placeholder="轮播图跳转地址"></Input>
+                <FormItem label="上传文本" prop="submit_text">
+                    <Input v-model="formItem.submit_text" placeholder="上传文本"></Input>
                 </FormItem>
-                <FormItem label="排序" prop="sort">
-                    <Input v-model="formItem.sort" placeholder="排序"></Input>
+                <FormItem label="提交时间" prop="submit_time">
+                    <Input v-model="formItem.submit_time" placeholder="提交时间"></Input>
+                </FormItem>
+                <FormItem label="状态" prop="status">
+                    <Input v-model="formItem.status" placeholder="状态"></Input>
+                </FormItem>
+                <FormItem label="创建时间" prop="gmt_create">
+                    <Input v-model="formItem.gmt_create" placeholder="创建时间"></Input>
                 </FormItem>
             </Form>
             <div slot="footer">
@@ -94,7 +121,7 @@
 
 <script>
     import config from '../../../../build/config';
-    import {getDataList, saveData, deleteData, change} from '@/api/banner_list'
+    import {getDataList, saveData, deleteData, change} from '@/api/user_task_list'
 
     const editButton = (vm, h, currentRow, index) => {
         return h('Button', {
@@ -107,10 +134,13 @@
             on: {
                 'click': () => {
                     vm.formItem.id = currentRow.id;
-                    vm.formItem.name = currentRow.name;
-                    vm.formItem.img = currentRow.img;
-                    vm.formItem.url = currentRow.url;
-                    vm.formItem.sort = currentRow.sort;
+                    vm.formItem.user_id = currentRow.user_id;
+                    vm.formItem.task_id = currentRow.task_id;
+                    vm.formItem.submit_img = currentRow.submit_img;
+                    vm.formItem.submit_text = currentRow.submit_text;
+                    vm.formItem.submit_time = currentRow.submit_time;
+                    vm.formItem.status = currentRow.status;
+                    vm.formItem.gmt_create = currentRow.gmt_create;
                     vm.modalSetting.show = true
                     vm.modalSetting.index = index
                 }
@@ -126,7 +156,7 @@
             },
             on: {
                 'on-ok': () => {
-                    deleteData({id:currentRow.id}).then(res => {
+                    deleteData(currentRow.id).then(res => {
                         if (res.data.code === 1) {
                             vm.tableData.splice(index, 1)
                             vm.$Message.success(res.data.msg)
@@ -152,32 +182,35 @@
     }
 
     export default {
-        name: 'banner_list',
+        name: 'user_task_list',
         components: {},
         data() {
             return {
-                columnsList: [
-                    {title: "id", key: "id", align: "center", width: 80}, {
-                        title: "轮播图名称",
-                        key: "name",
-                        align: "center"
-                    }, {title: "轮播图图片", key: "img", align: "center"}, {
-                        title: "轮播图跳转地址",
-                        key: "url",
-                        align: "center"
-                    }, {title: "排序", key: "sort", align: "center", width: 100}, {
-                        title: "状态",
-                        key: "status",
-                        align: "center", width: 100
-                    }, {title: "操作", key: "handle", align: "center", handle: ["edit", "delete"], width: 180}
-                ],
+                columnsList: [{title: "id", key: "id", align: "center", width: 80}, {
+                    title: "用户昵称",
+                    key: "nickname",
+                    align: "center"
+                }, {title: "任务标题", key: "title", align: "center"}, {
+                    title: "提交时间",
+                    key: "submit_time",
+                    align: "center"
+                }, {title: "审核时间", key: "check_time", align: "center"}, {
+                    title: "状态",
+                    key: "status",
+                    align: "center", width: 100
+                }, {title: "领取时间", key: "gmt_create", align: "center"}, {
+                    title: "操作",
+                    key: "handle",
+                    align: "center",
+                    handle: ["edit"], width: 150
+                }],
                 tableData: [],
                 tableShow: {
                     currentPage: 1,
                     pageSize: 10,
                     listCount: 0
                 },
-                searchConf: {status: ""},
+                searchConf: {nickname: "", title: "", submit_time: "", check_time: "", status: "", gmt_create: ""},
                 modalSetting: {
                     show: false,
                     loading: false,
@@ -191,11 +224,17 @@
                 visible: false,
                 uploadUrl: '',
                 uploadHeader: {},
-                formItem: {id: "", name: "", img: "", url: "", sort: ""},
-                ruleValidate: {
-                    name: [{required: true, message: "请输入轮播图名称", trigger: "blur"}],
-                    img: [{required: true, message: "请上传图片", trigger: "blur"}]
+                formItem: {
+                    id: "",
+                    user_id: "",
+                    task_id: "",
+                    submit_img: "",
+                    submit_text: "",
+                    submit_time: "",
+                    status: "",
+                    gmt_create: ""
                 },
+                ruleValidate: {id: [{required: 0, message: "", trigger: "blur"}]},
                 loading: true,
             }
         },
@@ -213,70 +252,50 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index]
                             return h('div', [
-                                editButton(vm, h, currentRowData, param.index),
-                                deleteButton(vm, h, currentRowData, param.index)
+                                editButton(vm, h, currentRowData, param.index)
                             ])
                         }
-                    }
-                    if (item.key === 'img') {
-                        item.render = (h, param) => {
-                            let currentRowData = vm.tableData[param.index];
-                            if (currentRowData.img) {
-                                return h('img', {
-                                    style: {
-                                        width: '40px',
-                                        height: '40px',
-                                        cursor: 'pointer',
-                                        margin: '5px 0'
-                                    },
-                                    attrs: {
-                                        src: currentRowData.img,
-                                        shape: 'square',
-                                        size: 'large'
-                                    },
-                                    on: {
-                                        click: (e) => {
-                                            vm.modalSeeingImg.img = currentRowData.img;
-                                            vm.modalSeeingImg.show = true;
-                                        }
-                                    }
-                                });
-                            } else {
-                                return h('Tag', {}, '暂无图片');
-                            }
-                        };
                     }
                     if (item.key === 'status') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
-                            return h('i-switch', {
-                                attrs: {
-                                    size: 'large'
-                                },
-                                props: {
-                                    'true-value': 1,
-                                    'false-value': 0,
-                                    value: currentRowData.status
-                                },
-                                on: {
-                                    'on-change': function (status) {
-                                        change({id: currentRowData.id, status: status}).then(res => {
-                                            vm.$Message.success(res.data.msg)
-                                            vm.cancel()
-                                        }, err => {
-                                            vm.$Message.error(res.data.msg)
-                                            vm.cancel()
-                                        })
-                                    }
-                                }
-                            }, [
-                                h('span', {
-                                    slot: 'open'
-                                }, '开启'),
-                                h('span', {
-                                    slot: 'close'
-                                }, '关闭')
-                            ]);
+                            switch (currentRowData.status) {
+                                case 0:
+                                    return h('Tag', {
+                                        attrs: {
+                                            color: 'blue'
+                                        }
+                                    }, '执行中');
+                                    break;
+                                case 1:
+                                    return h('Tag', {
+                                        attrs: {
+                                            color: 'orange'
+                                        }
+                                    }, '待审核');
+                                    break;
+                                case 2:
+                                    return h('Tag', {
+                                        attrs: {
+                                            color: 'green'
+                                        }
+                                    }, '已通过');
+                                    break;
+                                case 3:
+                                    return h('Tag', {
+                                        attrs: {
+                                            color: 'red'
+                                        }
+                                    }, '未通过');
+                                    break;
+                                case 4:
+                                    return h('Tag', {
+                                        attrs: {
+                                            color: 'default'
+                                        }
+                                    }, '已放弃');
+                                    break;
+                            }
                         };
                     }
                 })
@@ -289,7 +308,7 @@
                 this.visible = true;
             },
             handleImgRemove() {
-                this.formItem.img = '';
+                this.formItem.submit_img = '';
             },
             handleImgFormatError(file) {
                 this.$Notice.warning({
@@ -306,7 +325,7 @@
             handleImgSuccess(response) {
                 if (response.code === 1) {
                     this.$Message.success(response.msg);
-                    this.formItem.img = response.data.fileUrl;
+                    this.formItem.submit_img = response.data.fileUrl;
                 } else {
                     this.$Message.error(response.msg);
                 }
