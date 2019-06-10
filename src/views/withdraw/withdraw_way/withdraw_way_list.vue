@@ -41,6 +41,9 @@
                 <FormItem label="提现最大金额" prop="max_money">
                     <Input v-model="formItem.max_money" placeholder="提现最大金额"></Input>
                 </FormItem>
+                <FormItem label="提现说明" prop="notice">
+                    <Input v-model="formItem.notice" placeholder="提现说明" type="textarea" :row="4"></Input>
+                </FormItem>
             </Form>
             <div slot="footer">
                 <Button type="text" @click="cancel" style="margin-right: 8px">取消</Button>
@@ -73,6 +76,7 @@
                     vm.formItem.name = currentRow.name;
                     vm.formItem.min_money = currentRow.min_money;
                     vm.formItem.max_money = currentRow.max_money;
+                    vm.formItem.notice = currentRow.notice;
                     vm.modalSetting.show = true
                     vm.modalSetting.index = index
                 }
@@ -126,6 +130,10 @@
                     title: "提现最大金额",
                     key: "max_money",
                     align: "center"
+                }, {
+                    title: "提现说明",
+                    key: "notice",
+                    align: "center"
                 }, {title: "状态", key: "status", align: "center", width: 100}, {
                     title: "操作",
                     key: "handle",
@@ -153,8 +161,8 @@
                 formItem: {withdraw_way_id: "", name: "", min_money: "", max_money: ""},
                 ruleValidate: {
                     name: [{required: true, message: "请输入提现名称", trigger: "blur"}],
-                    min_money: [{required: true, message: "请输入最小金额", trigger: "blur"}],
-                    max_money: [{required: true, message: "请输入最大金额", trigger: "blur"}]
+                    min_money: [{required: true, message: "请输入最小金额", trigger: "blur", type: 'number'}],
+                    max_money: [{required: true, message: "请输入最大金额", trigger: "blur", type: 'number'}]
                 },
                 loading: true,
             }

@@ -78,7 +78,7 @@
             <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="100">
                 <FormItem label="任务类型" prop="task_type_id">
                     <Select v-model="formItem.task_type_id" style="width:200px" placeholder="选择任务类型">
-                        <Option v-for="(taskType, taskTypeIndex) in taskTypeList" :key="taskTypeIndex" :value="formItem.task_type_id">{{taskType.name}}</Option>
+                        <Option v-for="(taskType, taskTypeIndex) in taskTypeList" :key="taskTypeIndex" :value="taskType.id">{{taskType.name}}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="任务标题" prop="title">
@@ -91,7 +91,7 @@
                     <Input v-model="formItem.number" placeholder="任务数量"></Input>
                 </FormItem>
                 <FormItem label="截止日期" prop="end_date">
-                    <DatePicker type="date" placeholder="Select date" style="width: 200px"></DatePicker>
+                    <DatePicker type="date" v-model="formItem.end_date" placeholder="任务截止日期" format="yyyy-MM-dd" style="width: 200px"></DatePicker>
                 </FormItem>
                 <FormItem label="验收时长" prop="check_duration">
                     <Input v-model="formItem.check_duration" placeholder="验收时长"></Input>
@@ -175,7 +175,7 @@
                     </RadioGroup>
                 </FormItem>
                 <FormItem label="提交方式" prop="submit_way">
-                    <Select v-model="formItem.submit_way" style="width:200px">
+                    <Select v-model="formItem.submit_way" placeholder="提交方式" style="width:200px">
                         <Option value="1">文本</Option>
                         <Option value="2">文本+截图</Option>
                     </Select>
@@ -388,19 +388,19 @@
                     submit_img: []
                 },
                 ruleValidate: {
-                    task_type_id: [{required: true, message: "请选择任务类型", trigger: "change"}],
+                    task_type_id: [{required: true, message: "请选择任务类型", trigger: "change", type: 'number'}],
                     title: [{required: true, message: "请输入任务标题", trigger: "blur"}],
                     money: [{required: true, message: "请输入任务金额", trigger: "blur"}],
                     number: [{required: true, message: "请输入任务数量", trigger: "blur"}],
-                    end_date: [{required: true, message: "请选择任务截止日期", trigger: "change", type: 'array'}],
+                    end_date: [{required: true, message: "请选择任务截止日期", trigger: "change", type: 'date'}],
                     check_duration: [{required: true, message: "请输入验收时长", trigger: "blur"}],
-                    finish_duration: [{required: true, message: "请选择完成时长", trigger: "blur"}],
-                    is_repeat: [{required: true, message: "请选择是否重复", trigger: "blur"}],
+                    finish_duration: [{required: true, message: "请选择完成时长", trigger: "change"}],
+                    is_repeat: [{required: true, message: "请选择是否重复", trigger: "change"}],
                     area: [{required: true, message: "请选择任务地区", trigger: "change", type: 'array'}],
                     step: [{required: true, message: "请填写任务步骤", trigger: "change", type: 'array'}],
                     take_care: [{required: true, message: "请输入注意事项", trigger: "blur"}],
-                    device: [{required: true, message: "请选择设备类型", trigger: "blur"}],
-                    submit_way: [{required: true, message: "请选择提交方式", trigger: "blur"}],
+                    device: [{required: true, message: "请选择设备类型", trigger: "change"}],
+                    submit_way: [{required: true, message: "请选择提交方式", trigger: "change"}],
                     submit_notice: [{required: true, message: "请输入提交说明", trigger: "blur"}]
                 },
                 loading: true,
@@ -517,6 +517,9 @@
                     }
                 })
             },
+            changeTime(res) {
+                console.log(res)
+            },
             alertAdd() {
                 this.formItem.task_id = 0
                 this.modalSetting.show = true
@@ -556,6 +559,12 @@
                 });
             },
             submit() {
+                for (let i = 0; i < this.uploadListShow.length; i++) {
+                    this.formItem.show_img[i] = this.uploadListShow[i].url
+                }
+                for (let i = 0; i < this.uploadListSubmit.length; i++) {
+                    this.formItem.submit_img[i] = this.uploadListSubmit[i].url
+                }
                 this.$refs['myForm'].validate((valid) => {
                     if (valid) {
                         this.modalSetting.loading = true
