@@ -20,11 +20,6 @@
                             </Select>
                         </FormItem>
                         <FormItem style="margin-bottom: 0">
-                            <!--<Select v-model="searchConf.area" clearable placeholder='请选择地区' style="width:100px">
-                                <Option :value="1">select1</Option>
-                                <Option :value="2">select2</Option>
-                                <Option :value="3">select3</Option>
-                            </Select>-->
                             <Cascader :data="AreaList" v-model="searchConf.area" trigger="hover" placeholder='请选择地区'></Cascader>
                         </FormItem>
                         <FormItem style="margin-bottom: 0">
@@ -81,9 +76,9 @@
                 <span>{{formItem.task_id ? '编辑' : '新增'}}</span>
             </p>
             <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="100">
-                <FormItem label="任务类型id" prop="task_type_id">
-                    <Select v-model="formItem.task_type_id" style="width:200px">
-                        <Option :value="formItem.task_type_id">formItem.task_type_id</Option>
+                <FormItem label="任务类型" prop="task_type_id">
+                    <Select v-model="formItem.task_type_id" style="width:200px" placeholder="选择任务类型">
+                        <Option v-for="(taskType, taskTypeIndex) in taskTypeList" :key="taskTypeIndex" :value="formItem.task_type_id">{{taskType.name}}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="任务标题" prop="title">
@@ -103,86 +98,123 @@
                 </FormItem>
                 <FormItem label="完成时长" prop="finish_duration">
                     <Select v-model="formItem.finish_duration" style="width:200px">
-                        <Option :value="formItem.finish_duration">formItem.finish_duration</Option>
+                        <Option value="30">0.5小时</Option>
+                        <Option value="1">1小时</Option>
+                        <Option value="2">2小时</Option>
+                        <Option value="12">12小时</Option>
+                        <Option value="24">24小时</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="是否重复" prop="is_repeat">
-                    <Radio v-model="formItem.is_repeat">Radio</Radio>
+                    <RadioGroup v-model="formItem.is_repeat">
+                        <Radio label="0">不重复</Radio>
+                        <Radio label="1">重复</Radio>
+                    </RadioGroup>
                 </FormItem>
                 <FormItem label="地区" prop="area">
-                    <Select v-model="formItem.area" style="width:200px">
-                        <Option :value="formItem.area">formItem.area</Option>
-                    </Select>
+                    <Cascader :data="AreaList" v-model="formItem.area" trigger="hover" placeholder='请选择地区'></Cascader>
                 </FormItem>
                 <FormItem label="任务步骤" prop="step">
-                    <Input v-model="formItem.step" placeholder="任务步骤"></Input>
+                    <Row v-for="(item, index) in formItem.step" :key="index" style="margin-bottom: 10px;">
+                        <Col span="22">
+                            <Input v-model="formItem.step[index]" :placeholder="'任务步骤' + (index-0+1)"></Input>
+                        </Col>
+                        <Col span="1" offset="1" v-if="index > 2">
+                            <Icon type="md-close-circle" size="20" color="#ed4014" @click="delStep(index)"/>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span="4">
+                            <Button type="primary" ghost icon="md-add" @click="addStep">添加步骤</Button>
+                        </Col>
+                    </Row>
+
                 </FormItem>
-                <FormItem label="图片展示" prop="show_img">
-                    <div class="demo-upload-list" v-if="formItem.show_img">
-                        <img :src="formItem.show_img">
-                        <div class="demo-upload-list-cover">
-                            <Icon type="ios-eye-outline" @click.native="handleView()"></Icon>
-                            <Icon type="ios-trash-outline" @click.native="handleImgRemove()"></Icon>
-                        </div>
+                <FormItem label="图片展示">
+                    <div class="demo-upload-list" v-for="item in uploadListShow">
+                        <template v-if="item.status === 'finished'">
+                            <img :src="item.url">
+                            <div class="demo-upload-list-cover">
+                                <Icon type="ios-eye-outline" @click.native="handleView(item.url)"></Icon>
+                                <Icon type="ios-trash-outline" @click.native="handleRemoveShow(item)"></Icon>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+                        </template>
                     </div>
-                    <input v-if="formItem.show_img" v-model="formItem.show_img" type="hidden" name="image">
-                    <Upload type="drag"
-                            :action="uploadUrl"
-                            :headers="uploadHeader"
-                            v-if="!formItem.show_img"
+                    <Upload ref="uploadShow"
+                            :show-upload-list="false"
+                            :default-file-list="formItem.show_img"
+                            :on-success="handleSuccess"
                             :format="['jpg','jpeg','png']"
                             :max-size="5120"
-                            :on-success="handleImgSuccess"
-                            :on-format-error="handleImgFormatError"
-                            :on-exceeded-size="handleImgMaxSize"
+                            :on-format-error="handleFormatError"
+                            :on-exceeded-size="handleMaxSize"
+                            multiple
+                            type="drag"
+                            :action="uploadUrl"
+                            :headers="uploadHeader"
                             style="display: inline-block;width:58px;">
                         <div style="width: 58px;height:58px;line-height: 58px;">
                             <Icon type="ios-camera" size="20"></Icon>
                         </div>
                     </Upload>
                     <Modal title="View Image" v-model="visible">
-                        <img :src="formItem.show_img" v-if="visible" style="width: 100%">
+                        <img :src="showImgUrl" v-if="visible" style="width: 100%">
                     </Modal>
                 </FormItem>
                 <FormItem label="注意事项" prop="take_care">
-                    <Input v-model="formItem.take_care" placeholder="注意事项"></Input>
+                    <Input v-model="formItem.take_care" type="textarea" :rows="4" placeholder="注意事项"></Input>
                 </FormItem>
                 <FormItem label="设备类型" prop="device">
-                    <Radio v-model="formItem.device">Radio</Radio>
+                    <RadioGroup v-model="formItem.device">
+                        <Radio label="0">不限</Radio>
+                        <Radio label="1">安卓</Radio>
+                        <Radio label="2">IOS</Radio>
+                    </RadioGroup>
                 </FormItem>
                 <FormItem label="提交方式" prop="submit_way">
                     <Select v-model="formItem.submit_way" style="width:200px">
-                        <Option :value="formItem.submit_way">formItem.submit_way</Option>
+                        <Option value="1">文本</Option>
+                        <Option value="2">文本+截图</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="提交说明" prop="submit_notice">
-                    <Input v-model="formItem.submit_notice" placeholder="提交说明"></Input>
+                    <Input v-model="formItem.submit_notice" type="textarea" :rows="4" placeholder="提交说明"></Input>
                 </FormItem>
                 <FormItem label="提交图片" prop="submit_img">
-                    <div class="demo-upload-list" v-if="formItem.submit_img">
-                        <img :src="formItem.submit_img">
-                        <div class="demo-upload-list-cover">
-                            <Icon type="ios-eye-outline" @click.native="handleView()"></Icon>
-                            <Icon type="ios-trash-outline" @click.native="handleImgRemove()"></Icon>
-                        </div>
+                    <div class="demo-upload-list" v-for="item in uploadListSubmit">
+                        <template v-if="item.status === 'finished'">
+                            <img :src="item.url">
+                            <div class="demo-upload-list-cover">
+                                <Icon type="ios-eye-outline" @click.native="handleView(item.url)"></Icon>
+                                <Icon type="ios-trash-outline" @click.native="handleRemoveSubmit(item)"></Icon>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
+                        </template>
                     </div>
-                    <input v-if="formItem.submit_img" v-model="formItem.submit_img" type="hidden" name="image">
-                    <Upload type="drag"
-                            :action="uploadUrl"
-                            :headers="uploadHeader"
-                            v-if="!formItem.submit_img"
+                    <Upload ref="uploadSubmit"
+                            :show-upload-list="false"
+                            :default-file-list="formItem.submit_img"
+                            :on-success="handleSuccess"
                             :format="['jpg','jpeg','png']"
                             :max-size="5120"
-                            :on-success="handleImgSuccess"
-                            :on-format-error="handleImgFormatError"
-                            :on-exceeded-size="handleImgMaxSize"
+                            :on-format-error="handleFormatError"
+                            :on-exceeded-size="handleMaxSize"
+                            multiple
+                            type="drag"
+                            :action="uploadUrl"
+                            :headers="uploadHeader"
                             style="display: inline-block;width:58px;">
                         <div style="width: 58px;height:58px;line-height: 58px;">
                             <Icon type="ios-camera" size="20"></Icon>
                         </div>
                     </Upload>
                     <Modal title="View Image" v-model="visible">
-                        <img :src="formItem.submit_img" v-if="visible" style="width: 100%">
+                        <img :src="showImgUrl" v-if="visible" style="width: 100%">
                     </Modal>
                 </FormItem>
             </Form>
@@ -345,37 +377,38 @@
                     end_date: "",
                     check_duration: "",
                     finish_duration: "",
-                    is_repeat: "",
-                    area: "",
-                    step: "",
-                    show_img: "",
+                    is_repeat: 0,
+                    area: [],
+                    step: ['','',''],
+                    show_img: [],
                     take_care: "",
-                    device: "",
+                    device: 0,
                     submit_way: "",
                     submit_notice: "",
-                    submit_img: ""
+                    submit_img: []
                 },
                 ruleValidate: {
-                    task_type_id: [{required: true, message: "请选择任务类型", trigger: "blur"}],
+                    task_type_id: [{required: true, message: "请选择任务类型", trigger: "change"}],
                     title: [{required: true, message: "请输入任务标题", trigger: "blur"}],
                     money: [{required: true, message: "请输入任务金额", trigger: "blur"}],
                     number: [{required: true, message: "请输入任务数量", trigger: "blur"}],
-                    end_date: [{required: true, message: "请选择任务截止日期", trigger: "blur"}],
+                    end_date: [{required: true, message: "请选择任务截止日期", trigger: "change", type: 'array'}],
                     check_duration: [{required: true, message: "请输入验收时长", trigger: "blur"}],
                     finish_duration: [{required: true, message: "请选择完成时长", trigger: "blur"}],
                     is_repeat: [{required: true, message: "请选择是否重复", trigger: "blur"}],
-                    area: [{required: true, message: "请选择任务地区", trigger: "blur"}],
-                    step: [{required: true, message: "请填写任务步骤", trigger: "blur"}],
-                    show_img: [{required: true, message: "请上传图片", trigger: "blur"}],
+                    area: [{required: true, message: "请选择任务地区", trigger: "change", type: 'array'}],
+                    step: [{required: true, message: "请填写任务步骤", trigger: "change", type: 'array'}],
                     take_care: [{required: true, message: "请输入注意事项", trigger: "blur"}],
                     device: [{required: true, message: "请选择设备类型", trigger: "blur"}],
                     submit_way: [{required: true, message: "请选择提交方式", trigger: "blur"}],
-                    submit_notice: [{required: true, message: "请输入提交说明", trigger: "blur"}],
-                    submit_img: [{required: true, message: "请上传图片", trigger: "blur"}]
+                    submit_notice: [{required: true, message: "请输入提交说明", trigger: "blur"}]
                 },
                 loading: true,
                 taskTypeList: [],
-                AreaList: []
+                AreaList: [],
+                showImgUrl: '',
+                uploadListSubmit: [],
+                uploadListShow: []
             }
         },
         created() {
@@ -488,31 +521,39 @@
                 this.formItem.task_id = 0
                 this.modalSetting.show = true
             },
-            handleView() {
+            addStep () {
+                this.formItem.step.push('')
+            },
+            delStep (index) {
+                this.formItem.step.splice(index, 1)
+            },
+            handleView (url) {
+                this.showImgUrl = url
                 this.visible = true;
             },
-            handleImgRemove() {
-                this.formItem.submit_img = '';
+            handleRemoveShow (file) {
+                const fileList = this.$refs.uploadShow.fileList;
+                this.$refs.upload.fileList.splice(fileList.indexOf(file), 1);
             },
-            handleImgFormatError(file) {
+            handleRemoveSubmit (file) {
+                const fileList = this.$refs.uploadSubmit.fileList;
+                this.$refs.upload.fileList.splice(fileList.indexOf(file), 1);
+            },
+            handleSuccess (res, file) {
+                file.url = res.data.fileUrl
+                file.name = res.data.fileName
+            },
+            handleFormatError (file) {
                 this.$Notice.warning({
-                    title: '文件类型不合法',
-                    desc: file.name + '的文件类型不正确，请上传jpg或者png图片。'
+                    title: 'The file format is incorrect',
+                    desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
                 });
             },
-            handleImgMaxSize(file) {
+            handleMaxSize (file) {
                 this.$Notice.warning({
-                    title: '文件大小不合法',
-                    desc: file.name + '太大啦请上传小于5M的文件。'
+                    title: 'Exceeding file size limit',
+                    desc: 'File  ' + file.name + ' is too large, no more than 2M.'
                 });
-            },
-            handleImgSuccess(response) {
-                if (response.code === 1) {
-                    this.$Message.success(response.msg);
-                    this.formItem.submit_img = response.data.fileUrl;
-                } else {
-                    this.$Message.error(response.msg);
-                }
             },
             submit() {
                 this.$refs['myForm'].validate((valid) => {
@@ -562,12 +603,16 @@
                     this.loading = false
                 })
             }
+        },
+        mounted () {
+            this.uploadListSubmit = this.$refs.uploadSubmit.fileList;
+            this.uploadListShow = this.$refs.uploadShow.fileList;
         }
     }
 </script>
 
 <style scoped>
-    .demo-upload-list {
+    .demo-upload-list{
         display: inline-block;
         width: 60px;
         height: 60px;
@@ -578,30 +623,26 @@
         overflow: hidden;
         background: #fff;
         position: relative;
-        box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+        box-shadow: 0 1px 1px rgba(0,0,0,.2);
         margin-right: 4px;
     }
-
-    .demo-upload-list img {
+    .demo-upload-list img{
         width: 100%;
         height: 100%;
     }
-
-    .demo-upload-list-cover {
+    .demo-upload-list-cover{
         display: none;
         position: absolute;
         top: 0;
         bottom: 0;
         left: 0;
         right: 0;
-        background: rgba(0, 0, 0, .6);
+        background: rgba(0,0,0,.6);
     }
-
-    .demo-upload-list:hover .demo-upload-list-cover {
+    .demo-upload-list:hover .demo-upload-list-cover{
         display: block;
     }
-
-    .demo-upload-list-cover i {
+    .demo-upload-list-cover i{
         color: #fff;
         font-size: 20px;
         cursor: pointer;
