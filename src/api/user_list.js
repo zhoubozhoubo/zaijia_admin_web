@@ -17,3 +17,7 @@ export const getDataList = (pageData, searchConf) => {
     })
 }
 
+export const sendNotice = (data) => {
+    return axios.post('UserNotice/save', data)
+}
+
