@@ -73,7 +73,7 @@
         <Modal v-model="modalSetting.show" width="700" :styles="{top: '30px'}" @on-visible-change="doCancel">
             <p slot="header" style="color:#2d8cf0;">
                 <Icon type="md-information-circle"></Icon>
-                <span>{{formItem.task_id ? '编辑' : '新增'}}</span>
+                <span>新增</span>
             </p>
             <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="100">
                 <FormItem label="任务类型" prop="task_type_id">
@@ -111,8 +111,8 @@
                         <Radio label="1">重复</Radio>
                     </RadioGroup>
                 </FormItem>
-                <FormItem label="地区" prop="area">
-                    <Cascader :data="AreaList" v-model="formItem.area" trigger="hover" placeholder='请选择地区'></Cascader>
+                <FormItem label="地区">
+                    <Cascader :data="AreaList" v-model="formItem.area" trigger="hover" placeholder='请选择地区,不选则为全国'></Cascader>
                 </FormItem>
                 <FormItem label="任务步骤" prop="step">
                     <Row v-for="(item, index) in formItem.step" :key="index" style="margin-bottom: 10px;">
@@ -128,7 +128,9 @@
                             <Button type="primary" ghost icon="md-add" @click="addStep">添加步骤</Button>
                         </Col>
                     </Row>
-
+                </FormItem>
+                <FormItem label="任务链接" prop="link">
+                    <Input v-model="formItem.link" placeholder="任务链接"></Input>
                 </FormItem>
                 <FormItem label="图片展示">
                     <div class="demo-upload-list" v-for="item in uploadListShow">
@@ -183,7 +185,7 @@
                 <FormItem label="提交说明" prop="submit_notice">
                     <Input v-model="formItem.submit_notice" type="textarea" :rows="4" placeholder="提交说明"></Input>
                 </FormItem>
-                <FormItem label="提交图片" prop="submit_img">
+                <FormItem label="提交图片" prop="submit_img" v-if="formItem.submit_way == 2">
                     <div class="demo-upload-list" v-for="item in uploadListSubmit">
                         <template v-if="item.status === 'finished'">
                             <img :src="item.url">
@@ -223,6 +225,70 @@
                 <Button type="primary" @click="submit" :loading="modalSetting.loading">确定</Button>
             </div>
         </Modal>
+
+        <Modal v-model="modalEditting.show" width="700" :styles="{top: '30px'}" @on-visible-change="doCancel">
+            <p slot="header" style="color:#2d8cf0;">
+                <Icon type="md-information-circle"></Icon>
+                <span>编辑</span>
+            </p>
+            <Form ref="myFormEdit" :rules="ruleValidateEdit" :model="formItemEdit" :label-width="100">
+                <FormItem label="任务标题" prop="title">
+                    <Input v-model="formItemEdit.title" disabled placeholder="任务标题"></Input>
+                </FormItem>
+                <FormItem label="增加数量" prop="number">
+                    <Input v-model="formItemEdit.number" placeholder="增加数量"></Input>
+                </FormItem>
+                <FormItem label="截止日期" prop="end_date">
+                    <DatePicker type="date" v-model="formItemEdit.end_date" placeholder="任务截止日期" format="yyyy-MM-dd" style="width: 200px"></DatePicker>
+                </FormItem>
+            </Form>
+            <div slot="footer">
+                <Button type="text" @click="cancelEdit" style="margin-right: 8px">取消</Button>
+                <Button type="primary" @click="submitEdit" :loading="modalSetting.loading">确定</Button>
+            </div>
+        </Modal>
+
+        <Modal v-model="modalSeeingSubmit.show" width="998" :styles="{top: '30px'}">
+            <p slot="header" style="color:#2d8cf0;">
+                <Icon type="md-information-circle"></Icon>
+                <span>{{modalSeeingSubmit.title}} > 提交列表({{modalSeeingSubmit.status}})</span>
+            </p>
+            <div>
+                <Table :loading="submitLoading" :columns="submitColumns" :data="submitData" border disabled-hover></Table>
+            </div>
+            <div class="margin-top-15" style="text-align: center">
+                <Page :total="submitShow.listCount" :current="submitShow.currentPage"
+                      :page-size="submitShow.pageSize" @on-change="changeSubmitPage"
+                      @on-page-size-change="changeSubmitSize" show-elevator show-sizer show-total></Page>
+            </div>
+            <p slot="footer"></p>
+        </Modal>
+
+        <Modal v-model="modalSubmit.show" width="700" :styles="{top: '30px'}" @on-visible-change="doCancel">
+            <p slot="header" style="color:#2d8cf0;">
+                <Icon type="md-information-circle"></Icon>
+                <span>{{modalSubmit.nickname}} > 提交内容</span>
+            </p>
+            <Form ref="myFormSubmit" :model="formItemSubmit" :label-width="100">
+                <FormItem label="提交图片">
+                    <div class="demo-upload-list" v-for="item in modalSubmit.submit_img">
+                        <template>
+                            <img :src="item">
+                            <div class="demo-upload-list-cover">
+                                <Icon type="ios-eye-outline" @click.native="handleView(item)"></Icon>
+                            </div>
+                        </template>
+                    </div>
+                </FormItem>
+                <FormItem label="提交文本">
+                    <Input type="textarea" :rows="4" v-model="modalSubmit.submit_text" disabled placeholder="提交文本"></Input>
+                </FormItem>
+            </Form>
+            <div slot="footer">
+                <Button type="text" @click="cancelSubmit" style="margin-right: 8px">取消</Button>
+                <Button type="primary" @click="passSubmit" :loading="modalSubmit.loading" v-if="modalSubmit.status === 1">通过</Button>
+            </div>
+        </Modal>
         <!--查看大图-->
         <Modal v-model="modalSeeingImg.show"
                class-name="fl-image-modal"
@@ -235,7 +301,7 @@
 <script>
     import axios from 'axios';
     import config from '../../../../build/config';
-    import {getDataList, saveData, deleteData, change} from '@/api/task_list'
+    import {getDataList, saveData, deleteData, change, getSubmitDataList, saveUserTaskData} from '@/api/task_list'
 
     const editButton = (vm, h, currentRow, index) => {
         return h('Button', {
@@ -247,25 +313,11 @@
             },
             on: {
                 'click': () => {
-                    vm.formItem.task_id = currentRow.task_id;
-                    vm.formItem.task_type_id = currentRow.task_type_id;
-                    vm.formItem.title = currentRow.title;
-                    vm.formItem.money = currentRow.money;
-                    vm.formItem.number = currentRow.number;
-                    vm.formItem.end_date = currentRow.end_date;
-                    vm.formItem.check_duration = currentRow.check_duration;
-                    vm.formItem.finish_duration = currentRow.finish_duration;
-                    vm.formItem.is_repeat = currentRow.is_repeat;
-                    vm.formItem.area = currentRow.area;
-                    vm.formItem.step = currentRow.step;
-                    vm.formItem.show_img = currentRow.show_img;
-                    vm.formItem.take_care = currentRow.take_care;
-                    vm.formItem.device = currentRow.device;
-                    vm.formItem.submit_way = currentRow.submit_way;
-                    vm.formItem.submit_notice = currentRow.submit_notice;
-                    vm.formItem.submit_img = currentRow.submit_img;
-                    vm.modalSetting.show = true
-                    vm.modalSetting.index = index
+                    vm.formItemEdit.task_id = currentRow.task_id;
+                    vm.formItemEdit.title = currentRow.title;
+                    vm.formItemEdit.end_date = currentRow.end_date;
+                    vm.modalEditting.show = true
+                    vm.modalEditting.index = index
                 }
             }
         }, '编辑')
@@ -304,43 +356,199 @@
         ])
     }
 
+    // 查看提交列表
+    const seeSubmitListButton = (vm, h, currentRow, index, status) => {
+        let type = ''
+        let number = 0
+        if (status === 1) {
+            type = 'warning'
+            number = currentRow.wait_check
+        }else if (status === 2) {
+            type = 'success'
+            number = currentRow.have_pass
+        }else if (status === 3) {
+            type = 'error'
+            number = currentRow.no_pass
+        }
+        return h('Button', {
+            props: {
+                type: type,
+                ghost: true
+            },
+            on: {
+                'click': () => {
+                    vm.searchConfSubmit.task_id = currentRow.task_id;
+                    vm.searchConfSubmit.status = status;
+                    if (status === 1) {
+                        vm.modalSeeingSubmit.status = '待审核'
+                    }else if (status === 2) {
+                        vm.modalSeeingSubmit.status = '已通过'
+                    }else if (status === 3) {
+                        vm.modalSeeingSubmit.status = '未通过'
+                    }
+                    vm.modalSeeingSubmit.title = currentRow.title;
+                    vm.modalSeeingSubmit.show = true
+                    vm.getSubmitList();
+                }
+            }
+        }, number)
+    };
+
+    // 查看提交内容
+    const seeSubmitContentButton = (vm, h, currentRow, index) => {
+        return h('Button', {
+            props: {
+                type: 'primary'
+            },
+            style: {
+                margin: '0 5px'
+            },
+            on: {
+                'click': () => {
+                    vm.formItemSubmit.id = currentRow.id;
+                    vm.modalSubmit.nickname = currentRow.nickname;
+                    vm.modalSubmit.submit_img = currentRow.submit_img;
+                    vm.modalSubmit.submit_text = currentRow.submit_text;
+                    vm.modalSubmit.status = currentRow.status;
+                    vm.modalSubmit.show = true
+                    vm.modalSubmit.index = index
+                }
+            }
+        }, '查看')
+    };
+
+    // 审核拒绝操作
+    const noPassButton = (vm, h, currentRow, index) => {
+        return h('Poptip', {
+            props: {
+                confirm: true,
+                title: '您确定要不通过这条数据吗? ',
+                transfer: true
+            },
+            on: {
+                'on-ok': () => {
+                    vm.formItemSubmit.id = currentRow.id;
+                    vm.formItemSubmit.status = 3;
+                    saveUserTaskData(vm.formItemSubmit).then(res => {
+                        if (res.data.code === 1) {
+                            vm.submitData.splice(index, 1)
+                            vm.$Message.success(res.data.msg)
+                            vm.getList()
+                        } else {
+                            vm.$Message.error(res.data.msg)
+                        }
+                    })
+                }
+            }
+        }, [
+            h('Button', {
+                style: {
+                    margin: '0 5px'
+                },
+                props: {
+                    type: 'error',
+                    placement: 'top',
+                }
+            }, '拒绝')
+        ])
+    };
+
     export default {
         name: 'task_list',
         components: {},
         data() {
             return {
-                columnsList: [{title: "id", key: "task_id", align: "center", width: 80}, {
+                columnsList: [{title: "id", key: "task_id", align: "center", width: 80,
+                    fixed: 'left'}, {
                     title: "任务类型",
                     key: "task_type_name",
-                    align: "center"
-                }, {title: "任务标题", key: "title", align: "center"}, {
+                    align: "center", width: 100,
+                    fixed: 'left'
+                }, {title: "任务标题", key: "title", align: "center", width: 200,
+                    fixed: 'left'}, {
                     title: "任务金额",
                     key: "money",
-                    align: "center"
+                    align: "center", width: 100,
+                    fixed: 'left'
                 }, {title: "任务数量", key: "number", align: "center", width: 100}, {
-                    title: "剩余数量",
-                    key: "surplus_number",
+                    title: "已领数量",
+                    key: "have_number",
                     align: "center",
                     width: 100
                 }, {
+                    title: "待审核",
+                    key: "wait_check",
+                    align: "center",
+                    width: 80
+                }, {
+                    title: "已通过",
+                    key: "have_pass",
+                    align: "center",
+                    width: 80
+                }, {
+                    title: "未通过",
+                    key: "no_pass",
+                    align: "center",
+                    width: 80
+                }, {
                     title: "截止日期",
                     key: "end_date",
-                    align: "center"
+                    align: "center", width: 100
                 }, {title: "验收时长", key: "check_duration", align: "center", width: 100}, {
                     title: "完成时长",
                     key: "finish_duration",
                     align: "center", width: 100
                 }, {title: "是否重复", key: "is_repeat", align: "center", width: 100}, {
                     title: "地区",
-                    key: "area",
-                    align: "center"
+                    key: "city_name",
+                    align: "center", width: 120
                 }, {title: "状态", key: "status", align: "center", width: 100}, {
                     title: "创建时间",
                     key: "gmt_create",
                     align: "center", width: 150
                 }, {title: "操作", key: "handle", align: "center", handle: ["edit", "delete"], width: 180}],
+                submitColumns: [
+                    {
+                        title: '序号',
+                        type: 'index',
+                        width: 65,
+                        align: 'center'
+                    },
+                    {
+                        title: '用户头像',
+                        align: 'center',
+                        key: 'avatarurl', width: 100
+                    },
+                    {
+                        title: '用户昵称',
+                        align: 'center',
+                        key: 'nickname'
+                    },
+                    {
+                        title: '用户手机号',
+                        align: 'center',
+                        key: 'phone'
+                    },
+                    {
+                        title: '提交时间',
+                        align: 'center',
+                        key: 'submit_time'
+                    },
+                    {
+                        title: '审核时间',
+                        align: 'center',
+                        key: 'check_time'
+                    }, {title: "操作", key: "handle", align: "center", handle: ["edit", "delete"], width: 180}
+                ],
                 tableData: [],
                 tableShow: {
+                    currentPage: 1,
+                    pageSize: 10,
+                    listCount: 0
+                },
+                submitLoading: false,
+                submitData: [],
+                submitShow: {
                     currentPage: 1,
                     pageSize: 10,
                     listCount: 0
@@ -355,9 +563,34 @@
                     status: "",
                     gmt_create: ""
                 },
+                searchConfSubmit: {
+                    task_id: "",
+                    status: ""
+                },
                 modalSetting: {
                     show: false,
                     loading: false,
+                    index: 0
+                },
+                modalEditting: {
+                    show: false,
+                    loading: false,
+                    index: 0
+                },
+                modalSeeingSubmit: {
+                    show: false,
+                    loading: false,
+                    title: '',
+                    status: '',
+                    index: 0
+                },
+                modalSubmit: {
+                    show: false,
+                    loading: false,
+                    nickname: '',
+                    submit_img: [],
+                    submit_text: "",
+                    status: "",
                     index: 0
                 },
                 // 初始化图片弹出框
@@ -369,7 +602,7 @@
                 uploadUrl: '',
                 uploadHeader: {},
                 formItem: {
-                    task_id: "",
+                    task_id: 0,
                     task_type_id: "",
                     title: "",
                     money: "",
@@ -380,12 +613,23 @@
                     is_repeat: 0,
                     area: [],
                     step: ['','',''],
+                    link: "",
                     show_img: [],
                     take_care: "",
                     device: 0,
                     submit_way: "",
                     submit_notice: "",
                     submit_img: []
+                },
+                formItemEdit: {
+                    task_id: "",
+                    title: "",
+                    number: "",
+                    end_date: ""
+                },
+                formItemSubmit: {
+                    id: "",
+                    status: 2
                 },
                 ruleValidate: {
                     task_type_id: [{required: true, message: "请选择任务类型", trigger: "change", type: 'number'}],
@@ -396,12 +640,16 @@
                     check_duration: [{required: true, message: "请输入验收时长", trigger: "blur"}],
                     finish_duration: [{required: true, message: "请选择完成时长", trigger: "change"}],
                     is_repeat: [{required: true, message: "请选择是否重复", trigger: "change"}],
-                    area: [{required: true, message: "请选择任务地区", trigger: "change", type: 'array'}],
+                    // area: [{required: true, message: "请选择任务地区", trigger: "change", type: 'array'}],
                     step: [{required: true, message: "请填写任务步骤", trigger: "change", type: 'array'}],
                     take_care: [{required: true, message: "请输入注意事项", trigger: "blur"}],
                     device: [{required: true, message: "请选择设备类型", trigger: "change"}],
                     submit_way: [{required: true, message: "请选择提交方式", trigger: "change"}],
                     submit_notice: [{required: true, message: "请输入提交说明", trigger: "blur"}]
+                },
+                ruleValidateEdit: {
+                    number: [{required: true, message: "请输入任务数量", trigger: "blur"}],
+                    end_date: [{required: true, message: "请选择任务截止日期", trigger: "change", type: 'date'}]
                 },
                 loading: true,
                 taskTypeList: [],
@@ -414,6 +662,7 @@
         created() {
             let vm = this
             this.init()
+            this.submitinit()
             this.getList()
             this.uploadUrl = config.baseUrl + 'Index/upload';
             this.uploadHeader = {'ApiAuth': sessionStorage.getItem('apiAuth')};
@@ -451,6 +700,30 @@
                             }, currentRowData.money);
                         };
                     }
+                    if (item.key === 'wait_check') {
+                        item.render = (h, param) => {
+                            let currentRowData = vm.tableData[param.index];
+                            return h('div', [
+                                seeSubmitListButton(vm, h, currentRowData, param.index,1)
+                            ])
+                        };
+                    }
+                    if (item.key === 'have_pass') {
+                        item.render = (h, param) => {
+                            let currentRowData = vm.tableData[param.index];
+                            return h('div', [
+                                seeSubmitListButton(vm, h, currentRowData, param.index,2)
+                            ])
+                        };
+                    }
+                    if (item.key === 'no_pass') {
+                        item.render = (h, param) => {
+                            let currentRowData = vm.tableData[param.index];
+                            return h('div', [
+                                seeSubmitListButton(vm, h, currentRowData, param.index,3)
+                            ])
+                        };
+                    }
                     if (item.key === 'is_repeat') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
@@ -472,14 +745,17 @@
                             }
                         };
                     }
-                    if (item.key === 'area') {
+                    if (item.key === 'city_name') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
+                            if (!currentRowData.city) {
+                                currentRowData.city_name = '全国'
+                            }
                             return h('Tag', {
                                 attrs: {
                                     color: 'blue'
                                 }
-                            }, currentRowData.area);
+                            }, currentRowData.city_name);
                         };
                     }
                     if (item.key === 'status') {
@@ -517,6 +793,64 @@
                     }
                 })
             },
+            submitinit () {
+                let vm = this;
+                this.submitColumns.forEach(item => {
+                    if (item.key === 'avatarurl') {
+                        item.render = (h, param) => {
+                            let currentRowData = vm.submitData[param.index];
+                            if (currentRowData.avatarurl) {
+                                return h('img', {
+                                    style: {
+                                        width: '40px',
+                                        height: '40px',
+                                        cursor: 'pointer',
+                                        margin: '5px 0'
+                                    },
+                                    attrs: {
+                                        src: currentRowData.avatarurl,
+                                        shape: 'square',
+                                        size: 'large'
+                                    },
+                                    on: {
+                                        click: (e) => {
+                                            vm.modalSeeingImg.img = currentRowData.avatarurl;
+                                            vm.modalSeeingImg.show = true;
+                                        }
+                                    }
+                                });
+                            } else {
+                                return h('Tag', {}, '暂无图片');
+                            }
+                        };
+                    }
+                    if (item.key === 'status') {
+                        item.render = (h, param) => {
+                            let currentRowData = vm.submitData[param.index];
+                            return h('Tag', {
+                                attrs: {
+                                    color: 'blue'
+                                }
+                            }, currentRowData.status);
+                        };
+                    }
+                    if (item.key === 'handle') {
+                        item.render = (h, param) => {
+                            let currentRowData = vm.submitData[param.index]
+                            if (currentRowData.status === 1) {
+                                return h('div', [
+                                    seeSubmitContentButton(vm, h, currentRowData, param.index),
+                                    noPassButton(vm, h, currentRowData, param.index)
+                                ])
+                            }else if (currentRowData.status === 2 || currentRowData.status === 3) {
+                                return h('div', [
+                                    seeSubmitContentButton(vm, h, currentRowData, param.index)
+                                ])
+                            }
+                        }
+                    }
+                });
+            },
             changeTime(res) {
                 console.log(res)
             },
@@ -536,11 +870,11 @@
             },
             handleRemoveShow (file) {
                 const fileList = this.$refs.uploadShow.fileList;
-                this.$refs.upload.fileList.splice(fileList.indexOf(file), 1);
+                this.$refs.uploadShow.fileList.splice(fileList.indexOf(file), 1);
             },
             handleRemoveSubmit (file) {
                 const fileList = this.$refs.uploadSubmit.fileList;
-                this.$refs.upload.fileList.splice(fileList.indexOf(file), 1);
+                this.$refs.uploadSubmit.fileList.splice(fileList.indexOf(file), 1);
             },
             handleSuccess (res, file) {
                 file.url = res.data.fileUrl
@@ -562,9 +896,12 @@
                 for (let i = 0; i < this.uploadListShow.length; i++) {
                     this.formItem.show_img[i] = this.uploadListShow[i].url
                 }
-                for (let i = 0; i < this.uploadListSubmit.length; i++) {
-                    this.formItem.submit_img[i] = this.uploadListSubmit[i].url
+                if (this.formItem.submit_way === 2) {
+                    for (let i = 0; i < this.uploadListSubmit.length; i++) {
+                        this.formItem.submit_img[i] = this.uploadListSubmit[i].url
+                    }
                 }
+
                 this.$refs['myForm'].validate((valid) => {
                     if (valid) {
                         this.modalSetting.loading = true
@@ -573,6 +910,9 @@
                                 this.$Message.success(res.data.msg)
                                 this.getList()
                                 this.cancel()
+                                this.formItem.step = ['','','']
+                                this.$refs.uploadShow.fileList = ''
+                                this.$refs.uploadSubmit.fileList = ''
                             } else {
                                 this.$Message.error(res.data.msg)
                             }
@@ -582,6 +922,43 @@
             },
             cancel() {
                 this.modalSetting.show = false
+            },
+            submitEdit() {
+                this.$refs['myFormEdit'].validate((valid) => {
+                    if (valid) {
+                        this.modalEditting.loading = true
+                        saveData(this.formItemEdit).then(res => {
+                            if (res.data.code === 1) {
+                                this.$Message.success(res.data.msg)
+                                this.getList()
+                                this.cancelEdit()
+                            } else {
+                                this.$Message.error(res.data.msg)
+                            }
+                        })
+                    }
+                })
+            },
+            cancelEdit() {
+                this.modalEditting.show = false
+            },
+            passSubmit() {
+                this.modalSubmit.loading = true
+                this.formItemSubmit.status = 2;
+                saveUserTaskData(this.formItemSubmit).then(res => {
+                    if (res.data.code === 1) {
+                        this.$Message.success(res.data.msg)
+                        this.modalSubmit.loading = false
+                        this.getSubmitList()
+                        this.cancelSubmit()
+                        this.getList()
+                    } else {
+                        this.$Message.error(res.data.msg)
+                    }
+                })
+            },
+            cancelSubmit() {
+                this.modalSubmit.show = false
             },
             doCancel(data) {
                 if (!data) {
@@ -599,6 +976,14 @@
                 this.tableShow.pageSize = size
                 this.getList()
             },
+            changeSubmitPage (page) {
+                this.SubmitShow.currentPage = page;
+                this.getSubmitList();
+            },
+            changeSubmitSize (size) {
+                this.submitShow.pageSize = size;
+                this.getSubmitList();
+            },
             search() {
                 this.tableShow.currentPage = 1
                 this.getList()
@@ -611,11 +996,19 @@
                     this.tableShow.listCount = res.data.data.count
                     this.loading = false
                 })
+            },
+            getSubmitList () {
+                this.submitLoading = true;
+                getSubmitDataList(this.submitShow, this.searchConfSubmit).then(res => {
+                    this.submitData = res.data.data.list
+                    this.submitShow.listCount = res.data.data.count
+                    this.submitLoading = false
+                })
             }
         },
         mounted () {
-            this.uploadListSubmit = this.$refs.uploadSubmit.fileList;
             this.uploadListShow = this.$refs.uploadShow.fileList;
+            this.uploadListSubmit = this.$refs.uploadSubmit.fileList;
         }
     }
 </script>

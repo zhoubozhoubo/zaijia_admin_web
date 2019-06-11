@@ -57,7 +57,7 @@
                 <Button type="primary" @click="submit" :loading="modalSetting.loading">确定</Button>
             </div>
         </Modal>
-        <!--一级团队-->
+        <!--团队-->
         <Modal v-model="modalSeeingTeam.show" width="998" :styles="{top: '30px'}">
             <p slot="header" style="color:#2d8cf0;">
                 <Icon type="md-information-circle"></Icon>

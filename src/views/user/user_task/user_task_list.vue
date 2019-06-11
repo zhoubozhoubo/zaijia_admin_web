@@ -198,12 +198,7 @@
                     title: "状态",
                     key: "status",
                     align: "center", width: 100
-                }, {title: "领取时间", key: "gmt_create", align: "center"}, {
-                    title: "操作",
-                    key: "handle",
-                    align: "center",
-                    handle: ["edit"], width: 150
-                }],
+                }, {title: "领取时间", key: "gmt_create", align: "center"}],
                 tableData: [],
                 tableShow: {
                     currentPage: 1,
