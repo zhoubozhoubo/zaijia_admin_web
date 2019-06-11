@@ -7,13 +7,13 @@
                         <FormItem style="margin-bottom: 0">
                             <Input v-model="searchConf.nickname" clearable placeholder="用户昵称"></Input>
                         </FormItem>
-                        <FormItem style="margin-bottom: 0">
+                        <!--<FormItem style="margin-bottom: 0">
                             <Select v-model="searchConf.withdraw_way_id" clearable placeholder='提现方式'
                                     style="width:100px">
                                 <Option value="1">微信提现</Option>
                                 <Option value="2">支付宝提现</Option>
                             </Select>
-                        </FormItem>
+                        </FormItem>-->
                         <FormItem style="margin-bottom: 0">
                             <Input v-model="searchConf.account" clearable placeholder="提现帐号"></Input>
                         </FormItem>
@@ -57,10 +57,19 @@
                 <span>{{formItem.id ? '编辑' : '新增'}}</span>
             </p>
             <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="100">
+                <FormItem label="提现金额" prop="money">
+                    <Input v-model="formItem.money" disabled placeholder="提现金额"></Input>
+                </FormItem>
+                <FormItem label="提现方式" prop="withdraw_name">
+                    <Input v-model="formItem.withdraw_name" disabled placeholder="提现方式"></Input>
+                </FormItem>
+                <FormItem label="提现帐号" prop="account">
+                    <Input v-model="formItem.account" disabled placeholder="提现帐号"></Input>
+                </FormItem>
             </Form>
             <div slot="footer">
                 <Button type="text" @click="cancel" style="margin-right: 8px">取消</Button>
-                <Button type="primary" @click="submit" :loading="modalSetting.loading">确定</Button>
+                <Button type="primary" @click="submit" :loading="modalSetting.loading">确定转账</Button>
             </div>
         </Modal>
         <!--查看大图-->
@@ -86,29 +95,41 @@
             on: {
                 'click': () => {
                     vm.modalSetting.show = true
+                    vm.formItem.id = currentRow.id;
+                    vm.formItem.money = currentRow.money;
+                    vm.formItem.withdraw_name = currentRow.withdraw_name;
+                    vm.formItem.account = currentRow.account;
                     vm.modalSetting.index = index
                 }
             }
-        }, '编辑')
+        }, '转账')
     }
     const deleteButton = (vm, h, currentRow, index) => {
         return h('Poptip', {
             props: {
                 confirm: true,
-                title: '您确定要删除这条数据吗? ',
+                title: '您确定要拒绝这条数据吗? ',
                 transfer: true
             },
             on: {
                 'on-ok': () => {
-                    deleteData(currentRow.id).then(res => {
+                    // deleteData(currentRow.id).then(res => {
+                    //     if (res.data.code === 1) {
+                    //         vm.tableData.splice(index, 1)
+                    //         vm.$Message.success(res.data.msg)
+                    //     } else {
+                    //         vm.$Message.error(res.data.msg)
+                    //     }
+                    // }, err => {
+                    //     vm.$Message.error(err.data.msg)
+                    // })
+                    saveData({id: currentRow.id, status: 2}).then(res => {
                         if (res.data.code === 1) {
-                            vm.tableData.splice(index, 1)
                             vm.$Message.success(res.data.msg)
+                            vm.getList()
                         } else {
                             vm.$Message.error(res.data.msg)
                         }
-                    }, err => {
-                        vm.$Message.error(err.data.msg)
                     })
                 }
             }
@@ -121,7 +142,7 @@
                     type: 'error',
                     placement: 'top',
                 }
-            }, '删除')
+            }, '拒绝')
         ])
     }
 
@@ -136,13 +157,19 @@
                     align: "center"
                 }, {title: "金额", key: "money", align: "center"}, {
                     title: "提现方式",
-                    key: "withdraw_way_id",
+                    key: "withdraw_name",
                     align: "center"
                 }, {title: "提现帐号", key: "account", align: "center"}, {
                     title: "状态",
                     key: "status",
                     align: "center"
-                }, {title: "创建时间", key: "gmt_create", align: "center"}],
+                }, {title: "创建时间", key: "gmt_create", align: "center"}, {
+                    title: "操作",
+                    key: "handle",
+                    align: "center",
+                    handle: ["edit", "delete"],
+                    width: 180
+                }],
                 tableData: [],
                 tableShow: {
                     currentPage: 1,
@@ -160,7 +187,12 @@
                     img: '',
                     show: false
                 },
-                formItem: {},
+                formItem: {
+                    money: '',
+                    withdraw_name: '',
+                    account: '',
+                    id: 0
+                },
                 ruleValidate: {},
                 loading: true,
             }
@@ -176,27 +208,22 @@
                     if (item.key === 'handle') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index]
+                            if (currentRowData.status === 0) {
+                                return h('div', [
+                                    editButton(vm, h, currentRowData, param.index),
+                                    deleteButton(vm, h, currentRowData, param.index)
+                                ])
+                            }
                         }
                     }
-                    if (item.key === 'withdraw_way_id') {
+                    if (item.key === 'withdraw_name') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
-                            switch (currentRowData.withdraw_way_id) {
-                                case 1:
-                                    return h('Tag', {
-                                        attrs: {
-                                            color: 'green'
-                                        }
-                                    }, '微信提现');
-                                    break;
-                                case 2:
-                                    return h('Tag', {
-                                        attrs: {
-                                            color: 'blue'
-                                        }
-                                    }, '支付宝提现');
-                                    break;
-                            }
+                            return h('Tag', {
+                                attrs: {
+                                    color: 'blue'
+                                }
+                            }, currentRowData.withdraw_name);
                         };
                     }
                     if (item.key === 'status') {
@@ -215,14 +242,14 @@
                                         attrs: {
                                             color: 'green'
                                         }
-                                    }, '成功');
+                                    }, '已提现');
                                     break;
                                 case 2:
                                     return h('Tag', {
                                         attrs: {
                                             color: 'red'
                                         }
-                                    }, '失败');
+                                    }, '已拒绝');
                                     break;
                                 case 3:
                                     return h('Tag', {
@@ -244,7 +271,7 @@
                 this.$refs['myForm'].validate((valid) => {
                     if (valid) {
                         this.modalSetting.loading = true
-                        saveData(this.formItem).then(res => {
+                        saveData({id: this.formItem.id, status: 1}).then(res => {
                             if (res.data.code === 1) {
                                 this.$Message.success(res.data.msg)
                                 this.getList()
