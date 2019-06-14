@@ -506,7 +506,8 @@
                     title: "创建时间",
                     key: "gmt_create",
                     align: "center", width: 150
-                }, {title: "操作", key: "handle", align: "center", handle: ["edit", "delete"], width: 180}],
+                }, {title: "操作", key: "handle", align: "center", handle: ["edit", "delete"], width: 180,
+                    fixed: 'right'}],
                 submitColumns: [
                     {
                         title: '序号',
