@@ -349,6 +349,14 @@ export const appRouter = [
         component: Main,
         children: [
             {
+                path: "website_index",
+                icon: "ios-folder-open",
+                name: "website_index",
+                access: 'admin/BasicConf/invite',
+                title: "网站配置",
+                component: () => import('@/views/basic_conf/website/website_index.vue')
+            },
+            {
                 path: "invite_index",
                 icon: "ios-folder-open",
                 name: "invite_index",
