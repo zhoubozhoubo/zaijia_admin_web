@@ -331,7 +331,7 @@
             },
             on: {
                 'on-ok': () => {
-                    deleteData(currentRow.task_id).then(res => {
+                    deleteData({task_id: currentRow.task_id}).then(res => {
                         if (res.data.code === 1) {
                             vm.tableData.splice(index, 1)
                             vm.$Message.success(res.data.msg)

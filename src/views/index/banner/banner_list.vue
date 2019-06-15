@@ -21,7 +21,7 @@
             <Col span="24">
                 <Card>
                     <p slot="title" style="height: 40px">
-                        <Button type="primary" @click="alertAdd" icon="md-add">新增</Button>
+                        <!--<Button type="primary" @click="alertAdd" icon="md-add">新增</Button>-->
                     </p>
                     <div>
                         <Table :loading="loading" :columns="columnsList" :data="tableData" border
@@ -169,7 +169,7 @@
                         title: "状态",
                         key: "status",
                         align: "center", width: 100
-                    }, {title: "操作", key: "handle", align: "center", handle: ["edit", "delete"], width: 180}
+                    },{title: "操作", key: "handle", align: "center", handle: ["edit", "delete"], width: 180}
                 ],
                 tableData: [],
                 tableShow: {
@@ -214,7 +214,7 @@
                             let currentRowData = vm.tableData[param.index]
                             return h('div', [
                                 editButton(vm, h, currentRowData, param.index),
-                                deleteButton(vm, h, currentRowData, param.index)
+                                // deleteButton(vm, h, currentRowData, param.index)
                             ])
                         }
                     }
