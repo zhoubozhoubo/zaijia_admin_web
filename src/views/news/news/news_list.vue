@@ -1,0 +1,387 @@
+<template>
+    <div>
+        <Row>
+            <Col span="24">
+            <Card style="margin-bottom: 10px">
+                <Form inline>
+                                        <FormItem style="margin-bottom: 0">
+                    <Select v-model="searchConf.news_type_id" clearable placeholder='请选择新闻类型id' style="width:100px">
+                        <Option value="1">select1</Option>
+                        <Option value="2">select2</Option>
+                        <Option value="3">select3</Option>
+                    </Select>
+                    </FormItem>
+                                        <FormItem style="margin-bottom: 0">
+                        <Input v-model="searchConf.title" clearable placeholder="新闻标题"></Input>
+                    </FormItem>
+                                        <FormItem style="margin-bottom: 0">
+                    <Select v-model="searchConf.status" clearable placeholder='请选择状态' style="width:100px">
+                        <Option value="1">select1</Option>
+                        <Option value="2">select2</Option>
+                        <Option value="3">select3</Option>
+                    </Select>
+                    </FormItem>
+                                        <FormItem style="margin-bottom: 0">
+                        <Button type="primary" shape="circle" icon="ios-search" @click="search">查询/刷新</Button>
+                    </FormItem>
+                </Form>
+            </Card>
+            </Col>
+        </Row>
+        <Row>
+            <Col span="24">
+            <Card>
+                                <p slot="title" style="height: 40px">
+                    <Button type="primary" @click="alertAdd" icon="md-add">新增</Button>
+                </p>
+                                <div>
+                    <Table :loading="loading" :columns="columnsList" :data="tableData" border disabled-hover></Table>
+                </div>
+                <div style="text-align: center;margin-top: 15px">
+                    <Page :total="tableShow.listCount" :current="tableShow.currentPage"
+                          :page-size="tableShow.pageSize" @on-change="changePage"
+                          @on-page-size-change="changeSize" show-elevator show-sizer show-total></Page>
+                </div>
+            </Card>
+            </Col>
+        </Row>
+        <Modal v-model="modalSetting.show" width="700" :styles="{top: '30px'}" @on-visible-change="doCancel">
+            <p slot="header" style="color:#2d8cf0;">
+                <Icon type="md-information-circle"></Icon>
+                <span>{{formItem.news_id ? '编辑' : '新增'}}</span>
+            </p>
+            <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="100">
+                                <FormItem label="新闻类型id" prop="news_type_id">
+                                        <Select v-model="formItem.news_type_id" style="width:200px">
+                        <Option :value="formItem.news_type_id">formItem.news_type_id</Option>
+                    </Select>
+                                    </FormItem>
+                                <FormItem label="新闻标题" prop="title">
+                                        <Input v-model="formItem.title" placeholder="新闻标题"></Input>
+                                    </FormItem>
+                                <FormItem label="新闻内容" prop="content">
+                                        <Upload
+                            id="iviewUp"
+                            ref="upload"
+                            :show-upload-list="false"
+                            :on-success="handleSingleSuccess"
+                            :format="['jpg','jpeg','png']"
+                            :max-size="5120"
+                            :on-format-error="handleFormatError"
+                            :before-upload="handleBeforeUpload()"
+                            type="drag"
+                            :action="uploadUrl"
+                            :headers="uploadHeader"
+                            style="display: none;width:0">
+                        <div style="width: 0">
+                            <Icon type="ios-camera" size="50"></Icon>
+                        </div>
+                    </Upload>
+                    <quill-editor
+                            v-model="formItem.content"
+                            ref="myQuillEditor"
+                            :options="editorOption"
+                            @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
+                            @change="onEditorChange($event)">
+                    </quill-editor>
+                                    </FormItem>
+                            </Form>
+            <div slot="footer">
+                <Button type="text" @click="cancel" style="margin-right: 8px">取消</Button>
+                <Button type="primary" @click="submit" :loading="modalSetting.loading">确定</Button>
+            </div>
+        </Modal>
+        <!--查看大图-->
+        <Modal v-model="modalSeeingImg.show"
+               class-name="fl-image-modal"
+               @on-visible-change="doCancel">
+            <img :src="modalSeeingImg.img" v-if="modalSeeingImg.show" style="width: 100%">
+        </Modal>
+    </div>
+</template>
+
+<script>
+        import {getDataList,saveData,deleteData,change} from '@/api/news_list'
+        import {quillEditor} from 'vue-quill-editor';
+    
+    const editButton = (vm, h, currentRow, index) => {
+        return h('Button', {
+            props: {
+                type: 'primary'
+            },
+            style: {
+                margin: '0 5px'
+            },
+            on: {
+                'click': () => {
+                                        vm.formItem.news_id = currentRow.news_id;
+                                        vm.formItem.news_type_id = currentRow.news_type_id;
+                                        vm.formItem.title = currentRow.title;
+                                        vm.formItem.content = currentRow.content;
+                                        vm.modalSetting.show = true
+                    vm.modalSetting.index = index
+                }
+            }
+        }, '编辑')
+    }
+    const deleteButton = (vm, h, currentRow, index) => {
+        return h('Poptip', {
+            props: {
+                confirm: true,
+                title: '您确定要删除这条数据吗? ',
+                transfer: true
+            },
+            on: {
+                'on-ok': () => {
+                    deleteData({news_id:currentRow.news_id}).then(res => {
+                        if (res.data.code === 1) {
+                            vm.tableData.splice(index, 1)
+                            vm.$Message.success(res.data.msg)
+                        } else {
+                            vm.$Message.error(res.data.msg)
+                        }
+                    }, err => {
+                        vm.$Message.error(err.data.msg)
+                    })
+                }
+            }
+        }, [
+            h('Button', {
+                style: {
+                    margin: '0 5px'
+                },
+                props: {
+                    type: 'error',
+                    placement: 'top',
+                }
+            }, '删除')
+        ])
+    }
+
+    export default {
+        name: 'news_list',
+        components: {
+        },
+        data() {
+            return {
+                columnsList:[{title:"新闻id",key:"news_id",align:"center"},{title:"新闻类型id",key:"news_type_id",align:"center"},{title:"新闻标题",key:"title",align:"center"},{title:"新闻内容",key:"content",align:"center"},{title:"状态",key:"status",align:"center"},{title:"操作",key:"handle",align:"center",handle:["edit","delete"]}],
+                tableData: [],
+                tableShow: {
+                    currentPage: 1,
+                    pageSize: 10,
+                    listCount: 0
+                },
+                searchConf:{news_type_id:"",title:"",status:""},
+                modalSetting: {
+                    show: false,
+                    loading: false,
+                    index: 0
+                },
+                // 初始化图片弹出框
+                modalSeeingImg: {
+                    img: '',
+                    show: false
+                },
+                                editorOption: {
+                    modules: {
+                        toolbar: {
+                            container: [
+                                [{ 'size': ['small', false, 'large', 'huge'] }],
+                                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                                ['bold', 'italic', 'underline', 'strike', 'blockquote', 'clean'],
+                                [{ 'header': 1 }, { 'header': 2 }],
+                                [{'list': 'ordered'}, { 'list': 'bullet' }],
+                                [{'script': 'sub'}, { 'script': 'super' }],
+                                [{ 'align': [] }],
+                                [{ 'color': [] }, { 'background': [] }],
+                                ['link', 'image']
+                            ],
+                                handlers: {
+                                'image': function (value) {
+                                    if (value) {
+                                        console.log('image')
+                                        document.querySelector('#iviewUp input').click();
+                                    } else {
+                                        this.quill.format('image', false);
+                                    }
+                                },
+                                'link': function (value) {
+                                    if (value) {
+                                        console.log('link')
+                                        var href = prompt('Enter the URL');
+                                        this.quill.format('link', href);
+                                    } else {
+                                        this.quill.format('link', false);
+                                    }
+                                }
+                            }
+                        }
+                        // toolbar: [
+                        //     [{ 'size': ['small', false, 'large', 'huge'] }],
+                        //     [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                        //     ['bold', 'italic', 'underline', 'strike', 'blockquote', 'clean'],
+                        //     [{ 'header': 1 }, { 'header': 2 }],
+                        //     [{'list': 'ordered'}, { 'list': 'bullet' }],
+                        //     [{'script': 'sub'}, { 'script': 'super' }],
+                        //     [{ 'align': [] }],
+                        //     [{ 'color': [] }, { 'background': [] }],
+                        //     // ['image']
+                        // ]
+                    }
+                },
+                                    formItem:{news_id:"",news_type_id:"",title:"",content:""},
+                                    ruleValidate: {news_id:[{required:0,message:"",trigger:"blur"}],news_type_id:[{required:true,message:"请选择新闻类型",trigger:"blur"}],title:[{required:true,message:"请输入新闻标题",trigger:"blur"}]},
+                                    loading: true,
+            }
+        },
+        created() {
+            this.init()
+            this.getList()
+                    },
+        methods: {
+            init() {
+                let vm = this
+                this.columnsList.forEach(item => {
+                    if (item.key === 'handle') {
+                        item.render = (h, param) => {
+                            let currentRowData = vm.tableData[param.index]
+                                                        return h('div', [
+                                editButton(vm, h, currentRowData, param.index),
+                                deleteButton(vm, h, currentRowData, param.index)
+                            ])
+                                                    }
+                    }
+                                            if (item.key === 'news_type_id') {
+                            item.render = (h, param) => {
+                                let currentRowData = vm.tableData[param.index];
+                                return h('Tag', {
+                                    attrs: {
+                                        color: 'blue'
+                                    }
+                                }, currentRowData.news_type_id);
+                            };
+                        }
+                                            if (item.key === 'status') {
+                            item.render = (h, param) => {
+                                let currentRowData = vm.tableData[param.index];
+                                return h('i-switch', {
+                                    attrs: {
+                                        size: 'large'
+                                    },
+                                    props: {
+                                        'true-value': 1,
+                                        'false-value': 0,
+                                        value: currentRowData.status                                    },
+                                    on: {
+                                        'on-change': function (status) {
+                                            change({news_id:currentRowData.news_id,status:status}).then(res => {
+                                                vm.$Message.success(res.data.msg)
+                                                vm.cancel()
+                                            }, err => {
+                                                vm.$Message.error(res.data.msg)
+                                                vm.cancel()
+                                            })
+                                        }
+                                    }
+                                }, [
+                                    h('span', {
+                                        slot: 'open'
+                                    }, '开启'),
+                                    h('span', {
+                                        slot: 'close'
+                                    }, '关闭')
+                                ]);
+                            };
+                        }
+                                    })
+            },
+            alertAdd() {
+                this.formItem.news_id = 0
+                this.modalSetting.show = true
+            },
+                            // 富文本编辑器中上传图片
+                handleSingleSuccess (res, file) {
+                    // 获取富文本组件实例
+                    let vm = this
+                    let quill = this.$refs.myQuillEditor.quill
+                    // 如果上传成功
+                    if (res.code === 1) {
+                        // 获取光标所在位置
+                        let length = quill.getSelection().index;
+                        // 插入图片  res.info为服务器返回的图片地址
+                        quill.insertEmbed(length, 'image', res.data.fileUrl)
+                        // 调整光标到最后
+                        quill.setSelection(length + 1);
+                    } else {
+                        vm.$Message.error('图片插入失败');
+                    }
+                },
+                handleFormatError () {
+                },
+                handleBeforeUpload () {
+                },
+                onEditorBlur () {
+                },
+                onEditorFocus () {
+                },
+                onEditorChange () {
+                },
+                        submit() {
+                this.$refs['myForm'].validate((valid) => {
+                    if (valid) {
+                        this.modalSetting.loading = true
+                        saveData(this.formItem).then(res => {
+                            if (res.data.code === 1) {
+                                this.$Message.success(res.data.msg)
+                                this.getList()
+                                this.cancel()
+                            } else {
+                                this.$Message.error(res.data.msg)
+                            }
+                        })
+                    }
+                })
+            },
+            cancel() {
+                this.modalSetting.show = false
+            },
+            doCancel(data) {
+                if (!data) {
+                    this.formItem.news_id = 0
+                    this.$refs['myForm'].resetFields()
+                    this.modalSetting.loading = false
+                    this.modalSetting.index = 0
+                }
+            },
+            changePage(page) {
+                this.tableShow.currentPage = page
+                this.getList()
+            },
+            changeSize(size) {
+                this.tableShow.pageSize = size
+                this.getList()
+            },
+            search() {
+                this.tableShow.currentPage = 1
+                this.getList()
+            },
+            getList() {
+
+                this.loading = true;
+                getDataList(this.tableShow, this.searchConf).then(res => {
+                    this.tableData = res.data.data.list
+                    this.tableShow.listCount = res.data.data.count
+                    this.loading = false
+                })
+            }
+        }
+    }
+</script>
+
+<style scoped>
+</style>
+<style>
+.ql-editor,.ql-blank{
+    height: 200px;
+}
+</style>

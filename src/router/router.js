@@ -341,6 +341,56 @@ export const appRouter = [
             }
         ]
     },
+    {
+        path: "/basic_conf",
+        icon: "md-cube",
+        name: "basic_conf",
+        title: "基本配置",
+        component: Main,
+        children: [
+            {
+                path: "invite_index",
+                icon: "ios-folder-open",
+                name: "invite_index",
+                access: 'admin/BasicConf/invite',
+                title: "邀请技巧",
+                component: () => import('@/views/basic_conf/invite/invite_index.vue')
+            },
+            {
+                path: "customer_index",
+                icon: "ios-folder-open",
+                name: "customer_index",
+                access: 'admin/BasicConf/customer',
+                title: "联系客服",
+                component: () => import('@/views/basic_conf/customer/customer_index.vue')
+            }
+        ]
+    },
+    {
+        path: "/news",
+        icon: "md-cube",
+        name: "news",
+        title: "新闻管理",
+        component: Main,
+        children: [
+            {
+                path: "news",
+                icon: "ios-folder-open",
+                name: "news_list",
+                access: 'admin/News/getList',
+                title: "新闻列表",
+                component: () => import('@/views/news/news/news_list.vue')
+            },
+            {
+                path: "news_type",
+                icon: "ios-folder-open",
+                name: "news_type_list",
+                access: 'admin/NewsType/getList',
+                title: "新闻类型",
+                component: () => import('@/views/news/news_type/news_type_list.vue')
+            }
+        ]
+    },
     // {
     //     path: '/international',
     //     icon: 'earth',
