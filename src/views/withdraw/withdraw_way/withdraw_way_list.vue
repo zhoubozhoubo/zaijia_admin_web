@@ -33,7 +33,7 @@
             </p>
             <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="100">
                 <FormItem label="提现方式名称" prop="name">
-                    <Input v-model="formItem.name" placeholder="提现方式名称"></Input>
+                    <Input v-model="formItem.name" disabled placeholder="提现方式名称"></Input>
                 </FormItem>
                 <FormItem label="提现最小金额" prop="min_money">
                     <Input v-model="formItem.min_money" placeholder="提现最小金额"></Input>
@@ -42,7 +42,7 @@
                     <Input v-model="formItem.max_money" placeholder="提现最大金额"></Input>
                 </FormItem>
                 <FormItem label="提现说明" prop="notice">
-                    <Input v-model="formItem.notice" placeholder="提现说明" type="textarea" :row="4"></Input>
+                    <Input v-model="formItem.notice" placeholder="提现说明" type="textarea" :rows="4"></Input>
                 </FormItem>
             </Form>
             <div slot="footer">
@@ -134,13 +134,16 @@
                     title: "提现说明",
                     key: "notice",
                     align: "center"
-                }, {title: "状态", key: "status", align: "center", width: 100}, {
+                },
+                    // {title: "状态", key: "status", align: "center", width: 100},
+                    {
                     title: "操作",
                     key: "handle",
                     align: "center",
                     handle: ["edit", "delete"],
                     width: 180
-                }],
+                }
+                ],
                 tableData: [],
                 tableShow: {
                     currentPage: 1,
@@ -161,8 +164,8 @@
                 formItem: {withdraw_way_id: "", name: "", min_money: "", max_money: ""},
                 ruleValidate: {
                     name: [{required: true, message: "请输入提现名称", trigger: "blur"}],
-                    min_money: [{required: true, message: "请输入最小金额", trigger: "blur", type: 'number'}],
-                    max_money: [{required: true, message: "请输入最大金额", trigger: "blur", type: 'number'}]
+                    min_money: [{required: true, message: "请输入最小金额", trigger: "blur"}],
+                    max_money: [{required: true, message: "请输入最大金额", trigger: "blur"}]
                 },
                 loading: true,
             }

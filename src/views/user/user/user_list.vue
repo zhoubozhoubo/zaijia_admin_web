@@ -61,7 +61,7 @@
         <Modal v-model="modalSeeingTeam.show" width="998" :styles="{top: '30px'}">
             <p slot="header" style="color:#2d8cf0;">
                 <Icon type="md-information-circle"></Icon>
-                <span>{{modalSeeingTeam.nickname}} > {{searchConf.level === 1 ? '一级队员' : '二级队员'}}</span>
+                <span>{{modalSeeingTeam.nickname}} > {{teamConf.level === 1 ? '一级队员' : '二级队员'}}</span>
             </p>
             <div>
                 <Table :loading="teamLoading" :columns="teamColumns" :data="teamData" border disabled-hover></Table>
@@ -148,8 +148,8 @@
                 'click': () => {
                     vm.modalSeeingTeam.show = true;
                     vm.modalSeeingTeam.nickname = currentRow.nickname;
-                    vm.searchConf.level = 1;
-                    vm.searchConf.user_id = currentRow.user_id;
+                    vm.teamConf.level = 1;
+                    vm.teamConf.user_id = currentRow.user_id;
                     vm.getTeamList();
                 }
             }
@@ -169,8 +169,8 @@
                 'click': () => {
                     vm.modalSeeingTeam.show = true;
                     vm.modalSeeingTeam.nickname = currentRow.nickname;
-                    vm.searchConf.level = 2;
-                    vm.searchConf.user_id = currentRow.user_id;
+                    vm.teamConf.level = 2;
+                    vm.teamConf.user_id = currentRow.user_id;
                     vm.getTeamList();
                 }
             }
@@ -256,7 +256,8 @@
                     pageSize: 10,
                     listCount: 0
                 },
-                searchConf: {nickname: "", phone: "", gmt_create: "",user_id: '',level: ''},
+                searchConf: {nickname: "", phone: "", gmt_create: ""},
+                teamConf: {user_id: '',level: ''},
                 modalSetting: {
                     show: false,
                     loading: false,
@@ -448,7 +449,7 @@
             },
             getTeamList () {
                 this.teamLoading = true;
-                getDataList(this.teamShow, this.searchConf).then(res => {
+                getDataList(this.teamShow, this.teamConf).then(res => {
                     this.teamData = res.data.data.list
                     this.teamShow.listCount = res.data.data.count
                     this.teamLoading = false

@@ -151,15 +151,17 @@
         components: {},
         data() {
             return {
-                columnsList: [{title: "id", key: "id", align: "center",width: 80}, {
+                columnsList: [{title: "id", key: "id", align: "center", width: 80}, {
                     title: "用户昵称",
                     key: "nickname",
                     align: "center"
-                }, {title: "金额", key: "money", align: "center"}, {
+                }, {title: "帐号姓名", key: "name", align: "center"}, {
+                    title: "金额", key: "money", align: "center"
+                },{title: "提现帐号", key: "account", align: "center"}, {
                     title: "提现方式",
                     key: "withdraw_name",
                     align: "center"
-                }, {title: "提现帐号", key: "account", align: "center"}, {
+                }, {
                     title: "状态",
                     key: "status",
                     align: "center"

@@ -201,11 +201,11 @@
                     <Upload ref="uploadSubmit"
                             :show-upload-list="false"
                             :default-file-list="formItem.submit_img"
-                            :on-success="handleSuccess"
+                            :on-success="handleSuccessSubmit"
                             :format="['jpg','jpeg','png']"
                             :max-size="5120"
-                            :on-format-error="handleFormatError"
-                            :on-exceeded-size="handleMaxSize"
+                            :on-format-error="handleFormatErrorSubmit"
+                            :on-exceeded-size="handleMaxSizeSubmit"
                             multiple
                             type="drag"
                             :action="uploadUrl"
@@ -888,6 +888,22 @@
                 });
             },
             handleMaxSize (file) {
+                this.$Notice.warning({
+                    title: 'Exceeding file size limit',
+                    desc: 'File  ' + file.name + ' is too large, no more than 2M.'
+                });
+            },
+            handleSuccessSubmit (res, file) {
+                file.url = res.data.fileUrl
+                file.name = res.data.fileName
+            },
+            handleFormatErrorSubmit (file) {
+                this.$Notice.warning({
+                    title: 'The file format is incorrect',
+                    desc: 'File format of ' + file.name + ' is incorrect, please select jpg or png.'
+                });
+            },
+            handleMaxSizeSubmit (file) {
                 this.$Notice.warning({
                     title: 'Exceeding file size limit',
                     desc: 'File  ' + file.name + ' is too large, no more than 2M.'

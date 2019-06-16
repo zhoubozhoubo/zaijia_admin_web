@@ -33,10 +33,10 @@
             </p>
             <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="100">
                 <FormItem label="佣金等级" prop="level">
-                    <Input v-model="formItem.level" placeholder="佣金等级"></Input>
+                    <Input v-model="formItem.level" disabled number placeholder="佣金等级"></Input>
                 </FormItem>
-                <FormItem label="佣金比例" prop="value">
-                    <Input v-model="formItem.value" placeholder="佣金比例"></Input>
+                <FormItem label="佣金比例(%)" prop="value">
+                    <Input v-model="formItem.value" number placeholder="佣金比例(%)"></Input>
                 </FormItem>
             </Form>
             <div slot="footer">
@@ -143,8 +143,8 @@
                 },
                 formItem: {id: "", level: "", value: ""},
                 ruleValidate: {
-                    level: [{required: true, message: "请输入佣金等级", trigger: "blur"}],
-                    value: [{required: true, message: "请输入佣金比例", trigger: "blur"}]
+                    level: [{required: true, message: "请输入佣金等级", trigger: "blur", type: 'number'}],
+                    value: [{required: true, message: "请输入佣金比例", trigger: "blur", type: 'number'}]
                 },
                 loading: true,
             }
@@ -168,11 +168,23 @@
                     if (item.key === 'level') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
-                            return h('Tag', {
-                                attrs: {
-                                    color: 'blue'
-                                }
-                            }, currentRowData.level);
+                            switch (currentRowData.level) {
+                                case 1:
+                                    return h('Tag', {
+                                        attrs: {
+                                            color: 'blue'
+                                        }
+                                    }, '一级佣金');
+                                    break;
+                                case 2:
+                                    return h('Tag', {
+                                        attrs: {
+                                            color: 'blue'
+                                        }
+                                    }, '二级佣金');
+                                    break;
+                            }
+
                         };
                     }
                 })
