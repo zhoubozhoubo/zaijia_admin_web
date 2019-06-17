@@ -179,14 +179,14 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
                             switch (currentRowData.is_read) {
-                                case '0':
+                                case "0":
                                     return h('Tag', {
                                         attrs: {
                                             color: 'red'
                                         }
                                     }, '未读');
                                     break;
-                                case '1':
+                                case "1":
                                     return h('Tag', {
                                         attrs: {
                                             color: 'green'
