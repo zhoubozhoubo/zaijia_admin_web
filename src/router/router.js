@@ -91,115 +91,115 @@ export const otherRouter = {
 
 // 作为Main组件的子页面展示并且在左侧菜单显示的路由写在appRouter里
 export const appRouter = [
-    {
-        path: '/system',
-        icon: 'ios-build',
-        name: 'system',
-        title: '系统配置',
-        component: Main,
-        children: [
-            {
-                path: 'menu',
-                icon: 'md-menu',
-                name: 'menu',
-                access: 'admin/Menu/index',
-                title: '菜单维护',
-                component: () => import('@/views/system/menu.vue')
-
-            },
-            {
-                path: 'user',
-                icon: 'ios-people',
-                name: 'user',
-                access: 'admin/User/index',
-                title: '用户管理',
-                component: () => import('@/views/system/user.vue')
-            },
-            {
-                path: 'auth',
-                icon: 'md-warning',
-                name: 'auth',
-                access: 'admin/Auth/index',
-                title: '权限管理',
-                component: () => import('@/views/system/auth.vue')
-            },
-            {
-                path: 'log',
-                icon: 'md-list-box',
-                name: 'log',
-                access: 'admin/Log/index',
-                title: '操作日志',
-                component: () => import('@/views/system/log.vue')
-            }
-        ]
-    },
-    {
-        path: "/app",
-        icon: 'md-globe',
-        name: "app",
-        title: "应用接入",
-        component: Main,
-        children: [
-            {
-                path: "group",
-                icon: 'logo-buffer',
-                name: "app_group",
-                access: 'admin/AppGroup/index',
-                title: "应用分组",
-                component: () => import('@/views/app/group.vue')
-            },
-            {
-                path: "index",
-                icon: "md-code-working",
-                name: "app_index",
-                access: 'admin/App/index',
-                title: "应用列表",
-                component: () => import('@/views/app/list.vue')
-            }
-        ]
-    },
-    {
-        path: "/interface",
-        icon: "md-cube",
-        name: "interface",
-        title: "接口管理",
-        component: Main,
-        children: [
-            {
-                path: "group",
-                icon: "ios-folder-open",
-                name: "interface_group",
-                access: 'admin/InterfaceGroup/index',
-                title: "接口分组",
-                component: () => import('@/views/interface/group.vue')
-            },
-            {
-                path: "list",
-                icon: "ios-document-outline",
-                name: "interface_list",
-                access: 'admin/InterfaceList/index',
-                title: "接口列表",
-                component: () => import('@/views/interface/list.vue')
-            }
-        ]
-    },
-    {
-        path: "/db_table",
-        icon: "md-cube",
-        name: "db_table",
-        title: "数据库管理",
-        component: Main,
-        children: [
-            {
-                path: "db_table_list",
-                icon: "ios-folder-open",
-                name: "db_table_list",
-                access: 'admin/DbTable/index',
-                title: "数据库管理",
-                component: () => import('@/views/db_table/list.vue')
-            }
-        ]
-    },
+    // {
+    //     path: '/system',
+    //     icon: 'ios-build',
+    //     name: 'system',
+    //     title: '系统配置',
+    //     component: Main,
+    //     children: [
+    //         {
+    //             path: 'menu',
+    //             icon: 'md-menu',
+    //             name: 'menu',
+    //             access: 'admin/Menu/index',
+    //             title: '菜单维护',
+    //             component: () => import('@/views/system/menu.vue')
+    //
+    //         },
+    //         {
+    //             path: 'user',
+    //             icon: 'ios-people',
+    //             name: 'user',
+    //             access: 'admin/User/index',
+    //             title: '用户管理',
+    //             component: () => import('@/views/system/user.vue')
+    //         },
+    //         {
+    //             path: 'auth',
+    //             icon: 'md-warning',
+    //             name: 'auth',
+    //             access: 'admin/Auth/index',
+    //             title: '权限管理',
+    //             component: () => import('@/views/system/auth.vue')
+    //         },
+    //         {
+    //             path: 'log',
+    //             icon: 'md-list-box',
+    //             name: 'log',
+    //             access: 'admin/Log/index',
+    //             title: '操作日志',
+    //             component: () => import('@/views/system/log.vue')
+    //         }
+    //     ]
+    // },
+    // {
+    //     path: "/app",
+    //     icon: 'md-globe',
+    //     name: "app",
+    //     title: "应用接入",
+    //     component: Main,
+    //     children: [
+    //         {
+    //             path: "group",
+    //             icon: 'logo-buffer',
+    //             name: "app_group",
+    //             access: 'admin/AppGroup/index',
+    //             title: "应用分组",
+    //             component: () => import('@/views/app/group.vue')
+    //         },
+    //         {
+    //             path: "index",
+    //             icon: "md-code-working",
+    //             name: "app_index",
+    //             access: 'admin/App/index',
+    //             title: "应用列表",
+    //             component: () => import('@/views/app/list.vue')
+    //         }
+    //     ]
+    // },
+    // {
+    //     path: "/interface",
+    //     icon: "md-cube",
+    //     name: "interface",
+    //     title: "接口管理",
+    //     component: Main,
+    //     children: [
+    //         {
+    //             path: "group",
+    //             icon: "ios-folder-open",
+    //             name: "interface_group",
+    //             access: 'admin/InterfaceGroup/index',
+    //             title: "接口分组",
+    //             component: () => import('@/views/interface/group.vue')
+    //         },
+    //         {
+    //             path: "list",
+    //             icon: "ios-document-outline",
+    //             name: "interface_list",
+    //             access: 'admin/InterfaceList/index',
+    //             title: "接口列表",
+    //             component: () => import('@/views/interface/list.vue')
+    //         }
+    //     ]
+    // },
+    // {
+    //     path: "/db_table",
+    //     icon: "md-cube",
+    //     name: "db_table",
+    //     title: "数据库管理",
+    //     component: Main,
+    //     children: [
+    //         {
+    //             path: "db_table_list",
+    //             icon: "ios-folder-open",
+    //             name: "db_table_list",
+    //             access: 'admin/DbTable/index',
+    //             title: "数据库管理",
+    //             component: () => import('@/views/db_table/list.vue')
+    //         }
+    //     ]
+    // },
     {
         path: "/basic_conf",
         icon: "md-cube",

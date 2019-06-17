@@ -838,12 +838,12 @@
                     if (item.key === 'handle') {
                         item.render = (h, param) => {
                             let currentRowData = vm.submitData[param.index]
-                            if (currentRowData.status === 1) {
+                            if (currentRowData.status == 1) {
                                 return h('div', [
                                     seeSubmitContentButton(vm, h, currentRowData, param.index),
                                     noPassButton(vm, h, currentRowData, param.index)
                                 ])
-                            }else if (currentRowData.status === 2 || currentRowData.status === 3) {
+                            }else if (currentRowData.status == 2 || currentRowData.status == 3) {
                                 return h('div', [
                                     seeSubmitContentButton(vm, h, currentRowData, param.index)
                                 ])
