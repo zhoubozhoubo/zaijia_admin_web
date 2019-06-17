@@ -232,28 +232,28 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
                             switch (currentRowData.status) {
-                                case 0:
+                                case '0':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'blue'
                                         }
                                     }, '提现中');
                                     break;
-                                case 1:
+                                case '1':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'green'
                                         }
                                     }, '已提现');
                                     break;
-                                case 2:
+                                case '2':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'red'
                                         }
                                     }, '已拒绝');
                                     break;
-                                case 3:
+                                case '3':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'default'

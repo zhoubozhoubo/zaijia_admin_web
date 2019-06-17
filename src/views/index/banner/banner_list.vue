@@ -254,8 +254,8 @@
                                     size: 'large'
                                 },
                                 props: {
-                                    'true-value': 1,
-                                    'false-value': 0,
+                                    'true-value': '1',
+                                    'false-value': '0',
                                     value: currentRowData.status
                                 },
                                 on: {

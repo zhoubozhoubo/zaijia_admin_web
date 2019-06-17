@@ -729,14 +729,14 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
                             switch (currentRowData.is_repeat) {
-                                case 0:
+                                case '0':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'red'
                                         }
                                     }, '不重复');
                                     break;
-                                case 1:
+                                case '1':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'green'

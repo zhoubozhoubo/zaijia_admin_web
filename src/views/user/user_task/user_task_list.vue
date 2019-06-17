@@ -255,35 +255,35 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
                             switch (currentRowData.status) {
-                                case 0:
+                                case '0':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'blue'
                                         }
                                     }, '执行中');
                                     break;
-                                case 1:
+                                case '1':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'orange'
                                         }
                                     }, '待审核');
                                     break;
-                                case 2:
+                                case '2':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'green'
                                         }
                                     }, '已通过');
                                     break;
-                                case 3:
+                                case '3':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'red'
                                         }
                                     }, '未通过');
                                     break;
-                                case 4:
+                                case '4':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'default'

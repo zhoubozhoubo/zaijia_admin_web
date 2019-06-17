@@ -176,14 +176,14 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
                             switch (currentRowData.type) {
-                                case 1:
+                                case '1':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'green'
                                         }
                                     }, '一级佣金');
                                     break;
-                                case 2:
+                                case '2':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'blue'
