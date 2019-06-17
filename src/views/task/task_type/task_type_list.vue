@@ -167,11 +167,13 @@
                     title: "类型描述",
                     key: "comment",
                     align: "center"
-                }, {title: "排序", key: "sort", align: "center", width: 100}, {
-                    title: "状态",
-                    key: "status",
-                    align: "center", width: 100
-                }, {title: "操作", key: "handle", align: "center", handle: ["edit", "delete"], width: 180}],
+                }, {title: "排序", key: "sort", align: "center", width: 100},
+                //     {
+                //     title: "状态",
+                //     key: "status",
+                //     align: "center", width: 100
+                // },
+                    {title: "操作", key: "handle", align: "center", handle: ["edit", "delete"], width: 180}],
                 tableData: [],
                 tableShow: {
                     currentPage: 1,
