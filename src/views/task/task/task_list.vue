@@ -286,7 +286,7 @@
             </Form>
             <div slot="footer">
                 <Button type="text" @click="cancelSubmit" style="margin-right: 8px">取消</Button>
-                <Button type="primary" @click="passSubmit" :loading="modalSubmit.loading" v-if="modalSubmit.status === 1">通过</Button>
+                <Button type="primary" @click="passSubmit" :loading="modalSubmit.loading" v-if="modalSubmit.status == 1">通过</Button>
             </div>
         </Modal>
         <!--查看大图-->
@@ -913,7 +913,7 @@
                 for (let i = 0; i < this.uploadListShow.length; i++) {
                     this.formItem.show_img[i] = this.uploadListShow[i].url
                 }
-                if (this.formItem.submit_way === 2) {
+                if (this.formItem.submit_way == 2) {
                     for (let i = 0; i < this.uploadListSubmit.length; i++) {
                         this.formItem.submit_img[i] = this.uploadListSubmit[i].url
                     }
