@@ -143,8 +143,8 @@
                 },
                 formItem: {id: "", level: "", value: ""},
                 ruleValidate: {
-                    level: [{required: true, message: "请输入佣金等级", trigger: "blur", type: 'number'}],
-                    value: [{required: true, message: "请输入佣金比例", trigger: "blur", type: 'number'}]
+                    level: [{required: true, message: "请输入佣金等级", trigger: "blur"}],
+                    value: [{required: true, message: "请输入佣金比例"}]
                 },
                 loading: true,
             }
