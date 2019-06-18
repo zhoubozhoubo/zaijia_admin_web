@@ -13,12 +13,12 @@
                         <FormItem style="margin-bottom: 0">
                             <Input v-model="searchConf.title" clearable placeholder="新闻标题"></Input>
                         </FormItem>
-                        <FormItem style="margin-bottom: 0">
+                        <!--<FormItem style="margin-bottom: 0">
                             <Select v-model="searchConf.status" clearable placeholder='请选择状态' style="width:100px">
                                 <Option value="0">关闭</Option>
                                 <Option value="1">开启</Option>
                             </Select>
-                        </FormItem>
+                        </FormItem>-->
                         <FormItem style="margin-bottom: 0">
                             <Button type="primary" shape="circle" icon="ios-search" @click="search">查询/刷新</Button>
                         </FormItem>
@@ -229,7 +229,9 @@
                     title: "新闻内容",
                     key: "content",
                     align: "center"
-                }, {title: "状态", key: "status", align: "center"}, {
+                },
+                    // {title: "状态", key: "status", align: "center"},
+                    {
                     title: "操作",
                     key: "handle",
                     align: "center",
@@ -296,7 +298,7 @@
                 },
                 formItem: {news_id: 0, news_type_id: '', title: "",  img: "", content: ""},
                 ruleValidate: {
-                    news_type_id: [{required: true, message: "请选择新闻类型", trigger: "change", type: 'number'}],
+                    news_type_id: [{required: true, message: "请选择新闻类型", trigger: "change"}],
                     title: [{required: true, message: "请输入新闻标题", trigger: "blur"}],
                     img: [{required: true, message: "请上传图片", trigger: "blur"}]
                 },

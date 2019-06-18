@@ -8,12 +8,6 @@
                             <Input v-model="searchConf.name" clearable placeholder="类型名称"></Input>
                         </FormItem>
                         <FormItem style="margin-bottom: 0">
-                            <Select v-model="searchConf.status" clearable placeholder='请选择状态' style="width:100px">
-                                <Option value="0">关闭</Option>
-                                <Option value="1">开启</Option>
-                            </Select>
-                        </FormItem>
-                        <FormItem style="margin-bottom: 0">
                             <Button type="primary" shape="circle" icon="ios-search" @click="search">查询/刷新</Button>
                         </FormItem>
                     </Form>
@@ -47,33 +41,6 @@
                 <FormItem label="类型名称" prop="name">
                     <Input v-model="formItem.name" placeholder="类型名称"></Input>
                 </FormItem>
-                <FormItem label="类型图片" prop="img">
-                    <div class="demo-upload-list" v-if="formItem.img">
-                        <img :src="formItem.img">
-                        <div class="demo-upload-list-cover">
-                            <Icon type="ios-eye-outline" @click.native="handleView()"></Icon>
-                            <Icon type="ios-trash-outline" @click.native="handleImgRemove()"></Icon>
-                        </div>
-                    </div>
-                    <input v-if="formItem.img" v-model="formItem.img" type="hidden" name="image">
-                    <Upload type="drag"
-                            :action="uploadUrl"
-                            :headers="uploadHeader"
-                            v-if="!formItem.img"
-                            :format="['jpg','jpeg','png']"
-                            :max-size="5120"
-                            :on-success="handleImgSuccess"
-                            :on-format-error="handleImgFormatError"
-                            :on-exceeded-size="handleImgMaxSize"
-                            style="display: inline-block;width:58px;">
-                        <div style="width: 58px;height:58px;line-height: 58px;">
-                            <Icon type="ios-camera" size="20"></Icon>
-                        </div>
-                    </Upload>
-                    <Modal title="View Image" v-model="visible">
-                        <img :src="formItem.img" v-if="visible" style="width: 100%">
-                    </Modal>
-                </FormItem>
                 <FormItem label="类型描述" prop="comment">
                     <Input v-model="formItem.comment" placeholder="类型描述"></Input>
                 </FormItem>
@@ -85,12 +52,6 @@
                 <Button type="text" @click="cancel" style="margin-right: 8px">取消</Button>
                 <Button type="primary" @click="submit" :loading="modalSetting.loading">确定</Button>
             </div>
-        </Modal>
-        <!--查看大图-->
-        <Modal v-model="modalSeeingImg.show"
-               class-name="fl-image-modal"
-               @on-visible-change="doCancel">
-            <img :src="modalSeeingImg.img" v-if="modalSeeingImg.show" style="width: 100%">
         </Modal>
     </div>
 </template>
@@ -111,7 +72,6 @@
                 'click': () => {
                     vm.formItem.news_type_id = currentRow.news_type_id;
                     vm.formItem.name = currentRow.name;
-                    vm.formItem.img = currentRow.img;
                     vm.formItem.comment = currentRow.comment;
                     vm.formItem.sort = currentRow.sort;
                     vm.modalSetting.show = true
@@ -163,7 +123,7 @@
                     title: "类型名称",
                     key: "name",
                     align: "center"
-                }, {title: "类型图片", key: "img", align: "center"}, {
+                }, {
                     title: "类型描述",
                     key: "comment",
                     align: "center"
@@ -192,13 +152,9 @@
                     show: false
                 },
                 visible: false,
-                uploadUrl: '',
-                uploadHeader: {},
-                formItem: {news_type_id: "", name: "", img: "", comment: "", sort: ""},
+                formItem: {news_type_id: "", name: "", comment: "", sort: ""},
                 ruleValidate: {
-                    news_type_id: [{required: 0, message: "", trigger: "blur"}],
-                    name: [{required: true, message: "请输入类型名称", trigger: "blur"}],
-                    img: [{required: true, message: "请上传图片", trigger: "blur"}]
+                    name: [{required: true, message: "请输入类型名称", trigger: "blur"}]
                 },
                 loading: true,
             }
@@ -206,8 +162,6 @@
         created() {
             this.init()
             this.getList()
-            this.uploadUrl = config.baseUrl + 'Index/upload';
-            this.uploadHeader = {'ApiAuth': sessionStorage.getItem('apiAuth')};
         },
         methods: {
             init() {
@@ -221,34 +175,6 @@
                                 deleteButton(vm, h, currentRowData, param.index)
                             ])
                         }
-                    }
-                    if (item.key === 'img') {
-                        item.render = (h, param) => {
-                            let currentRowData = vm.tableData[param.index];
-                            if (currentRowData.img) {
-                                return h('img', {
-                                    style: {
-                                        width: '40px',
-                                        height: '40px',
-                                        cursor: 'pointer',
-                                        margin: '5px 0'
-                                    },
-                                    attrs: {
-                                        src: currentRowData.img,
-                                        shape: 'square',
-                                        size: 'large'
-                                    },
-                                    on: {
-                                        click: (e) => {
-                                            vm.modalSeeingImg.img = currentRowData.img;
-                                            vm.modalSeeingImg.show = true;
-                                        }
-                                    }
-                                });
-                            } else {
-                                return h('Tag', {}, '暂无图片');
-                            }
-                        };
                     }
                     if (item.key === 'sort') {
                         item.render = (h, param) => {
@@ -301,32 +227,6 @@
             alertAdd() {
                 this.formItem.news_type_id = 0
                 this.modalSetting.show = true
-            },
-            handleView() {
-                this.visible = true;
-            },
-            handleImgRemove() {
-                this.formItem.img = '';
-            },
-            handleImgFormatError(file) {
-                this.$Notice.warning({
-                    title: '文件类型不合法',
-                    desc: file.name + '的文件类型不正确，请上传jpg或者png图片。'
-                });
-            },
-            handleImgMaxSize(file) {
-                this.$Notice.warning({
-                    title: '文件大小不合法',
-                    desc: file.name + '太大啦请上传小于5M的文件。'
-                });
-            },
-            handleImgSuccess(response) {
-                if (response.code === 1) {
-                    this.$Message.success(response.msg);
-                    this.formItem.img = response.data.fileUrl;
-                } else {
-                    this.$Message.error(response.msg);
-                }
             },
             submit() {
                 this.$refs['myForm'].validate((valid) => {
