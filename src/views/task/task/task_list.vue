@@ -633,7 +633,7 @@
                     status: 2
                 },
                 ruleValidate: {
-                    task_type_id: [{required: true, message: "请选择任务类型", trigger: "change", type: 'number'}],
+                    task_type_id: [{required: true, message: "请选择任务类型", trigger: "change"}],
                     title: [{required: true, message: "请输入任务标题", trigger: "blur"}],
                     money: [{required: true, message: "请输入任务金额", trigger: "blur"}],
                     number: [{required: true, message: "请输入任务数量", trigger: "blur"}],
