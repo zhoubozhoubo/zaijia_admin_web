@@ -185,7 +185,7 @@
                 <FormItem label="提交说明" prop="submit_notice">
                     <Input v-model="formItem.submit_notice" type="textarea" :rows="4" placeholder="提交说明"></Input>
                 </FormItem>
-                <FormItem label="提交图片" prop="submit_img" v-if="formItem.submit_way == 2">
+                <FormItem label="提交图片" prop="submit_img" v-show="formItem.submit_way == 2">
                     <div class="demo-upload-list" v-for="item in uploadListSubmit">
                         <template v-if="item.status === 'finished'">
                             <img :src="item.url">
