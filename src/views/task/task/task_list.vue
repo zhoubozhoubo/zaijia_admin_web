@@ -857,6 +857,10 @@
             },
             alertAdd() {
                 this.formItem.task_id = 0
+                this.formItem.show_img = []
+                this.formItem.submit_img = []
+                this.$refs.uploadShow.fileList = ''
+                this.$refs.uploadSubmit.fileList = ''
                 this.modalSetting.show = true
             },
             addStep () {

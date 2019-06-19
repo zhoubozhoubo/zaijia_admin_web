@@ -210,7 +210,7 @@
                     if (item.key === 'handle') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index]
-                            if (currentRowData.status === 0) {
+                            if (currentRowData.status == 0) {
                                 return h('div', [
                                     editButton(vm, h, currentRowData, param.index),
                                     deleteButton(vm, h, currentRowData, param.index)
