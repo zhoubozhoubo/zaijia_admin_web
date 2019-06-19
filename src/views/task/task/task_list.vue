@@ -210,6 +210,7 @@
                             type="drag"
                             :action="uploadUrl"
                             :headers="uploadHeader"
+                            :before-upload="brforeUpload"
                             style="display: inline-block;width:58px;">
                         <div style="width: 58px;height:58px;line-height: 58px;">
                             <Icon type="ios-camera" size="20"></Icon>
@@ -857,10 +858,10 @@
             },
             alertAdd() {
                 this.formItem.task_id = 0
-                this.formItem.show_img = []
-                this.formItem.submit_img = []
-                this.$refs.uploadShow.fileList = ''
-                this.$refs.uploadSubmit.fileList = ''
+                // this.formItem.show_img = []
+                // this.formItem.submit_img = []
+                // this.$refs.uploadShow.fileList = []
+                // this.$refs.uploadSubmit.fileList = []
                 this.modalSetting.show = true
             },
             addStep () {
@@ -913,6 +914,20 @@
                     desc: 'File  ' + file.name + ' is too large, no more than 2M.'
                 });
             },
+            brforeUpload(file) { // 文件上传之前的钩子
+
+                // console.log(file);
+                // console.log(this.$refs);
+                // return false;
+                // this.$refs.uploadFile.clearFiles()
+                const mainImg = this.$refs.uploadSubmit; // 如果已经有文件  侧删除列表中的文件
+                if (mainImg && mainImg.length) {
+                    mainImg.forEach(item => {
+                        // item.uploadFiles.length = 0;
+                        item.clearFiles();
+                    });
+                }
+            },
             submit() {
                 for (let i = 0; i < this.uploadListShow.length; i++) {
                     this.formItem.show_img[i] = this.uploadListShow[i].url
@@ -932,8 +947,10 @@
                                 this.getList()
                                 this.cancel()
                                 this.formItem.step = ['','','']
-                                this.$refs.uploadShow.fileList = ''
-                                this.$refs.uploadSubmit.fileList = ''
+                                const fileList = this.$refs.uploadShow.fileList;
+                                this.$refs.uploadShow.fileList.splice(0, fileList.length);
+                                const fileListSubmit = this.$refs.uploadSubmit.fileList;
+                                this.$refs.uploadSubmit.fileList.splice(0, fileListSubmit.length);
                             } else {
                                 this.$Message.error(res.data.msg)
                             }
