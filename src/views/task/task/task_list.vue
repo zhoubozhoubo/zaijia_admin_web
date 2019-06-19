@@ -946,7 +946,7 @@
                                 this.$Message.success(res.data.msg)
                                 this.getList()
                                 this.cancel()
-                                this.formItem.step = ['','','']
+                                this.formItem.step.splice(0, this.formItem.step.length)
                                 const fileList = this.$refs.uploadShow.fileList;
                                 this.$refs.uploadShow.fileList.splice(0, fileList.length);
                                 const fileListSubmit = this.$refs.uploadSubmit.fileList;
