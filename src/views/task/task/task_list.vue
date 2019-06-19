@@ -749,7 +749,7 @@
                     if (item.key === 'city_name') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
-                            if (!currentRowData.city) {
+                            if (currentRowData.city == '0') {
                                 currentRowData.city_name = '全国'
                             }
                             return h('Tag', {
