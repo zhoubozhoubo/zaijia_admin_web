@@ -208,10 +208,18 @@ export const appRouter = [
         component: Main,
         children: [
             {
+                path: "wechatqrcode_index",
+                icon: "ios-folder-open",
+                name: "wechatqrcode_index",
+                access: 'admin/BasicConf/wechatQrCode',
+                title: "关注二维码",
+                component: () => import('@/views/basic_conf/wechatqrcode/wechatqrcode_index.vue')
+            },
+            {
                 path: "website_index",
                 icon: "ios-folder-open",
                 name: "website_index",
-                access: 'admin/BasicConf/invite',
+                access: 'admin/BasicConf/website',
                 title: "网站配置",
                 component: () => import('@/views/basic_conf/website/website_index.vue')
             },
