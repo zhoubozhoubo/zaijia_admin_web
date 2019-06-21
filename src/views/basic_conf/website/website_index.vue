@@ -7,7 +7,7 @@
             </p>
             <div>
                 <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="80">
-                    <FormItem label="网站域名">
+                    <FormItem label="网站域名" prop="website">
                         <Input v-model="formItem.website" placeholder="网站域名"></Input>
                     </FormItem>
                     <div>
@@ -30,22 +30,28 @@
                 formItem: {
                     website: ''
                 },
-                ruleValidate: {}
+                ruleValidate: {
+                    website: [{required: true, message: "请输入网站域名", trigger: "blur"}]
+                }
             };
         },
         methods: {
             submit () {
                 let vm = this;
-                this.saveLoading = true;
-                axios.post('BasicConf/saveWebsite', vm.formItem).then(function (response) {
-                    if (response.data.code === 1) {
-                        vm.$Message.success(response.data.msg);
-                        vm.saveLoading = false;
-                    }else{
-                        vm.$Message.fail(response.data.msg);
-                        vm.saveLoading = false;
+                this.$refs['myForm'].validate((valid) => {
+                    if (valid) {
+                        this.saveLoading = true;
+                        axios.post('BasicConf/saveWebsite', vm.formItem).then(function (response) {
+                            if (response.data.code === 1) {
+                                vm.$Message.success(response.data.msg);
+                                vm.saveLoading = false;
+                            }else{
+                                vm.$Message.fail(response.data.msg);
+                                vm.saveLoading = false;
+                            }
+                        });
                     }
-                });
+                })
             },
             init () {
                 let vm = this;
