@@ -787,18 +787,18 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index]
                             switch (currentRowData.status) {
-                                case 0:
+                                case '0':
                                     return h('div', [
                                         addButton(vm, h, currentRowData, param.index)
                                     ])
-                                case 1:
+                                case '1':
                                     return h('div', [
                                         stopButton(vm, h, currentRowData, param.index),
                                         deleteButton(vm, h, currentRowData, param.index),
                                         editButton(vm, h, currentRowData, param.index)
                                     ])
                                     break;
-                                case 2:
+                                case '2':
                                     return h('div', [
                                         goonButton(vm, h, currentRowData, param.index)
                                     ])
@@ -878,21 +878,21 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
                             switch (currentRowData.status) {
-                                case 0:
+                                case '0':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'default'
                                         }
                                     }, '已下架');
                                     break;
-                                case 1:
+                                case '1':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'green'
                                         }
                                     }, '已发布');
                                     break;
-                                case 2:
+                                case '2':
                                     return h('Tag', {
                                         attrs: {
                                             color: 'orange'
