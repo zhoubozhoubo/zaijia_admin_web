@@ -304,10 +304,44 @@
     import config from '../../../../build/config';
     import {getDataList, saveData, deleteData, change, getSubmitDataList, saveUserTaskData} from '@/api/task_list'
 
+    const addButton = (vm, h, currentRow, index) => {
+        return h('Button', {
+            props: {
+                type: 'text'
+            },
+            style: {
+                margin: '0 5px'
+            },
+            on: {
+                'click': () => {
+                    vm.formItem.task_id = currentRow.task_id;
+                    vm.formItem.task_type_id = currentRow.task_type_id;
+                    vm.formItem.title = currentRow.title;
+                    vm.formItem.money = currentRow.money;
+                    vm.formItem.number = currentRow.number;
+                    vm.formItem.end_date = currentRow.end_date;
+                    vm.formItem.check_duration = currentRow.check_duration;
+                    vm.formItem.finish_duration = currentRow.finish_duration;
+                    vm.formItem.is_repeat = currentRow.is_repeat;
+                    vm.formItem.area = currentRow.area;
+                    vm.formItem.step = currentRow.step;
+                    vm.formItem.link = currentRow.link;
+                    vm.formItem.show_img = currentRow.show_img;
+                    vm.formItem.take_care = currentRow.take_care;
+                    vm.formItem.device = currentRow.device;
+                    vm.formItem.submit_way = currentRow.submit_way;
+                    vm.formItem.submit_notice = currentRow.submit_notice;
+                    vm.formItem.submit_img = currentRow.submit_img;
+                    vm.modalSetting.show = true
+                    vm.modalSetting.index = index
+                }
+            }
+        }, '重新发布')
+    }
     const editButton = (vm, h, currentRow, index) => {
         return h('Button', {
             props: {
-                type: 'primary'
+                type: 'text'
             },
             style: {
                 margin: '0 5px'
@@ -321,7 +355,7 @@
                     vm.modalEditting.index = index
                 }
             }
-        }, '编辑')
+        }, '增量')
     }
     const deleteButton = (vm, h, currentRow, index) => {
         return h('Poptip', {
@@ -332,10 +366,10 @@
             },
             on: {
                 'on-ok': () => {
-                    deleteData({task_id: currentRow.task_id}).then(res => {
+                    change({task_id: currentRow.task_id, status: 0}).then(res => {
                         if (res.data.code === 1) {
-                            vm.tableData.splice(index, 1)
                             vm.$Message.success(res.data.msg)
+                            vm.getList()
                         } else {
                             vm.$Message.error(res.data.msg)
                         }
@@ -350,10 +384,76 @@
                     margin: '0 5px'
                 },
                 props: {
-                    type: 'error',
+                    type: 'text',
                     placement: 'top',
                 }
-            }, '删除')
+            }, '下架任务')
+        ])
+    }
+    const stopButton = (vm, h, currentRow, index) => {
+        return h('Poptip', {
+            props: {
+                confirm: true,
+                title: '您确定要暂停这条数据吗? ',
+                transfer: true
+            },
+            on: {
+                'on-ok': () => {
+                    change({task_id: currentRow.task_id, status: 2}).then(res => {
+                        if (res.data.code === 1) {
+                            vm.$Message.success(res.data.msg)
+                            vm.getList()
+                        } else {
+                            vm.$Message.error(res.data.msg)
+                        }
+                    }, err => {
+                        vm.$Message.error(err.data.msg)
+                    })
+                }
+            }
+        }, [
+            h('Button', {
+                style: {
+                    margin: '0 5px'
+                },
+                props: {
+                    type: 'text',
+                    placement: 'top',
+                }
+            }, '暂停任务')
+        ])
+    }
+    const goonButton = (vm, h, currentRow, index) => {
+        return h('Poptip', {
+            props: {
+                confirm: true,
+                title: '您确定要继续这条数据吗? ',
+                transfer: true
+            },
+            on: {
+                'on-ok': () => {
+                    change({task_id: currentRow.task_id, status: 1}).then(res => {
+                        if (res.data.code === 1) {
+                            vm.$Message.success(res.data.msg)
+                            vm.getList()
+                        } else {
+                            vm.$Message.error(res.data.msg)
+                        }
+                    }, err => {
+                        vm.$Message.error(err.data.msg)
+                    })
+                }
+            }
+        }, [
+            h('Button', {
+                style: {
+                    margin: '0 5px'
+                },
+                props: {
+                    type: 'text',
+                    placement: 'top',
+                }
+            }, '继续任务')
         ])
     }
 
@@ -507,7 +607,7 @@
                     title: "创建时间",
                     key: "gmt_create",
                     align: "center", width: 150
-                }, {title: "操作", key: "handle", align: "center", handle: ["edit", "delete"], width: 180,
+                }, {title: "操作", key: "handle", align: "center", handle: ["edit", "delete"], width: 120,
                     fixed: 'right'}],
                 submitColumns: [
                     {
@@ -686,10 +786,24 @@
                     if (item.key === 'handle') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index]
-                            return h('div', [
-                                editButton(vm, h, currentRowData, param.index),
-                                deleteButton(vm, h, currentRowData, param.index)
-                            ])
+                            switch (currentRowData.status) {
+                                case 0:
+                                    return h('div', [
+                                        addButton(vm, h, currentRowData, param.index)
+                                    ])
+                                case 1:
+                                    return h('div', [
+                                        stopButton(vm, h, currentRowData, param.index),
+                                        deleteButton(vm, h, currentRowData, param.index),
+                                        editButton(vm, h, currentRowData, param.index)
+                                    ])
+                                    break;
+                                case 2:
+                                    return h('div', [
+                                        goonButton(vm, h, currentRowData, param.index)
+                                    ])
+                                    break;
+                            }
                         }
                     }
                     if (item.key === 'money') {
@@ -763,34 +877,29 @@
                     if (item.key === 'status') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
-                            return h('i-switch', {
-                                attrs: {
-                                    size: 'large'
-                                },
-                                props: {
-                                    'true-value': '1',
-                                    'false-value': '0',
-                                    value: currentRowData.status
-                                },
-                                on: {
-                                    'on-change': function (status) {
-                                        change({task_id: currentRowData.task_id, status: status}).then(res => {
-                                            vm.$Message.success(res.data.msg)
-                                            vm.cancel()
-                                        }, err => {
-                                            vm.$Message.error(res.data.msg)
-                                            vm.cancel()
-                                        })
-                                    }
-                                }
-                            }, [
-                                h('span', {
-                                    slot: 'open'
-                                }, '开启'),
-                                h('span', {
-                                    slot: 'close'
-                                }, '关闭')
-                            ]);
+                            switch (currentRowData.status) {
+                                case 0:
+                                    return h('Tag', {
+                                        attrs: {
+                                            color: 'default'
+                                        }
+                                    }, '已下架');
+                                    break;
+                                case 1:
+                                    return h('Tag', {
+                                        attrs: {
+                                            color: 'green'
+                                        }
+                                    }, '已发布');
+                                    break;
+                                case 2:
+                                    return h('Tag', {
+                                        attrs: {
+                                            color: 'orange'
+                                        }
+                                    }, '已暂停');
+                                    break;
+                            }
                         };
                     }
                 })
