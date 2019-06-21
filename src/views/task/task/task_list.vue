@@ -604,7 +604,7 @@
             on: {
                 'click': () => {
                     vm.formItemRefuse.id = currentRow.id;
-                    vm.formItemRefuse.status = 3;
+                    vm.modalRefuse.status = currentRow.status;
                     vm.modalRefuse.show = true
                     vm.modalRefuse.index = index
                 }
@@ -756,6 +756,7 @@
                 modalRefuse: {
                     show: false,
                     loading: false,
+                    status: "",
                     index: 0
                 },
                 // 初始化图片弹出框
