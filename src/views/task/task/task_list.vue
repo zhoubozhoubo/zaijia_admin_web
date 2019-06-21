@@ -230,17 +230,19 @@
         <Modal v-model="modalEditting.show" width="700" :styles="{top: '30px'}" @on-visible-change="doCancel">
             <p slot="header" style="color:#2d8cf0;">
                 <Icon type="md-information-circle"></Icon>
-                <span>编辑</span>
+                <span>增量</span>
             </p>
             <Form ref="myFormEdit" :rules="ruleValidateEdit" :model="formItemEdit" :label-width="100">
                 <FormItem label="任务标题" prop="title">
                     <Input v-model="formItemEdit.title" disabled placeholder="任务标题"></Input>
                 </FormItem>
                 <FormItem label="增加数量" prop="number">
-                    <Input v-model="formItemEdit.number" placeholder="增加数量"></Input>
+                    <Input v-model="formItemEdit.number" placeholder="增加数量" style="width: 200px"></Input>
+                    <span>当前数量:{{current_number}}</span>
                 </FormItem>
                 <FormItem label="截止日期" prop="end_date">
                     <DatePicker type="date" v-model="formItemEdit.end_date" placeholder="任务截止日期" format="yyyy-MM-dd" style="width: 200px"></DatePicker>
+                    <span>当前截止日期:{{current_end_date}}</span>
                 </FormItem>
             </Form>
             <div slot="footer">
@@ -263,6 +265,21 @@
                       @on-page-size-change="changeSubmitSize" show-elevator show-sizer show-total></Page>
             </div>
             <p slot="footer"></p>
+        </Modal>
+        <Modal v-model="modalRefuse.show" width="700" :styles="{top: '30px'}" @on-visible-change="doCancel">
+            <p slot="header" style="color:#2d8cf0;">
+                <Icon type="md-information-circle"></Icon>
+                <span>拒绝理由</span>
+            </p>
+            <Form ref="myFormRefuse" :rules="ruleValidateRefuse" :model="formItemRefuse" :label-width="100">
+                <FormItem label="拒绝理由" prop="refuse_text">
+                    <Input type="textarea" :rows="4" v-model="formItemRefuse.refuse_text" :disabled="modalRefuse.status == 1" placeholder="拒绝理由"></Input>
+                </FormItem>
+            </Form>
+            <div slot="footer">
+                <Button type="text" @click="cancelRefuse" style="margin-right: 8px">取消</Button>
+                <Button type="primary" @click="submitRefuse" :loading="modalRefuse.loading" v-if="modalRefuse.status == 1">确定</Button>
+            </div>
         </Modal>
 
         <Modal v-model="modalSubmit.show" width="700" :styles="{top: '30px'}" @on-visible-change="doCancel">
@@ -350,7 +367,8 @@
                 'click': () => {
                     vm.formItemEdit.task_id = currentRow.task_id;
                     vm.formItemEdit.title = currentRow.title;
-                    vm.formItemEdit.end_date = currentRow.end_date;
+                    vm.current_number = currentRow.number;
+                    vm.current_end_date = currentRow.end_date
                     vm.modalEditting.show = true
                     vm.modalEditting.index = index
                 }
@@ -518,8 +536,29 @@
         }, '查看')
     };
 
+    // 查看拒绝理由
+    const seeRefuseContentButton = (vm, h, currentRow, index) => {
+        return h('Button', {
+            props: {
+                type: 'error'
+            },
+            style: {
+                margin: '0 5px'
+            },
+            on: {
+                'click': () => {
+                    vm.formItemRefuse.id = currentRow.id;
+                    vm.modalRefuse.status = currentRow.status;
+                    vm.formItemRefuse.refuse_text = currentRow.refuse_text;
+                    vm.modalRefuse.show = true
+                    vm.modalRefuse.index = index
+                }
+            }
+        }, '拒绝理由')
+    };
+
     // 审核拒绝操作
-    const noPassButton = (vm, h, currentRow, index) => {
+    /*const noPassButton = (vm, h, currentRow, index) => {
         return h('Poptip', {
             props: {
                 confirm: true,
@@ -552,6 +591,25 @@
                 }
             }, '拒绝')
         ])
+    };*/
+    // 审核拒绝操作
+    const noPassButton = (vm, h, currentRow, index) => {
+        return h('Button', {
+            props: {
+                type: 'error'
+            },
+            style: {
+                margin: '0 5px'
+            },
+            on: {
+                'click': () => {
+                    vm.formItemRefuse.id = currentRow.id;
+                    vm.formItemRefuse.status = 3;
+                    vm.modalRefuse.show = true
+                    vm.modalRefuse.index = index
+                }
+            }
+        }, '拒绝')
     };
 
     export default {
@@ -626,11 +684,11 @@
                         align: 'center',
                         key: 'nickname'
                     },
-                    {
+                    /*{
                         title: '用户手机号',
                         align: 'center',
                         key: 'phone'
-                    },
+                    },*/
                     {
                         title: '提交时间',
                         align: 'center',
@@ -640,7 +698,7 @@
                         title: '审核时间',
                         align: 'center',
                         key: 'check_time'
-                    }, {title: "操作", key: "handle", align: "center", handle: ["edit", "delete"], width: 180}
+                    }, {title: "操作", key: "handle", align: "center", handle: ["edit", "delete"]}
                 ],
                 tableData: [],
                 tableShow: {
@@ -695,6 +753,11 @@
                     status: "",
                     index: 0
                 },
+                modalRefuse: {
+                    show: false,
+                    loading: false,
+                    index: 0
+                },
                 // 初始化图片弹出框
                 modalSeeingImg: {
                     img: '',
@@ -733,6 +796,11 @@
                     id: "",
                     status: 2
                 },
+                formItemRefuse: {
+                    id: "",
+                    status: 3,
+                    refuse_text: ""
+                },
                 ruleValidate: {
                     task_type_id: [{required: true, message: "请选择任务类型", trigger: "change"}],
                     title: [{required: true, message: "请输入任务标题", trigger: "blur"}],
@@ -753,12 +821,17 @@
                     number: [{required: true, message: "请输入任务数量", trigger: "blur"}],
                     end_date: [{required: true, message: "请选择任务截止日期", trigger: "change", type: 'date'}]
                 },
+                ruleValidateRefuse: {
+                    refuse_text: [{required: true, message: "请输入拒绝理由", trigger: "blur"}],
+                },
                 loading: true,
                 taskTypeList: [],
                 AreaList: [],
                 showImgUrl: '',
                 uploadListSubmit: [],
-                uploadListShow: []
+                uploadListShow: [],
+                current_number: '',
+                current_end_date: ''
             }
         },
         created() {
@@ -953,9 +1026,14 @@
                                     seeSubmitContentButton(vm, h, currentRowData, param.index),
                                     noPassButton(vm, h, currentRowData, param.index)
                                 ])
-                            }else if (currentRowData.status == 2 || currentRowData.status == 3) {
+                            }else if (currentRowData.status == 2) {
                                 return h('div', [
                                     seeSubmitContentButton(vm, h, currentRowData, param.index)
+                                ])
+                            }else if (currentRowData.status == 3) {
+                                return h('div', [
+                                    seeSubmitContentButton(vm, h, currentRowData, param.index),
+                                    seeRefuseContentButton(vm, h, currentRowData, param.index)
                                 ])
                             }
                         }
@@ -1105,6 +1183,28 @@
                     }
                 })
             },
+            cancelRefuse() {
+                this.modalRefuse.show = false
+            },
+            submitRefuse() {
+                this.$refs['myFormRefuse'].validate((valid) => {
+                    if (valid) {
+                        this.modalRefuse.loading = true
+                        this.formItemRefuse.status = 3;
+                        saveUserTaskData(this.formItemRefuse).then(res => {
+                            if (res.data.code === 1) {
+                                this.$Message.success(res.data.msg)
+                                this.modalRefuse.loading = false
+                                this.getSubmitList()
+                                this.cancelRefuse()
+                                this.getList()
+                            } else {
+                                this.$Message.error(res.data.msg)
+                            }
+                        })
+                    }
+                })
+            },
             cancelSubmit() {
                 this.modalSubmit.show = false
             },
@@ -1152,6 +1252,9 @@
                     this.submitShow.listCount = res.data.data.count
                     this.submitLoading = false
                 })
+            },
+            p(s){
+                return s < 10 ? '0' + s : s
             }
         },
         mounted () {
