@@ -273,7 +273,7 @@
             </p>
             <Form ref="myFormRefuse" :rules="ruleValidateRefuse" :model="formItemRefuse" :label-width="100">
                 <FormItem label="拒绝理由" prop="refuse_text">
-                    <Input type="textarea" :rows="4" v-model="formItemRefuse.refuse_text" :disabled="modalRefuse.status == 1" placeholder="拒绝理由"></Input>
+                    <Input type="textarea" :rows="4" v-model="formItemRefuse.refuse_text" :disabled="modalRefuse.status == 3" placeholder="拒绝理由"></Input>
                 </FormItem>
             </Form>
             <div slot="footer">
@@ -367,7 +367,7 @@
                 'click': () => {
                     vm.formItemEdit.task_id = currentRow.task_id;
                     vm.formItemEdit.title = currentRow.title;
-                    vm.current_number = currentRow.number;
+                    vm.current_number = currentRow.number - currentRow.have_number;
                     vm.current_end_date = currentRow.end_date
                     vm.modalEditting.show = true
                     vm.modalEditting.index = index
