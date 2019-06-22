@@ -18,7 +18,7 @@
             <Col span="24">
                 <Card>
                     <p slot="title" style="height: 40px">
-                        <Button type="primary" @click="alertAdd" icon="md-add">新增</Button>
+                        <!--<Button type="primary" @click="alertAdd" icon="md-add">新增</Button>-->
                     </p>
                     <div>
                         <Table :loading="loading" :columns="columnsList" :data="tableData" border
@@ -172,7 +172,7 @@
                             let currentRowData = vm.tableData[param.index]
                             return h('div', [
                                 editButton(vm, h, currentRowData, param.index),
-                                deleteButton(vm, h, currentRowData, param.index)
+                                // deleteButton(vm, h, currentRowData, param.index)
                             ])
                         }
                     }
