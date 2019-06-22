@@ -373,9 +373,9 @@ export const appRouter = [
                 component: () => import('@/views/task/task/task_list.vue')
             },
             {
-                path: "task",
+                path: "task_down",
                 icon: "ios-folder-open",
-                name: "task_list",
+                name: "task_list_down",
                 access: 'admin/Task/getList',
                 title: "已下架任务列表",
                 component: () => import('@/views/task/task/task_list_down.vue')
