@@ -627,7 +627,7 @@
                     fixed: 'left'}, {
                     title: "任务金额",
                     key: "money",
-                    align: "center", width: 100,
+                    align: "center", width: 120,
                     fixed: 'left'
                 }, {title: "任务数量", key: "number", align: "center", width: 100}, {
                     title: "已领数量",
