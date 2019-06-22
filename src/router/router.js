@@ -212,7 +212,7 @@ export const appRouter = [
                 icon: "ios-folder-open",
                 name: "wechatqrcode_index",
                 access: 'admin/BasicConf/wechatQrCode',
-                title: "关注二维码",
+                title: "一键分享海报",
                 component: () => import('@/views/basic_conf/wechatqrcode/wechatqrcode_index.vue')
             },
             {

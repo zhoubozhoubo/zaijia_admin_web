@@ -3,11 +3,11 @@
         <Card>
             <p slot="title">
                 <Icon type="md-person"></Icon>
-                微信公众号二维码
+                一键分享海报
             </p>
             <div>
                 <Form ref="myForm" :rules="ruleValidate" :model="formItem" :label-width="80">
-                    <FormItem label="公众号二维码" prop="wechat_qr_code">
+                    <FormItem label="一键分享海报" prop="wechat_qr_code">
                         <div class="demo-upload-list" v-if="formItem.wechat_qr_code">
                             <img :src="formItem.wechat_qr_code">
                             <div class="demo-upload-list-cover">
