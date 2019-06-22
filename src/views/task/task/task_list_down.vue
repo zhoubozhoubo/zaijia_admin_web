@@ -36,12 +36,6 @@
                             </Select>
                         </FormItem>
                         <FormItem style="margin-bottom: 0">
-                            <Select v-model="searchConf.status" clearable placeholder='任务状态' style="width:100px">
-                                <Option value="1">已发布</Option>
-                                <Option value="2">已暂停</Option>
-                            </Select>
-                        </FormItem>
-                        <FormItem style="margin-bottom: 0">
                             <DatePicker type="daterange" @on-change="searchConf.gmt_create=$event" placeholder="发布日期范围"
                                         style="width: 200px"></DatePicker>
                         </FormItem>
@@ -56,7 +50,7 @@
             <Col span="24">
                 <Card>
                     <p slot="title" style="height: 40px">
-                        <Button type="primary" @click="alertAdd" icon="md-add">新增</Button>
+                        <!--<Button type="primary" @click="alertAdd" icon="md-add">新增</Button>-->
                     </p>
                     <div>
                         <Table :loading="loading" :columns="columnsList" :data="tableData" border
@@ -613,7 +607,7 @@
     };
 
     export default {
-        name: 'task_list',
+        name: 'task_list_down',
         components: {},
         data() {
             return {
@@ -720,7 +714,7 @@
                     area: [],
                     device: "",
                     submit_way: "",
-                    status: "",
+                    status: 0,
                     gmt_create: ""
                 },
                 searchConfSubmit: {

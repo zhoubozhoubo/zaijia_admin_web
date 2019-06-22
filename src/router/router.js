@@ -369,8 +369,16 @@ export const appRouter = [
                 icon: "ios-folder-open",
                 name: "task_list",
                 access: 'admin/Task/getList',
-                title: "任务列表",
+                title: "上架中任务列表",
                 component: () => import('@/views/task/task/task_list.vue')
+            },
+            {
+                path: "task",
+                icon: "ios-folder-open",
+                name: "task_list",
+                access: 'admin/Task/getList',
+                title: "已下架任务列表",
+                component: () => import('@/views/task/task/task_list_down.vue')
             },
             {
                 path: "task_type",
