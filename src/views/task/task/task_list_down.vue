@@ -783,7 +783,8 @@
                     device: 0,
                     submit_way: "",
                     submit_notice: "",
-                    submit_img: []
+                    submit_img: [],
+                    status: 1
                 },
                 formItemEdit: {
                     task_id: "",
