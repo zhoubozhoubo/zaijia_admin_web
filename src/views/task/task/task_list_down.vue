@@ -127,12 +127,12 @@
                     <Input v-model="formItem.link" placeholder="任务链接"></Input>
                 </FormItem>
                 <FormItem label="图片展示">
-                    <div class="demo-upload-list" v-for="item in uploadListShow">
-                        <template v-if="item.status === 'finished'">
+                    <div class="demo-upload-list" v-for="(item, index) in uploadListShow" :key="index">
+                        <template v-if="item.status == 'finished'">
                             <img :src="item.url">
                             <div class="demo-upload-list-cover">
                                 <Icon type="ios-eye-outline" @click.native="handleView(item.url)"></Icon>
-                                <Icon type="ios-trash-outline" @click.native="handleRemoveShow(item)"></Icon>
+                                <Icon type="ios-trash-outline" @click.native="handleRemoveShow(item,index)"></Icon>
                             </div>
                         </template>
                         <template v-else>
@@ -180,12 +180,12 @@
                     <Input v-model="formItem.submit_notice" type="textarea" :rows="4" placeholder="提交说明"></Input>
                 </FormItem>
                 <FormItem label="提交图片" prop="submit_img" v-show="formItem.submit_way == 2">
-                    <div class="demo-upload-list" v-for="item in uploadListSubmit">
-                        <template v-if="item.status === 'finished'">
+                    <div class="demo-upload-list" v-for="(item, index) in uploadListSubmit" :key="index">
+                        <template v-if="item.status == 'finished'">
                             <img :src="item.url">
                             <div class="demo-upload-list-cover">
                                 <Icon type="ios-eye-outline" @click.native="handleView(item.url)"></Icon>
-                                <Icon type="ios-trash-outline" @click.native="handleRemoveSubmit(item)"></Icon>
+                                <Icon type="ios-trash-outline" @click.native="handleRemoveSubmit(item,index)"></Icon>
                             </div>
                         </template>
                         <template v-else>
@@ -332,7 +332,9 @@
                     vm.formItem.number = currentRow.number;
                     vm.formItem.end_date = currentRow.end_date;
                     vm.formItem.check_duration = currentRow.check_duration;
-                    vm.formItem.finish_duration = currentRow.finish_duration;
+                    if (currentRow.finish_duration == 0.5) {
+                        vm.formItem.finish_duration =30
+                    }
                     vm.formItem.is_repeat = currentRow.is_repeat;
                     vm.formItem.area = currentRow.area;
                     vm.formItem.step = currentRow.step;
@@ -343,6 +345,8 @@
                     vm.formItem.submit_way = currentRow.submit_way;
                     vm.formItem.submit_notice = currentRow.submit_notice;
                     vm.formItem.submit_img = currentRow.submit_img;
+                    vm.uploadListShow = currentRow.show_img;
+                    vm.uploadListSubmit = currentRow.submit_img;
                     vm.modalSetting.show = true
                     vm.modalSetting.index = index
                 }
@@ -797,7 +801,7 @@
                     refuse_text: ""
                 },
                 ruleValidate: {
-                    task_type_id: [{required: true, message: "请选择任务类型", trigger: "change"}],
+                    // task_type_id: [{required: true, message: "请选择任务类型", trigger: "change"}],
                     title: [{required: true, message: "请输入任务标题", trigger: "blur"}],
                     money: [{required: true, message: "请输入任务金额", trigger: "blur"}],
                     number: [{required: true, message: "请输入任务数量", trigger: "blur"}],
@@ -855,7 +859,7 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index]
                             switch (currentRowData.status) {
-                                case '0':
+                                case 0:
                                     return h('div', [
                                         addButton(vm, h, currentRowData, param.index)
                                     ])
@@ -1056,13 +1060,15 @@
                 this.showImgUrl = url
                 this.visible = true;
             },
-            handleRemoveShow (file) {
+            handleRemoveShow (file,index) {
                 const fileList = this.$refs.uploadShow.fileList;
                 this.$refs.uploadShow.fileList.splice(fileList.indexOf(file), 1);
+                this.uploadListShow.splice(index, 1);
             },
-            handleRemoveSubmit (file) {
+            handleRemoveSubmit (file,index) {
                 const fileList = this.$refs.uploadSubmit.fileList;
                 this.$refs.uploadSubmit.fileList.splice(fileList.indexOf(file), 1);
+                this.uploadListSubmit.splice(index, 1);
             },
             handleSuccess (res, file) {
                 file.url = res.data.fileUrl
