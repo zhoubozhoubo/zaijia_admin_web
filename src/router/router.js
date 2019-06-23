@@ -238,6 +238,14 @@ export const appRouter = [
                 access: 'admin/BasicConf/customer',
                 title: "联系客服",
                 component: () => import('@/views/basic_conf/customer/customer_index.vue')
+            },
+            {
+                path: "company_index",
+                icon: "ios-folder-open",
+                name: "company_index",
+                access: 'admin/BasicConf/company',
+                title: "公司简介",
+                component: () => import('@/views/basic_conf/company/company_index.vue')
             }
         ]
     },
