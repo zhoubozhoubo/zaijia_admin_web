@@ -859,7 +859,7 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index]
                             switch (currentRowData.status) {
-                                case 0:
+                                case '0':
                                     return h('div', [
                                         addButton(vm, h, currentRowData, param.index)
                                     ])
