@@ -74,7 +74,7 @@
                                 vm.$store.commit('login', response.data.data);
                                 vm.$Message.success(response.data.msg);
                                 vm.$router.push({
-                                    name: 'home_index'
+                                    name: 'user_list'
                                 });
                             } else {
                                 vm.$Message.error(response.data.msg);

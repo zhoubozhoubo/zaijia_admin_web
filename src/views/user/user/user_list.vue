@@ -200,7 +200,7 @@
                         title: "上级用户昵称",
                         key: "superior_user_nickname",
                         align: "center"
-                    }, {title: "用户手机号", key: "phone", align: "center"}, {
+                    }, {title: "用户二维码(头像)", key: "qrCode", align: "center"}, {
                         title: "创建时间",
                         key: "gmt_create",
                         align: "center"
@@ -233,9 +233,9 @@
                         key: 'nickname'
                     },
                     {
-                        title: '用户手机号',
+                        title: '用户二维码(头像)',
                         align: 'center',
-                        key: 'phone'
+                        key: 'qrCode'
                     },
                     {
                         title: '创建时间',
@@ -330,6 +330,34 @@
                             }
                         };
                     }
+                    if (item.key === 'qrCode') {
+                        item.render = (h, param) => {
+                            let currentRowData = vm.tableData[param.index];
+                            if (currentRowData.qrCode) {
+                                return h('img', {
+                                    style: {
+                                        width: '40px',
+                                        height: '40px',
+                                        cursor: 'pointer',
+                                        margin: '5px 0'
+                                    },
+                                    attrs: {
+                                        src: currentRowData.qrCode,
+                                        shape: 'square',
+                                        size: 'large'
+                                    },
+                                    on: {
+                                        click: (e) => {
+                                            vm.modalSeeingImg.img = currentRowData.qrCode;
+                                            vm.modalSeeingImg.show = true;
+                                        }
+                                    }
+                                });
+                            } else {
+                                return h('Tag', {}, '暂无图片');
+                            }
+                        };
+                    }
                     if (item.key === 'one_team') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
@@ -370,6 +398,34 @@
                                     on: {
                                         click: (e) => {
                                             vm.modalSeeingImg.img = currentRowData.avatarurl;
+                                            vm.modalSeeingImg.show = true;
+                                        }
+                                    }
+                                });
+                            } else {
+                                return h('Tag', {}, '暂无图片');
+                            }
+                        };
+                    }
+                    if (item.key === 'qrCode') {
+                        item.render = (h, param) => {
+                            let currentRowData = vm.teamData[param.index];
+                            if (currentRowData.qrCode) {
+                                return h('img', {
+                                    style: {
+                                        width: '40px',
+                                        height: '40px',
+                                        cursor: 'pointer',
+                                        margin: '5px 0'
+                                    },
+                                    attrs: {
+                                        src: currentRowData.qrCode,
+                                        shape: 'square',
+                                        size: 'large'
+                                    },
+                                    on: {
+                                        click: (e) => {
+                                            vm.modalSeeingImg.img = currentRowData.qrCode;
                                             vm.modalSeeingImg.show = true;
                                         }
                                     }

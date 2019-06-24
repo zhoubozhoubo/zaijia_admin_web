@@ -20,6 +20,13 @@
                             </Select>
                         </FormItem>-->
                         <FormItem style="margin-bottom: 0">
+                            <Select v-model="searchConf.status" clearable placeholder='显示设备' style="width:100px">
+                                <Option value="0">不限</Option>
+                                <Option value="1">PC端</Option>
+                                <Option value="2">移动端</Option>
+                            </Select>
+                        </FormItem>
+                        <FormItem style="margin-bottom: 0">
                             <Button type="primary" shape="circle" icon="ios-search" @click="search">查询/刷新</Button>
                         </FormItem>
                     </Form>
@@ -84,6 +91,13 @@
                     <Modal title="View Image" v-model="visible">
                         <img :src="formItem.img" v-if="visible" style="width: 100%">
                     </Modal>
+                </FormItem>
+                <FormItem label="显示设备" prop="status">
+                    <RadioGroup v-model="formItem.status">
+                        <Radio label="0">不限</Radio>
+                        <Radio label="1">PC端</Radio>
+                        <Radio label="2">移动端</Radio>
+                    </RadioGroup>
                 </FormItem>
                 <FormItem label="新闻简介" prop="comment">
                     <Input type="textarea" :rows="4" v-model="formItem.comment" placeholder="新闻简介"></Input>
@@ -157,6 +171,7 @@
                     vm.formItem.news_type_id = currentRow.news_type_id;
                     vm.formItem.title = currentRow.title;
                     vm.formItem.img = currentRow.img;
+                    vm.formItem.status = currentRow.status;
                     vm.formItem.comment = currentRow.comment;
                     vm.formItem.content = currentRow.content;
                     vm.modalSetting.show = true
@@ -234,7 +249,7 @@
                     key: "content",
                     align: "center"
                 },
-                    // {title: "状态", key: "status", align: "center"},
+                    {title: "显示设备", key: "status", align: "center"},
                     {
                     title: "操作",
                     key: "handle",
@@ -300,11 +315,12 @@
                         }
                     }
                 },
-                formItem: {news_id: 0, news_type_id: '', title: "", comment: "",  img: "", content: ""},
+                formItem: {news_id: 0, news_type_id: '', title: "", status: "", comment: "",  img: "", content: ""},
                 ruleValidate: {
                     news_type_id: [{required: true, message: "请选择新闻类型", trigger: "change"}],
                     title: [{required: true, message: "请输入新闻标题", trigger: "blur"}],
                     img: [{required: true, message: "请上传图片", trigger: "blur"}],
+                    status: [{required: true, message: "请选择显示设备", trigger: "change"}],
                     comment: [{required: true, message: "请输入新闻简介", trigger: "blur"}]
                 },
                 loading: true,
@@ -385,34 +401,29 @@
                     if (item.key === 'status') {
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index];
-                            return h('i-switch', {
-                                attrs: {
-                                    size: 'large'
-                                },
-                                props: {
-                                    'true-value': '1',
-                                    'false-value': '0',
-                                    value: currentRowData.status
-                                },
-                                on: {
-                                    'on-change': function (status) {
-                                        change({news_id: currentRowData.news_id, status: status}).then(res => {
-                                            vm.$Message.success(res.data.msg)
-                                            vm.cancel()
-                                        }, err => {
-                                            vm.$Message.error(res.data.msg)
-                                            vm.cancel()
-                                        })
-                                    }
-                                }
-                            }, [
-                                h('span', {
-                                    slot: 'open'
-                                }, '开启'),
-                                h('span', {
-                                    slot: 'close'
-                                }, '关闭')
-                            ]);
+                            switch (currentRowData.status) {
+                                case '0':
+                                    return h('Tag', {
+                                        attrs: {
+                                            color: 'default'
+                                        }
+                                    }, '不限');
+                                    break;
+                                case '1':
+                                    return h('Tag', {
+                                        attrs: {
+                                            color: 'green'
+                                        }
+                                    }, 'PC端');
+                                    break;
+                                case '2':
+                                    return h('Tag', {
+                                        attrs: {
+                                            color: 'orange'
+                                        }
+                                    }, '移动端');
+                                    break;
+                            }
                         };
                     }
                 })
