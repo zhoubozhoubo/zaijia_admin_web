@@ -1131,12 +1131,9 @@
                                 this.$Message.success(res.data.msg)
                                 this.getList()
                                 this.cancel()
-                                this.formItem.step.splice(0, this.formItem.step.length)
-                                this.formItem.step = ['','','']
-                                const fileList = this.$refs.uploadShow.fileList;
-                                this.$refs.uploadShow.fileList.splice(0, fileList.length);
-                                const fileListSubmit = this.$refs.uploadSubmit.fileList;
-                                this.$refs.uploadSubmit.fileList.splice(0, fileListSubmit.length);
+                                // this.formItem.step.splice(0, this.formItem.step.length)
+                                // this.formItem.step = ['','','']
+                                this.$refs['myForm'].resetFields()
                             } else {
                                 this.$Message.error(res.data.msg)
                             }
