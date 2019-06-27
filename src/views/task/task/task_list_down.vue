@@ -127,17 +127,12 @@
                     <Input v-model="formItem.link" placeholder="任务链接"></Input>
                 </FormItem>
                 <FormItem label="图片展示">
-                    <div class="demo-upload-list" v-for="(item, index) in uploadListShow" :key="index">
-                        <template v-if="item.status == 'finished'">
-                            <img :src="item.url">
-                            <div class="demo-upload-list-cover">
-                                <Icon type="ios-eye-outline" @click.native="handleView(item.url)"></Icon>
-                                <Icon type="ios-trash-outline" @click.native="handleRemoveShow(item,index)"></Icon>
-                            </div>
-                        </template>
-                        <template v-else>
-                            <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
-                        </template>
+                    <div class="demo-upload-list" v-for="(item, index) in formItem.show_img" :key="index">
+                        <img :src="item.url">
+                        <div class="demo-upload-list-cover">
+                            <Icon type="ios-eye-outline" @click.native="handleView(item.url)"></Icon>
+                            <Icon type="ios-trash-outline" @click.native="handleRemoveShow(index)"></Icon>
+                        </div>
                     </div>
                     <Upload ref="uploadShow"
                             :show-upload-list="false"
@@ -180,17 +175,12 @@
                     <Input v-model="formItem.submit_notice" type="textarea" :rows="4" placeholder="提交说明"></Input>
                 </FormItem>
                 <FormItem label="提交图片" prop="submit_img" v-show="formItem.submit_way == 2">
-                    <div class="demo-upload-list" v-for="(item, index) in uploadListSubmit" :key="index">
-                        <template v-if="item.status == 'finished'">
-                            <img :src="item.url">
-                            <div class="demo-upload-list-cover">
-                                <Icon type="ios-eye-outline" @click.native="handleView(item.url)"></Icon>
-                                <Icon type="ios-trash-outline" @click.native="handleRemoveSubmit(item,index)"></Icon>
-                            </div>
-                        </template>
-                        <template v-else>
-                            <Progress v-if="item.showProgress" :percent="item.percentage" hide-info></Progress>
-                        </template>
+                    <div class="demo-upload-list" v-for="(item, index) in formItem.submit_img" :key="index">
+                        <img :src="item.url">
+                        <div class="demo-upload-list-cover">
+                            <Icon type="ios-eye-outline" @click.native="handleView(item.url)"></Icon>
+                            <Icon type="ios-trash-outline" @click.native="handleRemoveSubmit(index)"></Icon>
+                        </div>
                     </div>
                     <Upload ref="uploadSubmit"
                             :show-upload-list="false"
@@ -198,13 +188,12 @@
                             :on-success="handleSuccessSubmit"
                             :format="['jpg','jpeg','png']"
                             :max-size="5120"
-                            :on-format-error="handleFormatErrorSubmit"
-                            :on-exceeded-size="handleMaxSizeSubmit"
+                            :on-format-error="handleFormatError"
+                            :on-exceeded-size="handleMaxSize"
                             multiple
                             type="drag"
                             :action="uploadUrl"
                             :headers="uploadHeader"
-                            :before-upload="brforeUpload"
                             style="display: inline-block;width:58px;">
                         <div style="width: 58px;height:58px;line-height: 58px;">
                             <Icon type="ios-camera" size="20"></Icon>
@@ -1061,19 +1050,27 @@
                 this.showImgUrl = url
                 this.visible = true;
             },
-            handleRemoveShow (file,index) {
-                const fileList = this.$refs.uploadShow.fileList;
-                this.$refs.uploadShow.fileList.splice(fileList.indexOf(file), 1);
-                this.uploadListShow.splice(index, 1);
+            handleRemoveShow (index) {
+                // const fileList = this.$refs.uploadShow.fileList;
+                // this.$refs.uploadShow.fileList.splice(fileList.indexOf(file), 1);
+                // this.uploadListShow.splice(index, 1);
+
+                this.formItem.show_img.splice(index, 1);
             },
-            handleRemoveSubmit (file,index) {
-                const fileList = this.$refs.uploadSubmit.fileList;
-                this.$refs.uploadSubmit.fileList.splice(fileList.indexOf(file), 1);
-                this.uploadListSubmit.splice(index, 1);
+            handleRemoveSubmit (index) {
+                // const fileList = this.$refs.uploadSubmit.fileList;
+                // this.$refs.uploadSubmit.fileList.splice(fileList.indexOf(file), 1);
+                // this.uploadListSubmit.splice(index, 1);
+                this.formItem.submit_img.splice(index, 1);
             },
-            handleSuccess (res, file) {
-                file.url = res.data.fileUrl
-                file.name = res.data.fileName
+            handleSuccess (res) {
+                if (res.code === 1) {
+                    this.$Message.success(res.msg)
+                    let img = { 'name': '', 'url': res.data.fileUrl }
+                    this.formItem.show_img.push(img)
+                } else {
+                    this.$Message.error(res.msg)
+                }
             },
             handleFormatError (file) {
                 this.$Notice.warning({
@@ -1087,9 +1084,14 @@
                     desc: 'File  ' + file.name + ' is too large, no more than 2M.'
                 });
             },
-            handleSuccessSubmit (res, file) {
-                file.url = res.data.fileUrl
-                file.name = res.data.fileName
+            handleSuccessSubmit (res) {
+                if (res.code === 1) {
+                    this.$Message.success(res.msg)
+                    let img = { 'name': '', 'url': res.data.fileUrl }
+                    this.formItem.submit_img.push(img)
+                } else {
+                    this.$Message.error(res.msg)
+                }
             },
             handleFormatErrorSubmit (file) {
                 this.$Notice.warning({
@@ -1118,14 +1120,14 @@
                 }
             },
             submit() {
-                for (let i = 0; i < this.uploadListShow.length; i++) {
-                    this.formItem.show_img[i] = this.uploadListShow[i].url
-                }
-                if (this.formItem.submit_way == 2) {
-                    for (let i = 0; i < this.uploadListSubmit.length; i++) {
-                        this.formItem.submit_img[i] = this.uploadListSubmit[i].url
-                    }
-                }
+                // for (let i = 0; i < this.uploadListShow.length; i++) {
+                //     this.formItem.show_img[i] = this.uploadListShow[i].url
+                // }
+                // if (this.formItem.submit_way == 2) {
+                //     for (let i = 0; i < this.uploadListSubmit.length; i++) {
+                //         this.formItem.submit_img[i] = this.uploadListSubmit[i].url
+                //     }
+                // }
 
                 this.$refs['myForm'].validate((valid) => {
                     if (valid) {
@@ -1260,8 +1262,8 @@
             }
         },
         mounted () {
-            this.uploadListShow = this.$refs.uploadShow.fileList;
-            this.uploadListSubmit = this.$refs.uploadSubmit.fileList;
+            // this.uploadListShow = this.$refs.uploadShow.fileList;
+            // this.uploadListSubmit = this.$refs.uploadSubmit.fileList;
         }
     }
 </script>
