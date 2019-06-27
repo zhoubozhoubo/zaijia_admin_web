@@ -1131,9 +1131,11 @@
                                 this.$Message.success(res.data.msg)
                                 this.getList()
                                 this.cancel()
-                                // this.formItem.step.splice(0, this.formItem.step.length)
-                                // this.formItem.step = ['','','']
-                                this.$refs['myForm'].resetFields()
+                                this.formItem.step.splice(0, this.formItem.step.length)
+                                this.formItem.step = ['','','']
+                                this.formItem.area = []
+                                this.formItem.show_img.splice(0, this.formItem.show_img.length);
+                                this.formItem.submit_img.splice(0, this.formItem.submit_img.length);
                             } else {
                                 this.$Message.error(res.data.msg)
                             }

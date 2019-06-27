@@ -1139,10 +1139,9 @@
                                 this.cancel()
                                 this.formItem.step.splice(0, this.formItem.step.length)
                                 this.formItem.step = ['','','']
-                                const fileList = this.$refs.uploadShow.fileList;
-                                this.$refs.uploadShow.fileList.splice(0, fileList.length);
-                                const fileListSubmit = this.$refs.uploadSubmit.fileList;
-                                this.$refs.uploadSubmit.fileList.splice(0, fileListSubmit.length);
+                                this.formItem.area = []
+                                this.formItem.show_img.splice(0, this.formItem.show_img.length);
+                                this.formItem.submit_img.splice(0, this.formItem.submit_img.length);
                             } else {
                                 this.$Message.error(res.data.msg)
                             }
