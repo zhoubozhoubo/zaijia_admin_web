@@ -325,7 +325,7 @@
                         vm.formItem.finish_duration =30
                     }
                     vm.formItem.is_repeat = currentRow.is_repeat;
-                    vm.formItem.area = currentRow.area;
+                    vm.formItem.area = [currentRow.province,currentRow.city];
                     vm.formItem.step = currentRow.step;
                     vm.formItem.link = currentRow.link;
                     vm.formItem.show_img = currentRow.show_img;
@@ -849,7 +849,7 @@
                         item.render = (h, param) => {
                             let currentRowData = vm.tableData[param.index]
                             switch (currentRowData.status) {
-                                case '0':
+                                case 0:
                                     return h('div', [
                                         addButton(vm, h, currentRowData, param.index)
                                     ])
