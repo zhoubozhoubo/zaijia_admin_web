@@ -1145,6 +1145,7 @@
                             } else {
                                 this.$Message.error(res.data.msg)
                             }
+                            this.modalSetting.loading = false
                         })
                     }
                 })

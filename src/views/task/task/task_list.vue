@@ -368,7 +368,7 @@
         return h('Poptip', {
             props: {
                 confirm: true,
-                title: '您确定要删除这条数据吗? ',
+                title: '您确定要下架这条任务吗? ',
                 transfer: true
             },
             on: {
