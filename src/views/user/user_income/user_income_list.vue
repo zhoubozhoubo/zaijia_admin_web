@@ -11,6 +11,10 @@
                             <Input v-model="searchConf.title" clearable placeholder="任务标题"></Input>
                         </FormItem>
                         <FormItem style="margin-bottom: 0">
+                            <DatePicker type="daterange" @on-change="searchConf.gmt_create=$event" placeholder="选择日期范围"
+                                        style="width: 200px"></DatePicker>
+                        </FormItem>
+                        <FormItem style="margin-bottom: 0">
                             <Button type="primary" shape="circle" icon="ios-search" @click="search">查询/刷新</Button>
                         </FormItem>
                     </Form>
@@ -126,7 +130,7 @@
                     pageSize: 10,
                     listCount: 0
                 },
-                searchConf: {nickname: "", title: ""},
+                searchConf: {nickname: "", title: "", gmt_create: ""},
                 modalSetting: {
                     show: false,
                     loading: false,
