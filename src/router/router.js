@@ -246,6 +246,14 @@ export const appRouter = [
                 access: 'admin/BasicConf/company',
                 title: "公司简介",
                 component: () => import('@/views/basic_conf/company/company_index.vue')
+            },
+            {
+                path: "reward_index",
+                icon: "ios-folder-open",
+                name: "reward_index",
+                access: 'admin/BasicConf/company',
+                title: "关注奖励配置",
+                component: () => import('@/views/basic_conf/reward/reward_index.vue')
             }
         ]
     },
