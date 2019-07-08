@@ -254,6 +254,14 @@ export const appRouter = [
                 access: 'admin/BasicConf/company',
                 title: "关注奖励配置",
                 component: () => import('@/views/basic_conf/reward/reward_index.vue')
+            },
+            {
+                path: "taskmoney_index",
+                icon: "ios-folder-open",
+                name: "taskmoney_index",
+                access: 'admin/BasicConf/taskmoney',
+                title: "任务金额显示",
+                component: () => import('@/views/basic_conf/taskmoney/taskmoney_index.vue')
             }
         ]
     },
